@@ -10,7 +10,8 @@
 	var defaults = {
 		page_size  : 10,
 		row_numbers: false,
-		start_page : 1
+		start_page : 1,
+		page_sizes : [2, 5, 10]
 	};
 
 	var tTable = function ( config ){
@@ -32,7 +33,17 @@
 		row : "<tr class='<%= className %>'><%= colls %></tr>",
 		coll: "<td><%= data.html || '' %></td>",
 
-		pager: 'pager',
+		pager: {
+			wrap_top    : '<div class="table-pager">',
+			arrows      : '<span class="table-pager-arrows"><a href="#" class="table-pager-arrows-prev <%= prev_disabled %>">prev</a><a href="#" class="table-pager-arrows-next <%= next_disabled %>">next</a></span>',
+			pages_top   : '<span class="table-pager-pages">',
+			pages       : '<a href="#<%= page %>" class="table-pager-pages-item <%= current == page ? "table-pager-pages-item__on" : ""%>" data-goto="<%= page %>"><%= page %></a>',
+			dots        : '<span class="table-pager-pages-item">...</span>',
+			pages_bottom: '</span>',
+			goto        : '<input type="text" name="table-goto" class="table-pager-goto" />',
+			page_size   : '<select class="table-pager-page_size"><% _.each(sizes, function(item){ %><option value="<%= item %>" <%= current == item ? "selected" : "" %>><%= item %></option><% }); %></select>',
+			wrap_bottom : '</div>'
+		},
 
 		bottom: "</table>"
 	};
@@ -46,6 +57,9 @@
 		self.config = _.extend( self.config, config );
 
 		console.log( 'Config: ', self.config );
+
+		self.$el = $( self.get( 'container' ) );
+		self.$pager = $( self.get( 'pager' ) );
 
 		self.goto( self.get( 'start_page' ) );
 		return self;
@@ -109,7 +123,7 @@
 				page_size = self.get( 'page_size' ),
 				start_page = self.get( 'start_page' ),
 				sort_by = self.get( 'sort_by' ),
-				num = page_size * (start_page -1) + 1,
+				num = page_size * (start_page - 1) + 1,
 				rows_data = self.getPageData();
 
 			_.each( rows_data, function ( row ){
@@ -141,22 +155,169 @@
 		html_str = html.top + html.header + html.body + html.bottom;
 
 		// inserting
-		$( self.config.container ).html( html_str );
+		self.$el.html( html_str );
+		self.updatePager(); // update pager;
 		return self;
 	};
 
+	t_proto.updatePager = function (){
+		var self = this,
+			tpl = self.tpl.pager,
+			page_size = self.get( 'page_size' ),
+			page_sizes = self.get( 'page_sizes' ),
+			page = self.get( 'start_page' ),
+			pager_str = '',
+			max = (function ( page_size, data_length ){
+				var max = data_length / page_size,
+					max_rounded = Math.floor( max );
+				if ( max_rounded < max ) {
+					max = max_rounded + 1;
+				}
+				return max;
+			})( page_size, self.get( 'data' ).length ),
+			get_pages = function (){
+				var diff = 2,
+					pages = [page - diff, page + diff],
+					pages4str = [],
+					page_arr = [],
+					dots = tpl.dots,
+					tmp = 0,
+					tpl_page = function ( item ){
+						return _.template( tpl.pages, {
+							page   : item,
+							current: page
+						} );
+					};
+
+
+				if ( pages[1] > max ) {
+					tmp = pages[1] - max;
+					pages[1] = max;
+					pages[0] = pages[0] - tmp;
+				}
+
+				if ( pages[0] < 1 ) {
+					tmp = 0 - pages[0];
+					pages[0] = 1;
+					pages[1] = pages[1] + tmp + 1;
+				}
+
+				if ( pages[1] > max ) {
+					pages[1] = max;
+				}
+
+				pages4str = (function (){
+					var str = '';
+					for ( var i = pages[0]; i <= pages[1]; i++ ) {
+						str += tpl_page( i );
+					}
+					return str;
+				})();
+
+				if ( pages[0] == 2 ) {
+					pages4str = tpl_page( 1 ) + pages4str;
+				}
+
+				if ( pages[0] == 3 ) {
+					pages4str = tpl_page( 1 ) + tpl_page( 2 ) + pages4str;
+				}
+
+				if ( pages[0] > 3 ) {
+					pages4str = tpl_page( 1 ) + dots + pages4str;
+				}
+
+
+				if ( pages[1] + 2 == max ) {
+					pages4str = pages4str + tpl_page( max - 1 ) + tpl_page( max );
+				}
+
+				if ( pages[1] + 1 == max ) {
+					pages4str = pages4str + tpl_page( max );
+				}
+
+				if ( pages[1] + 3 <= max ) {
+					pages4str = pages4str + dots + tpl_page( max );
+				}
+				return pages4str;
+			},
+
+			pager = {
+				top      : tpl.wrap_top,
+				arrows   : (function (){
+					var str = _.template( tpl.arrows, {
+						prev_disabled: page == 1 ? 'table-pager-arrows-prev__disabled' : '',
+						next_disabled: page == max ? 'table-pager-arrows-next__disabled' : ''
+					} );
+					return str;
+				})(),
+				pages    : get_pages(),
+				goto     : (function (){
+					var str = _.template( tpl.goto, {} );
+					return str;
+				})(),
+				page_size: (function (){
+					var str = _.template( tpl.page_size, {
+						sizes  : page_sizes,
+						current: page_size
+					} );
+					return str;
+				})(),
+				bottom   : tpl.wrap_bottom
+			};
+
+		pager_str = pager.top + pager.arrows + pager.pages + pager.page_size + pager.goto + pager.bottom;
+
+		self.$pager.html( pager_str );
+		self.pagerEvents();
+		return self;
+	};
+
+	t_proto.pagerEvents = function (){
+		var self = this;
+
+		self.$pager.off( 'click', '.table-pager-arrows-prev' ).on( 'click', '.table-pager-arrows-prev', function ( e ){
+			e.preventDefault();
+			self.goto( self.get( 'start_page' ) - 1 );
+			return false;
+		} );
+
+		self.$pager.off( 'click', '.table-pager-arrows-next' ).on( 'click', '.table-pager-arrows-next', function ( e ){
+			e.preventDefault();
+			self.goto( self.get( 'start_page' ) + 1 );
+			return false;
+		} );
+
+		self.$pager.off( 'click', '.table-pager-pages-item' ).on( 'click', '.table-pager-pages-item', function ( e ){
+			e.preventDefault();
+			if ( $( e.target ).hasClass( 'table-pager-pages-item__on' ) ) {
+				return false;
+			}
+			self.goto( $( this ).data( 'goto' ) );
+			return false;
+		} );
+
+		self.$pager.off( 'keypress', '.table-pager-goto' ).on( 'keypress', '.table-pager-goto', function ( e ){
+			if ( e.keyCode == 13 ) {
+				e.preventDefault();
+				self.goto( $( this ).val() );
+				return false;
+			}
+		} );
+
+		self.$pager.off( 'change', '.table-pager-page_size' ).on( 'change', '.table-pager-page_size', function ( e ){
+			e.preventDefault();
+			self.set( {page_size: parseInt( $( this ).val(), 10 ) } ).goto( 1 );
+			return false;
+		} );
+
+		return self;
+	}
+
 	t_proto.getData = function (){
 		var self = this,
-			data = self.get( 'data' ),
-			page_data = (function (){
-				var data4work;
-				if ( typeof page_size == 'number' ) {
-					data4work = data.slice( (start_page - 1) * page_size, start_page * page_size )
-				} else {
-					data4work = data;
-				}
-				return data4work;
-			})();
+			data = self.get( 'data' );
+		// todo: filter data here;
+		// todo: sort data here;
 		return data;
 	};
 
@@ -177,7 +338,16 @@
 		return page_data;
 	};
 
+
+	/**
+	 *
+	 * @param {number} page - page that should be rendered
+	 * @returns {*}
+	 */
 	t_proto.goto = function ( page ){
+		if ( !page || page < 1 ) {
+			return this;
+		}
 		var self = this,
 			page_size = self.get( 'page_size' ),
 			data = self.getData(),

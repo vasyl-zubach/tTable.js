@@ -14,22 +14,29 @@
 				"type" : "string"
 			}
 		],
-		"page_size"  : 5,
-		"start_page" : 2,
+		"page_size"  : 2,
+		"start_page" : 1,
 		"row_numbers": true,
 		"sort_by"    : 1,
 		"data"       : [
 			["DevMate", "<a href='http://devmate.com'>DevMate</a>", "work" ],
 			["MacPaw", "<a href='http://macpaw.com'>MacPaw</a>", "work"],
+			["Ensoul.Me", "<a href='http://ensoul.me'>Ensoul.me</a>", "work"],
+			["xTube.com", "<a href='http://xtube.com'>Ensoul.me</a>", "mastersystems"],
 			["TjRus.com", "<a href='http://tjrus.com'>TjRus.com</a>", "personal"],
 			["Imageless iPhone", "<a href='http://tjrus.com/iphone'>Imageless iPhone</a>", "repsonal"],
 			["Imageless Lumia", "<a href='http://tjrus.com/lumia'>Imageless Lumia</a>", "repsonal"],
-			["_v_.js", "<a href='http://github.com/TjRus/_v_.js'>_v_.js</a>", "opensource"],
-			["tFormer.js", "<a href='http://github.com/TjRus/tFormer.js'>tFormer.js</a>", "opensource"],
-			["tTable.js", "<a href='http://github.com/TjRus/tTable.js'>tTable.js</a>", "opensource"],
-			["aer.js", "<a href='http://github.com/TjRus/aer.js'>aer.js</a>", "opensource"]
+			["_v_.js", "<a href='http://github.com/TjRus/_v_.js'>_v_.js</a>", "git"],
+			["tFormer.js", "<a href='http://github.com/TjRus/tFormer.js'>tFormer.js</a>", "git"],
+			["tTable.js", "<a href='http://github.com/TjRus/tTable.js'>tTable.js</a>", "git"],
+			["aer.js", "<a href='http://github.com/TjRus/aer.js'>aer.js</a>", "git"],
+			["Imageless iPhone", "<a href='http://github.com/TjRus/iPhone.js'>iPhone.js</a>", "git"],
+			["Imageless Lumia", "<a href='http://github.com/TjRus/Lumia.js'>Lumia.js</a>", "git"],
+			["_v_.js", "<a href='http://tjrus.github.io/_v_.js'>_v_.js</a>", "opensource"],
+			["tFormer.js", "<a href='http://tformerjs.com/'>tFormer.js</a>", "opensource"]
 		],
-		"container"  : "#table_id"
+		"container"  : "#table_id",
+		"pager"      : "#table_id_pager"
 	}
 
 }
