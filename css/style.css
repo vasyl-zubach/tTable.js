@@ -1,0 +1,23 @@
+html, body {
+	background: #fff;
+	margin: 0;
+	padding: 0;
+	font-size: 14px;
+	font-family: "Helvetica Neue", sans-serif, Arial, Tahoma;
+	line-height: 20px;
+}
+
+table {
+	background: #fff;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+table tr {
+
+}
+
+table td {
+	border: 1px #ccc solid;
+	padding: 3px 10px;
+}

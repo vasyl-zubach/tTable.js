@@ -1,0 +1,35 @@
+{
+	"projects": {
+		"titles"     : [
+			{
+				"title": "Project",
+				"type" : "string"
+			},
+			{
+				"title": "Link",
+				"type" : "string"
+			},
+			{
+				"title": "Type",
+				"type" : "string"
+			}
+		],
+		"page_size"  : 5,
+		"start_page" : 2,
+		"row_numbers": true,
+		"sort_by"    : 1,
+		"data"       : [
+			["DevMate", "<a href='http://devmate.com'>DevMate</a>", "work" ],
+			["MacPaw", "<a href='http://macpaw.com'>MacPaw</a>", "work"],
+			["TjRus.com", "<a href='http://tjrus.com'>TjRus.com</a>", "personal"],
+			["Imageless iPhone", "<a href='http://tjrus.com/iphone'>Imageless iPhone</a>", "repsonal"],
+			["Imageless Lumia", "<a href='http://tjrus.com/lumia'>Imageless Lumia</a>", "repsonal"],
+			["_v_.js", "<a href='http://github.com/TjRus/_v_.js'>_v_.js</a>", "opensource"],
+			["tFormer.js", "<a href='http://github.com/TjRus/tFormer.js'>tFormer.js</a>", "opensource"],
+			["tTable.js", "<a href='http://github.com/TjRus/tTable.js'>tTable.js</a>", "opensource"],
+			["aer.js", "<a href='http://github.com/TjRus/aer.js'>aer.js</a>", "opensource"]
+		],
+		"container"  : "#table_id"
+	}
+
+}
