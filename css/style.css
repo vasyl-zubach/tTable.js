@@ -7,6 +7,14 @@ html, body {
 	line-height : 20px;
 }
 
+hr {
+	border     : 0;
+	background : #ccc;
+	height     : 1px;
+	overflow   : hidden;
+	margin: 30px 0;
+}
+
 table {
 	background      : #fff;
 	border-collapse : collapse;
@@ -21,11 +29,13 @@ table tr.table-head {
 
 table tr {
 }
+
 table tr:nth-child(2n+1) {
-	background  : rgba(0, 0, 0, .03);
+	background : rgba(0, 0, 0, .03);
 }
+
 table tr:hover {
-	background  : rgba(0, 0, 0, .1);
+	background : rgba(0, 0, 0, .1);
 }
 
 table td {
