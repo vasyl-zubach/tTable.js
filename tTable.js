@@ -181,9 +181,9 @@
 	t_proto.updatePager = function (){
 		var self = this,
 			tpl = self.tpl.pager,
-			page_size = self.get( 'page_size' ),
+			page_size = parseInt(self.get( 'page_size' ), 10),
 			page_sizes = self.get( 'page_sizes' ),
-			page = self.get( 'start_page' ),
+			page = parseInt(self.get( 'start_page' ), 10),
 			pager_str = '',
 			max = (function ( page_size, data_length ){
 				var max = data_length / page_size,
@@ -196,8 +196,7 @@
 			get_pages = function (){
 				var diff = 2,
 					pages = [page - diff, page + diff],
-					pages4str = [],
-					page_arr = [],
+					pages4str = '',
 					dots = tpl.dots,
 					tmp = 0,
 					tpl_page = function ( item ){
@@ -212,17 +211,14 @@
 					pages[1] = max;
 					pages[0] = pages[0] - tmp;
 				}
-
 				if ( pages[0] < 1 ) {
 					tmp = 0 - pages[0];
 					pages[0] = 1;
 					pages[1] = pages[1] + tmp + 1;
 				}
-
 				if ( pages[1] > max ) {
 					pages[1] = max;
 				}
-
 				pages4str = (function (){
 					var str = '';
 					for ( var i = pages[0]; i <= pages[1]; i++ ) {
@@ -234,24 +230,18 @@
 				if ( pages[0] == 2 ) {
 					pages4str = tpl_page( 1 ) + pages4str;
 				}
-
 				if ( pages[0] == 3 ) {
 					pages4str = tpl_page( 1 ) + tpl_page( 2 ) + pages4str;
 				}
-
 				if ( pages[0] > 3 ) {
 					pages4str = tpl_page( 1 ) + dots + pages4str;
 				}
-
-
 				if ( pages[1] + 2 == max ) {
 					pages4str = pages4str + tpl_page( max - 1 ) + tpl_page( max );
 				}
-
 				if ( pages[1] + 1 == max ) {
 					pages4str = pages4str + tpl_page( max );
 				}
-
 				if ( pages[1] + 3 <= max ) {
 					pages4str = pages4str + dots + tpl_page( max );
 				}
@@ -260,27 +250,19 @@
 
 			pager = {
 				top      : tpl.wrap_top,
-				arrows   : (function (){
-					var str = _.template( tpl.arrows, {
-						prev_disabled: page == 1 ? 'table-pager-arrows-prev__disabled' : '',
-						next_disabled: page == max ? 'table-pager-arrows-next__disabled' : ''
-					} );
-					return str;
-				})(),
+				arrows   : _.template( tpl.arrows, {
+					prev_disabled: page == 1 ? 'table-pager-arrows-prev__disabled' : '',
+					next_disabled: page == max ? 'table-pager-arrows-next__disabled' : ''
+				} ),
 				pages    : get_pages(),
-				goto     : (function (){
-					var str = _.template( tpl.goto, {} );
-					return str;
-				})(),
-				page_size: (function (){
-					var str = _.template( tpl.page_size, {
-						sizes  : page_sizes,
-						current: page_size
-					} );
-					return str;
-				})(),
+				goto     : _.template( tpl.goto, {} ),
+				page_size: _.template( tpl.page_size, {
+					sizes  : page_sizes,
+					current: page_size
+				} ),
 				bottom   : tpl.wrap_bottom
 			};
+
 
 		pager_str = pager.top + pager.arrows + pager.pages + pager.page_size + pager.goto + pager.bottom;
 
@@ -335,11 +317,6 @@
 				sort_type = $this.data( 'sort_type' ) ,
 				reverse_sort_type = sort_type == 'asc' ? 'desc' : 'asc';
 
-			//			console.log( {
-			//				sort_by  : sort_by,
-			//				sort_type: was_sorted_by == sort_by ? reverse_sort_type : sort_type
-			//			} );
-
 			self.set( {
 				sort_by  : sort_by,
 				sort_type: was_sorted_by == sort_by ? reverse_sort_type : sort_type
@@ -392,7 +369,6 @@
 			sorted_data = data;
 		}
 
-		//		console.log( 'titles: ', titles );
 		// todo: filter data here;
 
 		if ( self.data_cache_key != cache_key ) {
@@ -451,17 +427,33 @@
 	 * @returns {*}
 	 */
 	t_proto.goto = function ( page ){
+
+		//	console.group( 'goto( ' + page + ' )' );
 		if ( !page || page < 1 ) {
 			return this;
 		}
 		var self = this,
 			page_size = self.get( 'page_size' ),
 			data = self.getData(),
-			data_length = data.length;
+			data_length = data.length,
+			max = (function ( page_size, data_length ){
+				var max = data_length / page_size,
+					max_rounded = Math.floor( max );
+				if ( max_rounded < max ) {
+					max = max_rounded + 1;
+				}
+				return max;
+			})( page_size, self.get( 'data' ).length );
 
-		if ( data_length >= (page - 1) * page_size ) {
+
+		//	console.log( 'page_size: ', page_size );
+		//	console.log( 'data_length: ', data_length );
+		//	console.log( 'max: ', max );
+
+		if ( page <= max ) {
 			self.set( {start_page: page} ).update();
 		}
+		//		console.groupEnd();
 		return self;
 	};
 
