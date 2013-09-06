@@ -5,7 +5,12 @@ tTable.js - plugin for work with table data.
 
 [@MacPaw](http://macpaw.com) FedEX Day project
 =========
-It's actually a simple @MacPaw FedEX Day project (start - "September 5, 2013 at 12:00 AM", end - "September 6, 2013 at 12:00 AM").
+It's actually a simple @MacPaw FedEX Day project
+Hours of development:
+- start at "September 5, 2013 at 12:00 AM"
+- end at "September 6, 2013 at 12:00 AM"
+- total - 1 day (actually 8-9 work hours :) )
+
 
 Features
 =========
