@@ -11,7 +11,9 @@
 		page_size  : 10,
 		row_numbers: false,
 		start_page : 1,
-		page_sizes : [2, 5, 10]
+		page_sizes : [2, 5, 10],
+		sort_type  : 'asc',
+		sorting    : true
 	};
 
 	var tTable = function ( config ){
@@ -30,10 +32,10 @@
 		top   : "<table>",
 		header: "<tr><%= data.colls || '' %></tr>",
 
-		row : "<tr class='<%= className %>'><%= colls %></tr>",
-		coll: "<td><%= data.html || '' %></td>",
-
-		pager: {
+		row    : "<tr class='<%= className %>'><%= colls %></tr>",
+		coll   : "<td><%= data.html || '' %></td>",
+		sorting: '<div class="table-sorting" data-sort_type="<%= sort_type %>" data-sort_by="<%= sort_by %>"><div class="table-sorting-asc"></div><div class="table-sorting-desc"></div></div>',
+		pager  : {
 			wrap_top    : '<div class="table-pager">',
 			arrows      : '<span class="table-pager-arrows"><a href="#" class="table-pager-arrows-prev <%= prev_disabled %>">prev</a><a href="#" class="table-pager-arrows-next <%= next_disabled %>">next</a></span>',
 			pages_top   : '<span class="table-pager-pages">',
@@ -89,6 +91,9 @@
 				{"title": "#", "type": "number" }
 			],
 			is_row_numbers = self.get( 'row_numbers' ),
+			sorting_enabled = self.get( 'sorting' ),
+			sorted_by = self.get( 'sort_by' ),
+			sort_type = self.get( 'sort_type' ),
 			html_str = '';
 
 		html.top = self.html.top || _.template( self.tpl.top, {} );
@@ -98,13 +103,26 @@
 			var str = self.html.header || '';
 			if ( !str ) {
 				if ( is_row_numbers ) {
-					titles = num.concat( titles );
+					str += _.template( self.tpl.coll, {
+						data: {
+							html: num[0].title
+						}
+					} );
 				}
 			}
-			_.each( titles, function ( item ){
+
+			_.each( titles, function ( item, iterator ){
+				var sorting = '';
+				if ( sorting_enabled ) {
+					sorting = _.template( self.tpl.sorting, {
+						sort_by  : iterator,
+						sorted_by: sorted_by,
+						sort_type: sort_type
+					} );
+				}
 				str += _.template( self.tpl.coll, {
 					data: {
-						html: item.title
+						html: item.title + sorting
 					}
 				} );
 			} );
@@ -188,7 +206,6 @@
 							current: page
 						} );
 					};
-
 
 				if ( pages[1] > max ) {
 					tmp = pages[1] - max;
@@ -310,15 +327,72 @@
 			return false;
 		} );
 
+		self.$el.off( 'click', '.table-sorting' ).on( 'click', '.table-sorting', function ( e ){
+			e.preventDefault();
+			var $this = $( this ),
+				was_sorted_by = self.get( 'sort_by' ),
+				sort_by = $this.data( 'sort_by' ),
+				sort_type = $this.data( 'sort_type' ) ,
+				reverse_sort_type = sort_type == 'asc' ? 'desc' : 'asc';
+
+			console.log({
+				sort_by  : sort_by,
+				sort_type: was_sorted_by == sort_by ? reverse_sort_type : sort_type
+			});
+
+			self.set( {
+				sort_by  : sort_by,
+				sort_type: was_sorted_by == sort_by ? reverse_sort_type : sort_type
+			} ).update();
+			return false;
+		} );
+
 		return self;
-	}
+	};
 
 	t_proto.getData = function (){
 		var self = this,
-			data = self.get( 'data' );
+			titles = self.get( 'titles' ),
+			titles_length = titles.length,
+			sort_by = self.get( 'sort_by' ) - 1,
+			data = self.get( 'data' ),
+			sort_type = self.get( 'sort_type' ),
+			data_type = (sort_by >= 0 && sort_by < titles_length) ? titles[sort_by].type : null,
+			cache_key = self.get( 'start_page' ).toString() + sort_by.toString() + sort_type.toString(),
+			sorted_data = [];
+
+		if ( self.data_cache_key == cache_key ) {
+			return self.data;
+		}
+
+		if ( sort_by >= 0 && sort_by < titles_length ) {
+			sorted_data = data.sort( function ( prev, next ){
+				if ( sort_type == 'asc' ) {
+					return prev[sort_by].localeCompare( next[sort_by] );
+				} else if ( sort_type == 'desc' ) {
+					return next[sort_by].localeCompare( prev[sort_by] );
+				}
+			} );
+		} else {
+			sorted_data = data;
+		}
+
+		console.log( 'titles: ', titles );
 		// todo: filter data here;
-		// todo: sort data here;
-		return data;
+
+		if ( self.data_cache_key != cache_key ) {
+			self.data_cache_key = cache_key
+			self.data = sorted_data;
+		}
+
+		return self.data;
+	};
+
+	t_proto.sortData = function ( data, type ){
+		var self = this,
+			sorted_data = [];
+
+		return sorted_data;
 	};
 
 	t_proto.getPageData = function (){

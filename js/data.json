@@ -18,6 +18,7 @@
 		"start_page" : 1,
 		"row_numbers": true,
 		"sort_by"    : 1,
+		"sorting"    : true,
 		"data"       : [
 			["DevMate", "<a href='http://devmate.com'>DevMate</a>", "work" ],
 			["MacPaw", "<a href='http://macpaw.com'>MacPaw</a>", "work"],
