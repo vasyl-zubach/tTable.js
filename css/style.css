@@ -1,7 +1,7 @@
 html, body {
 	background  : #fff;
 	margin      : 0;
-	padding     : 0;
+	padding     : 30px;
 	font-size   : 14px;
 	font-family : "Helvetica Neue", sans-serif, Arial, Tahoma;
 	line-height : 20px;
@@ -53,7 +53,15 @@ table td {
 }
 
 .table-sorting[data-sort] {
-	opacity: 1;
+	opacity : 1 !important;
+}
+
+.table-sorting[data-sort][data-sort_type="asc"] .table-sorting-desc {
+	opacity : .2;
+}
+
+.table-sorting[data-sort][data-sort_type="desc"] .table-sorting-asc {
+	opacity : .2;
 }
 
 .table-sorting-asc,

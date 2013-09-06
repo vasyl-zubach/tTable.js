@@ -58,7 +58,7 @@
 		var self = this;
 		self.config = _.extend( self.config, config );
 
-		console.log( 'Config: ', self.config );
+		//		console.log( 'Config: ', self.config );
 
 		self.$el = $( self.get( 'container' ) );
 		self.$pager = $( self.get( 'pager' ) );
@@ -335,10 +335,10 @@
 				sort_type = $this.data( 'sort_type' ) ,
 				reverse_sort_type = sort_type == 'asc' ? 'desc' : 'asc';
 
-			console.log( {
-				sort_by  : sort_by,
-				sort_type: was_sorted_by == sort_by ? reverse_sort_type : sort_type
-			} );
+			//			console.log( {
+			//				sort_by  : sort_by,
+			//				sort_type: was_sorted_by == sort_by ? reverse_sort_type : sort_type
+			//			} );
 
 			self.set( {
 				sort_by  : sort_by,
@@ -357,7 +357,7 @@
 			sort_by = self.get( 'sort_by' ),
 			data = self.get( 'data' ),
 			sort_type = self.get( 'sort_type' ),
-			data_type = (sort_by > 0 && sort_by <= titles_length) ? titles[sort_by - 1].type : '',
+			data_type = ((sort_by > 0 && sort_by <= titles_length) ? titles[sort_by - 1].type : '').toLowerCase(),
 			cache_key = self.get( 'start_page' ).toString() + sort_by.toString() + sort_type.toString(),
 			sorted_data = [];
 
@@ -366,18 +366,33 @@
 		}
 
 		if ( sort_by > 0 && sort_by <= titles_length ) {
-			sorted_data = data.sort( function ( prev, next ){
-				if ( sort_type == 'asc' ) {
-					return prev[sort_by - 1].localeCompare( next[sort_by - 1] );
-				} else if ( sort_type == 'desc' ) {
-					return next[sort_by - 1].localeCompare( prev[sort_by - 1] );
-				}
-			} );
+			if ( data_type == 'string' ) {
+				sorted_data = data.sort( function ( prev, next ){
+					var p = prev[sort_by - 1].toString();
+					var n = next[sort_by - 1].toString();
+
+					if ( sort_type == 'asc' ) {
+						return p.localeCompare( n );
+					} else if ( sort_type == 'desc' ) {
+						return n.localeCompare( p );
+					}
+				} );
+			} else if ( data_type == 'number' ) {
+				sorted_data = data.sort( function ( prev, next ){
+					var p = prev[sort_by - 1];
+					var n = next[sort_by - 1];
+					if ( sort_type == 'asc' ) {
+						return p - n;
+					} else if ( sort_type == 'desc' ) {
+						return n - p;
+					}
+				} );
+			}
 		} else {
 			sorted_data = data;
 		}
 
-		console.log( 'titles: ', titles );
+		//		console.log( 'titles: ', titles );
 		// todo: filter data here;
 
 		if ( self.data_cache_key != cache_key ) {
@@ -393,6 +408,23 @@
 			sorted_data = [];
 
 		return sorted_data;
+	};
+
+	t_proto.getTotal = function ( column ){
+		var self = this,
+			total = 0,
+			titles = self.get( 'titles' ),
+			titles_length = titles.length,
+			data_type = ((column > 0 && column <= titles_length) ? titles[column - 1].type : '').toLowerCase(),
+			data = self.getData();
+
+		if ( data_type == 'number' ) {
+			_.each( data, function ( item ){
+				total += parseInt( item[column - 1] );
+			} );
+		}
+
+		return total
 	};
 
 	t_proto.getPageData = function (){
