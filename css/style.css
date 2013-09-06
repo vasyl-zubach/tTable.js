@@ -7,6 +7,10 @@ html, body {
 	line-height : 20px;
 }
 
+h1 {
+	line-height: 40px;
+}
+
 hr {
 	border     : 0;
 	background : #ccc;
