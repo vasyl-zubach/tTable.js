@@ -56,7 +56,7 @@ $( document ).ready( function (){
 		"data"       : fake_data,
 		"container"  : "#long_table_id",
 		"pager"      : "#long_table_id_pager",
-		page_sizes : [10, 25, 50]
+		page_sizes : [10, 25, 50, 100, 250, 500]
 	} );
 
 
