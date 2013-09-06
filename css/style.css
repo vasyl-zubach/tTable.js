@@ -52,6 +52,10 @@ table td {
 	transition         : opacity .2s;
 }
 
+.table-sorting[data-sort] {
+	opacity: 1;
+}
+
 .table-sorting-asc,
 .table-sorting-desc {
 	height   : 15px;

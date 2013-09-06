@@ -34,7 +34,7 @@
 
 		row    : "<tr class='<%= className %>'><%= colls %></tr>",
 		coll   : "<td><%= data.html || '' %></td>",
-		sorting: '<div class="table-sorting" data-sort_type="<%= sort_type %>" data-sort_by="<%= sort_by %>"><div class="table-sorting-asc"></div><div class="table-sorting-desc"></div></div>',
+		sorting: '<div class="table-sorting" data-sort_type="<%= sort_type %>" data-sort_by="<%= sort_by %>" <%= is_sort_column ? "data-sort" : "" %>><div class="table-sorting-asc"></div><div class="table-sorting-desc"></div></div>',
 		pager  : {
 			wrap_top    : '<div class="table-pager">',
 			arrows      : '<span class="table-pager-arrows"><a href="#" class="table-pager-arrows-prev <%= prev_disabled %>">prev</a><a href="#" class="table-pager-arrows-next <%= next_disabled %>">next</a></span>',
@@ -115,9 +115,9 @@
 				var sorting = '';
 				if ( sorting_enabled ) {
 					sorting = _.template( self.tpl.sorting, {
-						sort_by  : iterator,
-						sorted_by: sorted_by,
-						sort_type: sort_type
+						sort_by       : iterator + 1,
+						sort_type     : sort_type,
+						is_sort_column: sorted_by == iterator + 1
 					} );
 				}
 				str += _.template( self.tpl.coll, {
@@ -335,10 +335,10 @@
 				sort_type = $this.data( 'sort_type' ) ,
 				reverse_sort_type = sort_type == 'asc' ? 'desc' : 'asc';
 
-			console.log({
+			console.log( {
 				sort_by  : sort_by,
 				sort_type: was_sorted_by == sort_by ? reverse_sort_type : sort_type
-			});
+			} );
 
 			self.set( {
 				sort_by  : sort_by,
@@ -354,10 +354,10 @@
 		var self = this,
 			titles = self.get( 'titles' ),
 			titles_length = titles.length,
-			sort_by = self.get( 'sort_by' ) - 1,
+			sort_by = self.get( 'sort_by' ),
 			data = self.get( 'data' ),
 			sort_type = self.get( 'sort_type' ),
-			data_type = (sort_by >= 0 && sort_by < titles_length) ? titles[sort_by].type : null,
+			data_type = (sort_by > 0 && sort_by <= titles_length) ? titles[sort_by - 1].type : '',
 			cache_key = self.get( 'start_page' ).toString() + sort_by.toString() + sort_type.toString(),
 			sorted_data = [];
 
@@ -365,12 +365,12 @@
 			return self.data;
 		}
 
-		if ( sort_by >= 0 && sort_by < titles_length ) {
+		if ( sort_by > 0 && sort_by <= titles_length ) {
 			sorted_data = data.sort( function ( prev, next ){
 				if ( sort_type == 'asc' ) {
-					return prev[sort_by].localeCompare( next[sort_by] );
+					return prev[sort_by - 1].localeCompare( next[sort_by - 1] );
 				} else if ( sort_type == 'desc' ) {
-					return next[sort_by].localeCompare( prev[sort_by] );
+					return next[sort_by - 1].localeCompare( prev[sort_by - 1] );
 				}
 			} );
 		} else {
