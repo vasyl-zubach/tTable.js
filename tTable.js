@@ -181,9 +181,9 @@
 	t_proto.updatePager = function (){
 		var self = this,
 			tpl = self.tpl.pager,
-			page_size = parseInt(self.get( 'page_size' ), 10),
+			page_size = parseInt( self.get( 'page_size' ), 10 ),
 			page_sizes = self.get( 'page_sizes' ),
-			page = parseInt(self.get( 'start_page' ), 10),
+			page = parseInt( self.get( 'start_page' ), 10 ),
 			pager_str = '',
 			max = (function ( page_size, data_length ){
 				var max = data_length / page_size,
@@ -318,8 +318,9 @@
 				reverse_sort_type = sort_type == 'asc' ? 'desc' : 'asc';
 
 			self.set( {
-				sort_by  : sort_by,
-				sort_type: was_sorted_by == sort_by ? reverse_sort_type : sort_type
+				start_page: 1,
+				sort_by   : sort_by,
+				sort_type : was_sorted_by == sort_by ? reverse_sort_type : sort_type
 			} ).update();
 			return false;
 		} );
