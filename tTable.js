@@ -336,7 +336,7 @@
 			data = self.get( 'data' ),
 			sort_type = self.get( 'sort_type' ),
 			data_type = ((sort_by > 0 && sort_by <= titles_length) ? titles[sort_by - 1].type : '').toLowerCase(),
-			cache_key = self.get( 'start_page' ).toString() + sort_by.toString() + sort_type.toString(),
+			cache_key = sort_by.toString() + sort_type.toString(),
 			sorted_data = [];
 
 		if ( self.data_cache_key == cache_key ) {
