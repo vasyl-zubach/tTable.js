@@ -29,7 +29,7 @@ TODO:
 =========
  - Column filters;
  - Column metrics;
- - Data outpus formaters;
+ - Data output formaters;
  - Receiving pages data with AJAX for each page;
  - Infinit scroll (also with AJAX);
  - Events;
