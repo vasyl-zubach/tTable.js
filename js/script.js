@@ -75,7 +75,7 @@ $( document ).ready( function (){
 		console.log( ttt.table_id );
 	} )
 
-	//*
+	/*
 	ttt.long = new tTable( {
 		titles       : [
 			{
@@ -97,6 +97,6 @@ $( document ).ready( function (){
 		"pager"      : "#long_table_id_pager",
 		page_sizes   : [10, 25, 50, 100, 250, 500]
 	} );
-	//*/
+	*/
 
 } );
