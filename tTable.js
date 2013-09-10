@@ -132,7 +132,7 @@
 			str = _.template( self.tpl.row, {
 				className: 'table-head',
 				colls    : str
-			} )
+			} );
 
 			return str;
 		})();
@@ -455,10 +455,11 @@
 	t_proto.goto = function ( page ){
 
 		//	console.group( 'goto( ' + page + ' )' );
-		if ( !page || page < 1 ) {
+		if ( !page ) {
 			return this;
 		}
 		var self = this,
+			page = parseInt( page, 10 ),
 			page_size = self.get( 'page_size' ),
 			data = self.getData(),
 			data_length = data.length,
@@ -475,9 +476,12 @@
 		//	console.log( 'page_size: ', page_size );
 		//	console.log( 'data_length: ', data_length );
 		//	console.log( 'max: ', max );
-
-		if ( page <= max ) {
+		if ( page <= max && page > 0 ) {
 			self.set( {start_page: page} ).update();
+		} else if ( page <= 0 ) {
+			self.set( {start_page: 1} ).update();
+		} else {
+			self.set( {start_page: max} ).update();
 		}
 		//		console.groupEnd();
 		return self;
