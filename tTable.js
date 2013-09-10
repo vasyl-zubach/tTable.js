@@ -70,7 +70,8 @@
 	};
 
 	t_proto.get = function ( what ){
-		var self = this, val;
+		var self = this,
+			val;
 
 		val = self.config[what] || null;
 		return val;
@@ -84,9 +85,18 @@
 	};
 
 	t_proto.update = function (){
-		var self = this, html = {}, titles = self.get( 'titles' ), data = self.get( 'data' ), num = [
+		var self = this,
+			html = {},
+			titles = self.get( 'titles' ),
+			data = self.get( 'data' ),
+			num = [
 				{"title": "#", "type": "number" }
-			], is_row_numbers = self.get( 'row_numbers' ), sorting_enabled = self.get( 'sorting' ), sorted_by = self.get( 'sort_by' ), sort_type = self.get( 'sort_type' ), html_str = '';
+			],
+			is_row_numbers = self.get( 'row_numbers' ),
+			sorting_enabled = self.get( 'sorting' ),
+			sorted_by = self.get( 'sort_by' ),
+			sort_type = self.get( 'sort_type' ),
+			html_str = '';
 
 		html.top = self.html.top || _.template( self.tpl.top, {} );
 
@@ -129,7 +139,12 @@
 
 		// All table rows with some data
 		html.body = (function (){
-			var str = '', page_size = self.get( 'page_size' ), start_page = self.get( 'start_page' ), sort_by = self.get( 'sort_by' ), num = page_size * (start_page - 1) + 1, rows_data = self.getPageData();
+			var str = '',
+				page_size = self.get( 'page_size' ),
+				start_page = self.get( 'start_page' ),
+				sort_by = self.get( 'sort_by' ),
+				num = page_size * (start_page - 1) + 1,
+				rows_data = self.getPageData();
 
 			_.each( rows_data, function ( row ){
 				var row_html = '';
@@ -166,7 +181,17 @@
 	};
 
 	t_proto.updatePager = function (){
-		var self = this, tpl = self.tpl.pager, page_size = parseInt( self.get( 'page_size' ), 10 ), page_sizes = self.get( 'page_sizes' ), page_sizes_available = !!page_sizes, nav_arrows_available = self.get( 'nav_arrows' ), goto_available = self.get( 'goto' ), pages_available = self.get( 'show_pages' ), page = parseInt( self.get( 'start_page' ), 10 ), pager_str = '', max, get_pages, pager;
+		var self = this,
+			tpl = self.tpl.pager,
+			page_size = parseInt( self.get( 'page_size' ), 10 ),
+			page_sizes = self.get( 'page_sizes' ),
+			page_sizes_available = !!page_sizes,
+			nav_arrows_available = self.get( 'nav_arrows' ),
+			goto_available = self.get( 'goto' ),
+			pages_available = self.get( 'show_pages' ),
+			page = parseInt( self.get( 'start_page' ), 10 ),
+			pager_str = '',
+			max, get_pages, pager;
 
 		if ( !page_size ) {
 			self.$pager.empty();
@@ -175,7 +200,8 @@
 
 		// get pages max size
 		max = (function ( page_size, data_length ){
-			var max = data_length / page_size, max_rounded = Math.floor( max );
+			var max = data_length / page_size,
+				max_rounded = Math.floor( max );
 			if ( max_rounded < max ) {
 				max = max_rounded + 1;
 			}
@@ -183,7 +209,12 @@
 		})( page_size, self.get( 'data' ).length );
 
 		get_pages = function (){
-			var diff = 2, pages = [page - diff, page + diff], pages4str, dots = tpl.dots, tmp = 0, tpl_page = function ( item ){
+			var diff = 2,
+				pages = [page - diff, page + diff],
+				pages4str,
+				dots = tpl.dots,
+				tmp = 0,
+				tpl_page = function ( item ){
 					return _.template( tpl.pages, {
 						page   : item,
 						current: page
@@ -295,7 +326,11 @@
 
 		self.$el.off( 'click', '.table-sorting' ).on( 'click', '.table-sorting', function ( e ){
 			e.preventDefault();
-			var $this = $( this ), was_sorted_by = self.get( 'sort_by' ), sort_by = $this.data( 'sort_by' ), sort_type = $this.data( 'sort_type' ) , reverse_sort_type = sort_type == 'asc' ? 'desc' : 'asc';
+			var $this = $( this ),
+				was_sorted_by = self.get( 'sort_by' ),
+				sort_by = $this.data( 'sort_by' ),
+				sort_type = $this.data( 'sort_type' ) ,
+				reverse_sort_type = sort_type == 'asc' ? 'desc' : 'asc';
 
 			self.set( {
 				start_page: 1,
@@ -309,7 +344,11 @@
 	};
 
 	t_proto.getData = function (){
-		var self = this, sort_by = self.get( 'sort_by' ), data = self.get( 'data' ), sort_type = self.get( 'sort_type' ), // todo: filter data here;
+		var self = this,
+			sort_by = self.get( 'sort_by' ),
+			data = self.get( 'data' ),
+			sort_type = self.get( 'sort_type' ),
+		// todo: filter data here;
 
 			filtered_data = self.filterData( data ),
 
@@ -319,7 +358,8 @@
 	};
 
 	t_proto.filterData = function ( data ){
-		var self = this, filtered_data = [];
+		var self = this,
+			filtered_data = [];
 		filtered_data = data;
 		return filtered_data;
 	};
@@ -327,7 +367,13 @@
 	t_proto.sortData = function ( data, sort_by ){
 		data = data || self.get( 'data' );
 		sort_by = sort_by || self.get( 'sort_by' );
-		var self = this, titles = self.get( 'titles' ), titles_length = titles.length, sort_type = self.get( 'sort_type' ), data_type = ((sort_by > 0 && sort_by <= titles_length) ? titles[sort_by - 1].type : '').toLowerCase(), cache_key = sort_by.toString() + sort_type.toString(), sorted_data = [];
+		var self = this,
+			titles = self.get( 'titles' ),
+			titles_length = titles.length,
+			sort_type = self.get( 'sort_type' ),
+			data_type = ((sort_by > 0 && sort_by <= titles_length) ? titles[sort_by - 1].type : '').toLowerCase(),
+			cache_key = sort_by.toString() + sort_type.toString(),
+			sorted_data = [];
 
 		if ( self.data_cache_key == cache_key ) {
 			return self.data;
@@ -367,7 +413,12 @@
 	};
 
 	t_proto.getTotal = function ( column ){
-		var self = this, total = 0, titles = self.get( 'titles' ), titles_length = titles.length, data_type = ((column > 0 && column <= titles_length) ? titles[column - 1].type : '').toLowerCase(), data = self.getData();
+		var self = this,
+			total = 0,
+			titles = self.get( 'titles' ),
+			titles_length = titles.length,
+			data_type = ((column > 0 && column <= titles_length) ? titles[column - 1].type : '').toLowerCase(),
+			data = self.getData();
 
 		if ( data_type == 'number' ) {
 			_.each( data, function ( item ){
@@ -379,7 +430,11 @@
 	};
 
 	t_proto.getPageData = function (){
-		var self = this, page_size = self.get( 'page_size' ), start_page = self.get( 'start_page' ), data = self.getData(), page_data = (function (){
+		var self = this,
+			page_size = self.get( 'page_size' ),
+			start_page = self.get( 'start_page' ),
+			data = self.getData(),
+			page_data = (function (){
 				var data4work;
 				if ( typeof page_size == 'number' ) {
 					data4work = data.slice( (start_page - 1) * page_size, start_page * page_size )
@@ -403,8 +458,14 @@
 		if ( !page ) {
 			return this;
 		}
-		var self = this, page = parseInt( page, 10 ), page_size = self.get( 'page_size' ), data = self.getData(), data_length = data.length, max = (function ( page_size, data_length ){
-				var max = data_length / page_size, max_rounded = Math.floor( max );
+		var self = this,
+			page = parseInt( page, 10 ),
+			page_size = self.get( 'page_size' ),
+			data = self.getData(),
+			data_length = data.length,
+			max = (function ( page_size, data_length ){
+				var max = data_length / page_size,
+					max_rounded = Math.floor( max );
 				if ( max_rounded < max ) {
 					max = max_rounded + 1;
 				}
