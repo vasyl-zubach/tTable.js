@@ -87,86 +87,15 @@
 	t_proto.update = function (){
 		var self = this,
 			html = {},
-			titles = self.get( 'titles' ),
-			data = self.get( 'data' ),
-			num = [
-				{"title": "#", "type": "number" }
-			],
-			is_row_numbers = self.get( 'row_numbers' ),
-			sorting_enabled = self.get( 'sorting' ),
-			sorted_by = self.get( 'sort_by' ),
-			sort_type = self.get( 'sort_type' ),
-			html_str = '';
+			html_str;
 
 		html.top = self.html.top || _.template( self.tpl.top, {} );
 
 		// Table header with titles
-		html.header = (function (){
-			var str = self.html.header || '';
-			if ( !str ) {
-				if ( is_row_numbers ) {
-					str += _.template( self.tpl.coll, {
-						data: {
-							html: num[0].title
-						}
-					} );
-				}
-			}
-
-			_.each( titles, function ( item, iterator ){
-				var sorting = '';
-				if ( sorting_enabled ) {
-					sorting = _.template( self.tpl.sorting, {
-						sort_by       : iterator + 1,
-						sort_type     : sort_type,
-						is_sort_column: sorted_by == iterator + 1
-					} );
-				}
-				str += _.template( self.tpl.coll, {
-					data: {
-						html: item.title + sorting
-					}
-				} );
-			} );
-
-			str = _.template( self.tpl.row, {
-				className: 'table-head',
-				colls    : str
-			} );
-
-			return str;
-		})();
+		html.header = self.__tableHeadHTML();
 
 		// All table rows with some data
-		html.body = (function (){
-			var str = '',
-				page_size = self.get( 'page_size' ),
-				start_page = self.get( 'start_page' ),
-				sort_by = self.get( 'sort_by' ),
-				num = page_size * (start_page - 1) + 1,
-				rows_data = self.getPageData();
-
-			_.each( rows_data, function ( row ){
-				var row_html = '';
-				if ( is_row_numbers ) {
-					row = [num].concat( row );
-					num++;
-				}
-				_.each( row, function ( item ){
-					row_html += _.template( self.tpl.coll, {
-						data: {
-							html: item
-						}
-					} );
-				} );
-				str += _.template( self.tpl.row, {
-					className: '',
-					colls    : row_html
-				} )
-			} );
-
-			return str;
-		})();
+		html.body = self.__tableBodyHTML();
 
 		// Table bottom
 		html.bottom = self.html.bottom || _.template( self.tpl.bottom, {} );
@@ -178,6 +107,83 @@
 		self.$el.html( html_str );
 		self.updatePager(); // update pager;
 		return self;
+	};
+
+	t_proto.__tableHeadHTML = function (){
+		var self = this,
+			is_row_numbers = self.get( 'row_numbers' ),
+			titles = self.get( 'titles' ),
+			num = [
+				{"title": "#", "type": "number" }
+			],
+			sorting_enabled = self.get( 'sorting' ),
+			sorted_by = self.get( 'sort_by' ),
+			sort_type = self.get( 'sort_type' ),
+			str = self.html.header || '';
+
+		if ( !str ) {
+			if ( is_row_numbers ) {
+				str += _.template( self.tpl.coll, {
+					data: {
+						html: num[0].title
+					}
+				} );
+			}
+		}
+
+		_.each( titles, function ( item, iterator ){
+			var sorting = '';
+			if ( sorting_enabled ) {
+				sorting = _.template( self.tpl.sorting, {
+					sort_by       : iterator + 1,
+					sort_type     : sort_type,
+					is_sort_column: sorted_by == iterator + 1
+				} );
+			}
+			str += _.template( self.tpl.coll, {
+				data: {
+					html: item.title + sorting
+				}
+			} );
+		} );
+
+		str = _.template( self.tpl.row, {
+			className: 'table-head',
+			colls    : str
+		} );
+		return str;
+	};
+
+	t_proto.__tableBodyHTML = function (){
+		var self = this,
+			str = '',
+			page_size = self.get( 'page_size' ),
+			start_page = self.get( 'start_page' ),
+			sort_by = self.get( 'sort_by' ),
+			num = page_size * (start_page - 1) + 1,
+			is_row_numbers = self.get( 'row_numbers' ),
+			rows_data = self.getPageData();
+
+		_.each( rows_data, function ( row ){
+			var row_html = '';
+			if ( is_row_numbers ) {
+				row = [num].concat( row );
+				num++;
+			}
+			_.each( row, function ( item ){
+				row_html += _.template( self.tpl.coll, {
+					data: {
+						html: !_.isObject( item ) ? item : item.formated
+					}
+				} );
+			} );
+			str += _.template( self.tpl.row, {
+				className: '',
+				colls    : row_html
+			} )
+		} );
+
+		return str;
 	};
 
 	t_proto.updatePager = function (){
@@ -364,6 +370,27 @@
 		return filtered_data;
 	};
 
+	t_proto.__prepareDataFormat = function ( data, formatter ){
+		var self = this,
+			data_length = data.length;
+
+		if ( formatter ) {
+			for ( var key in formatter ) {
+				var col = parseInt( key, 10 ) - 1;
+				for ( var i = 0; i < data_length; i++ ) {
+					var item = data[i][col];
+					if ( !_.isObject( item ) ) {
+						data[i][col] = {
+							value   : item,
+							formated: formatter[key].apply( item )
+						};
+					}
+				}
+			}
+		}
+		return data;
+	};
+
 	t_proto.sortData = function ( data, sort_by ){
 		data = data || self.get( 'data' );
 		sort_by = sort_by || self.get( 'sort_by' );
@@ -382,8 +409,10 @@
 		if ( sort_by > 0 && sort_by <= titles_length ) {
 			if ( data_type == 'string' ) {
 				sorted_data = data.sort( function ( prev, next ){
-					var p = prev[sort_by - 1].toString();
-					var n = next[sort_by - 1].toString();
+					var p = prev[sort_by - 1],
+						n = next[sort_by - 1];
+					p = !_.isObject( p ) ? p.toString() : p.value.toString();
+					n = !_.isObject( n ) ? n.toString() : n.value.toString();
 
 					if ( sort_type == 'asc' ) {
 						return p.localeCompare( n );
@@ -393,8 +422,11 @@
 				} );
 			} else if ( data_type == 'number' ) {
 				sorted_data = data.sort( function ( prev, next ){
-					var p = prev[sort_by - 1];
-					var n = next[sort_by - 1];
+					var p = prev[sort_by - 1],
+						n = next[sort_by - 1];
+					p = !_.isObject( p ) ? p : p.value;
+					n = !_.isObject( n ) ? n : n.value;
+
 					if ( sort_type == 'asc' ) {
 						return p - n;
 					} else if ( sort_type == 'desc' ) {
@@ -433,6 +465,7 @@
 		var self = this,
 			page_size = self.get( 'page_size' ),
 			start_page = self.get( 'start_page' ),
+			formatter = self.get( 'formatter' ),
 			data = self.getData(),
 			page_data = (function (){
 				var data4work;
@@ -443,6 +476,9 @@
 				}
 				return data4work;
 			})();
+
+		page_data = self.__prepareDataFormat( page_data, formatter );
+
 		return page_data;
 	};
 
@@ -454,7 +490,6 @@
 	 */
 	t_proto.goto = function ( page ){
 
-		//	console.group( 'goto( ' + page + ' )' );
 		if ( !page ) {
 			return this;
 		}
@@ -473,9 +508,6 @@
 			})( page_size, self.get( 'data' ).length );
 
 
-		//	console.log( 'page_size: ', page_size );
-		//	console.log( 'data_length: ', data_length );
-		//	console.log( 'max: ', max );
 		if ( page <= max && page > 0 ) {
 			self.set( {start_page: page} ).update();
 		} else if ( page <= 0 ) {
@@ -483,7 +515,6 @@
 		} else {
 			self.set( {start_page: max} ).update();
 		}
-		//		console.groupEnd();
 		return self;
 	};
 
