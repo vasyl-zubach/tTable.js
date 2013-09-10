@@ -173,7 +173,7 @@
 			_.each( row, function ( item ){
 				row_html += _.template( self.tpl.coll, {
 					data: {
-						html: !_.isObject( item ) ? item : item.formated
+						html: !_.isObject( item ) ? item : item.formatted
 					}
 				} );
 			} );
@@ -382,7 +382,7 @@
 					if ( !_.isObject( item ) ) {
 						data[i][col] = {
 							value   : item,
-							formated: formatter[key].apply( item )
+							formatted: formatter[key].apply( item )
 						};
 					}
 				}
