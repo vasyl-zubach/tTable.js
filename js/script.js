@@ -55,6 +55,11 @@ $( document ).ready( function (){
 		url     : 'js/data.json',
 		dataType: 'json',
 		success : function ( result ){
+			result.projects.formatter = {
+				"3": function (){
+					return this == 'work' || this == 'opensource' ? '<b>' + this + '</b>': this;
+				}
+			};
 			ttt.table_id = new tTable( result.projects );
 		}
 	} );
@@ -70,6 +75,7 @@ $( document ).ready( function (){
 		console.log( ttt.table_id );
 	} )
 
+	//*
 	ttt.long = new tTable( {
 		titles       : [
 			{
@@ -91,6 +97,6 @@ $( document ).ready( function (){
 		"pager"      : "#long_table_id_pager",
 		page_sizes   : [10, 25, 50, 100, 250, 500]
 	} );
-
+	//*/
 
 } );
