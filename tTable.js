@@ -8,15 +8,15 @@
 (function ( window, document, undefined ) {
 
 	var defaults = {
-		start_page  : 1,
-		show_pages  : true,
-		page_sizes  : [10, 25, 50],
-		page_size   : 10,
-		row_numbers : false,
-		nav_arrows  : true,
-		goto        : true,
-		sort_type   : 'asc',
-		sorting     : true
+		start_page : 1,
+		show_pages : true,
+		page_sizes : [10, 25, 50],
+		page_size  : 10,
+		row_numbers: false,
+		nav_arrows : true,
+		goto       : true,
+		sort_type  : 'asc',
+		sorting    : true
 	};
 
 	var tTable = function ( config ) {
@@ -32,25 +32,25 @@
 	t_proto.cache = [];
 
 	t_proto.tpl = {
-		top    : "<table>",
-		header : "<tr><%= data.colls || '' %></tr>",
+		top   : "<table>",
+		header: "<tr><%= data.colls || '' %></tr>",
 
-		row     : "<tr class='<%= className %>'><%= colls %></tr>",
-		coll    : "<td><%= data.html || '' %></td>",
-		sorting : '<div class="table-sorting" data-sort_type="<%= sort_type %>" data-sort_by="<%= sort_by %>" <%= is_sort_column ? "data-sort" : "" %>><div class="table-sorting-asc"></div><div class="table-sorting-desc"></div></div>',
-		pager   : {
-			wrap_top     : '<div class="table-pager">',
-			arrows       : '<span class="table-pager-arrows"><a href="#" class="table-pager-arrows-prev <%= prev_disabled %>">prev</a><a href="#" class="table-pager-arrows-next <%= next_disabled %>">next</a></span>',
-			pages_top    : '<span class="table-pager-pages">',
-			pages        : '<a href="#<%= page %>" class="table-pager-pages-item <%= current == page ? "table-pager-pages-item__on" : ""%>" data-goto="<%= page %>"><%= page %></a>',
-			dots         : '<span class="table-pager-pages-item">...</span>',
-			pages_bottom : '</span>',
-			goto         : '<input type="text" name="table-goto" class="table-pager-goto" />',
-			page_size    : '<select class="table-pager-page_size"><% _.each(sizes, function(item){ %><option value="<%= item %>" <%= current == item ? "selected" : "" %>><%= item %></option><% }); %></select>',
-			wrap_bottom  : '</div>'
+		row    : "<tr class='<%= className %>'><%= colls %></tr>",
+		coll   : "<td><%= data.html || '' %></td>",
+		sorting: '<div class="table-sorting" data-sort_type="<%= sort_type %>" data-sort_by="<%= sort_by %>" <%= is_sort_column ? "data-sort" : "" %>><div class="table-sorting-asc"></div><div class="table-sorting-desc"></div></div>',
+		pager  : {
+			wrap_top    : '<div class="table-pager">',
+			arrows      : '<span class="table-pager-arrows"><a href="#" class="table-pager-arrows-prev <%= prev_disabled %>">prev</a><a href="#" class="table-pager-arrows-next <%= next_disabled %>">next</a></span>',
+			pages_top   : '<span class="table-pager-pages">',
+			pages       : '<a href="#<%= page %>" class="table-pager-pages-item <%= current == page ? "table-pager-pages-item__on" : ""%>" data-goto="<%= page %>"><%= page %></a>',
+			dots        : '<span class="table-pager-pages-item">...</span>',
+			pages_bottom: '</span>',
+			goto        : '<input type="text" name="table-goto" class="table-pager-goto" />',
+			page_size   : '<select class="table-pager-page_size"><% _.each(sizes, function(item){ %><option value="<%= item %>" <%= current == item ? "selected" : "" %>><%= item %></option><% }); %></select>',
+			wrap_bottom : '</div>'
 		},
 
-		bottom : "</table>"
+		bottom: "</table>"
 	};
 	t_proto.html = {
 
@@ -90,7 +90,7 @@
 			titles = self.get( 'titles' ),
 			data = self.get( 'data' ),
 			num = [
-				{"title" : "#", "type" : "number" }
+				{"title": "#", "type": "number" }
 			],
 			is_row_numbers = self.get( 'row_numbers' ),
 			sorting_enabled = self.get( 'sorting' ),
@@ -106,8 +106,8 @@
 			if ( !str ) {
 				if ( is_row_numbers ) {
 					str += _.template( self.tpl.coll, {
-						data : {
-							html : num[0].title
+						data: {
+							html: num[0].title
 						}
 					} );
 				}
@@ -117,21 +117,21 @@
 				var sorting = '';
 				if ( sorting_enabled ) {
 					sorting = _.template( self.tpl.sorting, {
-						sort_by        : iterator + 1,
-						sort_type      : sort_type,
-						is_sort_column : sorted_by == iterator + 1
+						sort_by       : iterator + 1,
+						sort_type     : sort_type,
+						is_sort_column: sorted_by == iterator + 1
 					} );
 				}
 				str += _.template( self.tpl.coll, {
-					data : {
-						html : item.title + sorting
+					data: {
+						html: item.title + sorting
 					}
 				} );
 			} );
 
 			str = _.template( self.tpl.row, {
-				className : 'table-head',
-				colls     : str
+				className: 'table-head',
+				colls    : str
 			} );
 
 			return str;
@@ -154,14 +154,14 @@
 				}
 				_.each( row, function ( item ) {
 					row_html += _.template( self.tpl.coll, {
-						data : {
-							html : item
+						data: {
+							html: item
 						}
 					} );
 				} );
 				str += _.template( self.tpl.row, {
-					className : '',
-					colls     : row_html
+					className: '',
+					colls    : row_html
 				} )
 			} );
 
@@ -216,8 +216,8 @@
 				tmp = 0,
 				tpl_page = function ( item ) {
 					return _.template( tpl.pages, {
-						page    : item,
-						current : page
+						page   : item,
+						current: page
 					} );
 				};
 
@@ -264,18 +264,18 @@
 		};
 
 		pager = {
-			top       : tpl.wrap_top,
-			arrows    : nav_arrows_available ? _.template( tpl.arrows, {
-				prev_disabled : page == 1 ? 'table-pager-arrows-prev__disabled' : '',
-				next_disabled : page == max ? 'table-pager-arrows-next__disabled' : ''
+			top      : tpl.wrap_top,
+			arrows   : nav_arrows_available ? _.template( tpl.arrows, {
+				prev_disabled: page == 1 ? 'table-pager-arrows-prev__disabled' : '',
+				next_disabled: page == max ? 'table-pager-arrows-next__disabled' : ''
 			} ) : '',
-			pages     : pages_available ? get_pages() : '',
-			goto      : goto_available ? _.template( tpl.goto, {} ) : '',
-			page_size : page_sizes_available ? _.template( tpl.page_size, {
-				sizes   : page_sizes,
-				current : page_size
+			pages    : pages_available ? get_pages() : '',
+			goto     : goto_available ? _.template( tpl.goto, {} ) : '',
+			page_size: page_sizes_available ? _.template( tpl.page_size, {
+				sizes  : page_sizes,
+				current: page_size
 			} ) : '',
-			bottom    : tpl.wrap_bottom
+			bottom   : tpl.wrap_bottom
 		};
 
 
@@ -320,7 +320,7 @@
 
 		self.$pager.off( 'change', '.table-pager-page_size' ).on( 'change', '.table-pager-page_size', function ( e ) {
 			e.preventDefault();
-			self.set( {page_size : parseInt( $( this ).val(), 10 ) } ).goto( 1 );
+			self.set( {page_size: parseInt( $( this ).val(), 10 ) } ).goto( 1 );
 			return false;
 		} );
 
@@ -333,9 +333,9 @@
 				reverse_sort_type = sort_type == 'asc' ? 'desc' : 'asc';
 
 			self.set( {
-				start_page : 1,
-				sort_by    : sort_by,
-				sort_type  : was_sorted_by == sort_by ? reverse_sort_type : sort_type
+				start_page: 1,
+				sort_by   : sort_by,
+				sort_type : was_sorted_by == sort_by ? reverse_sort_type : sort_type
 			} ).update();
 			return false;
 		} );
@@ -477,11 +477,11 @@
 		//	console.log( 'data_length: ', data_length );
 		//	console.log( 'max: ', max );
 		if ( page <= max && page > 0 ) {
-			self.set( {start_page : page} ).update();
+			self.set( {start_page: page} ).update();
 		} else if ( page <= 0 ) {
-			self.set( {start_page : 1} ).update();
+			self.set( {start_page: 1} ).update();
 		} else {
-			self.set( {start_page : max} ).update();
+			self.set( {start_page: max} ).update();
 		}
 		//		console.groupEnd();
 		return self;
