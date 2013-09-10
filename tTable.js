@@ -16,7 +16,9 @@
 		nav_arrows : true,
 		goto       : true,
 		sort_type  : 'asc',
-		sorting    : true
+		sorting    : true,
+		prefix     : {},
+		suffix     : {}
 	};
 
 	var tTable = function ( config ){
@@ -160,6 +162,8 @@
 			page_size = self.get( 'page_size' ),
 			start_page = self.get( 'start_page' ),
 			sort_by = self.get( 'sort_by' ),
+			prefix = self.get( 'prefix' ),
+			suffix = self.get( 'suffix' ),
 			num = page_size * (start_page - 1) + 1,
 			is_row_numbers = self.get( 'row_numbers' ),
 			rows_data = self.getPageData();
@@ -170,10 +174,19 @@
 				row = [num].concat( row );
 				num++;
 			}
-			_.each( row, function ( item ){
+			_.each( row, function ( item, iterator ){
+				var value = !_.isObject( item ) ? item : item.formatted,
+					row_id = iterator + (is_row_numbers ? 0 : 1);
+
+				if ( prefix[row_id] ) {
+					value = prefix[row_id] + value;
+				}
+				if ( suffix[row_id] ) {
+					value = value + suffix[row_id];
+				}
 				row_html += _.template( self.tpl.coll, {
 					data: {
-						html: !_.isObject( item ) ? item : item.formatted
+						html: value
 					}
 				} );
 			} );
@@ -381,7 +394,7 @@
 					var item = data[i][col];
 					if ( !_.isObject( item ) ) {
 						data[i][col] = {
-							value   : item,
+							value    : item,
 							formatted: formatter[key].apply( item )
 						};
 					}
