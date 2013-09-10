@@ -9,6 +9,7 @@
 
 	var defaults = {
 		start_page : 1,
+		show_pages : true,
 		page_sizes : [10, 25, 50],
 		page_size  : 10,
 		row_numbers: false,
