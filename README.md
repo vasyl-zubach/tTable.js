@@ -23,13 +23,13 @@ Features
  - Page size;
  - Column sorting;
  - Count totals;
+ - Data output formaters;
 
 
 TODO:
 =========
  - Column filters;
  - Column metrics;
- - Data output formaters;
  - Receiving pages data with AJAX for each page;
  - Infinit scroll (also with AJAX);
  - Events;
