@@ -5,7 +5,7 @@
  * tTable.js may be freely distributed under the MIT license.
  */
 
-(function ( window, document, undefined ) {
+(function ( window, document, undefined ){
 
 	var defaults = {
 		start_page : 1,
@@ -19,7 +19,7 @@
 		sorting    : true
 	};
 
-	var tTable = function ( config ) {
+	var tTable = function ( config ){
 		if ( !(this instanceof tTable) ) {
 			return new tTable( config );
 		}
@@ -57,7 +57,7 @@
 	};
 
 
-	t_proto.init = function ( config ) {
+	t_proto.init = function ( config ){
 		var self = this;
 		self.config = _.extend( self.config, config );
 
@@ -69,14 +69,13 @@
 		return self;
 	};
 
-	t_proto.get = function ( what ) {
-		var self = this,
-			val;
+	t_proto.get = function ( what ){
+		var self = this, val;
 
 		val = self.config[what] || null;
 		return val;
 	};
-	t_proto.set = function ( what ) {
+	t_proto.set = function ( what ){
 		var self = this;
 		for ( var key in what ) {
 			self.config[key] = what[key];
@@ -84,24 +83,15 @@
 		return self;
 	};
 
-	t_proto.update = function () {
-		var self = this,
-			html = {},
-			titles = self.get( 'titles' ),
-			data = self.get( 'data' ),
-			num = [
+	t_proto.update = function (){
+		var self = this, html = {}, titles = self.get( 'titles' ), data = self.get( 'data' ), num = [
 				{"title": "#", "type": "number" }
-			],
-			is_row_numbers = self.get( 'row_numbers' ),
-			sorting_enabled = self.get( 'sorting' ),
-			sorted_by = self.get( 'sort_by' ),
-			sort_type = self.get( 'sort_type' ),
-			html_str = '';
+			], is_row_numbers = self.get( 'row_numbers' ), sorting_enabled = self.get( 'sorting' ), sorted_by = self.get( 'sort_by' ), sort_type = self.get( 'sort_type' ), html_str = '';
 
 		html.top = self.html.top || _.template( self.tpl.top, {} );
 
 		// Table header with titles
-		html.header = (function () {
+		html.header = (function (){
 			var str = self.html.header || '';
 			if ( !str ) {
 				if ( is_row_numbers ) {
@@ -113,7 +103,7 @@
 				}
 			}
 
-			_.each( titles, function ( item, iterator ) {
+			_.each( titles, function ( item, iterator ){
 				var sorting = '';
 				if ( sorting_enabled ) {
 					sorting = _.template( self.tpl.sorting, {
@@ -138,21 +128,16 @@
 		})();
 
 		// All table rows with some data
-		html.body = (function () {
-			var str = '',
-				page_size = self.get( 'page_size' ),
-				start_page = self.get( 'start_page' ),
-				sort_by = self.get( 'sort_by' ),
-				num = page_size * (start_page - 1) + 1,
-				rows_data = self.getPageData();
+		html.body = (function (){
+			var str = '', page_size = self.get( 'page_size' ), start_page = self.get( 'start_page' ), sort_by = self.get( 'sort_by' ), num = page_size * (start_page - 1) + 1, rows_data = self.getPageData();
 
-			_.each( rows_data, function ( row ) {
+			_.each( rows_data, function ( row ){
 				var row_html = '';
 				if ( is_row_numbers ) {
 					row = [num].concat( row );
 					num++;
 				}
-				_.each( row, function ( item ) {
+				_.each( row, function ( item ){
 					row_html += _.template( self.tpl.coll, {
 						data: {
 							html: item
@@ -180,18 +165,8 @@
 		return self;
 	};
 
-	t_proto.updatePager = function () {
-		var self = this,
-			tpl = self.tpl.pager,
-			page_size = parseInt( self.get( 'page_size' ), 10 ),
-			page_sizes = self.get( 'page_sizes' ),
-			page_sizes_available = !!page_sizes,
-			nav_arrows_available = self.get( 'nav_arrows' ),
-			goto_available = self.get( 'goto' ),
-			pages_available = self.get( 'show_pages' ),
-			page = parseInt( self.get( 'start_page' ), 10 ),
-			pager_str = '',
-			max, get_pages, pager;
+	t_proto.updatePager = function (){
+		var self = this, tpl = self.tpl.pager, page_size = parseInt( self.get( 'page_size' ), 10 ), page_sizes = self.get( 'page_sizes' ), page_sizes_available = !!page_sizes, nav_arrows_available = self.get( 'nav_arrows' ), goto_available = self.get( 'goto' ), pages_available = self.get( 'show_pages' ), page = parseInt( self.get( 'start_page' ), 10 ), pager_str = '', max, get_pages, pager;
 
 		if ( !page_size ) {
 			self.$pager.empty();
@@ -199,22 +174,16 @@
 		}
 
 		// get pages max size
-		max = (function ( page_size, data_length ) {
-			var max = data_length / page_size,
-				max_rounded = Math.floor( max );
+		max = (function ( page_size, data_length ){
+			var max = data_length / page_size, max_rounded = Math.floor( max );
 			if ( max_rounded < max ) {
 				max = max_rounded + 1;
 			}
 			return max;
 		})( page_size, self.get( 'data' ).length );
 
-		get_pages = function () {
-			var diff = 2,
-				pages = [page - diff, page + diff],
-				pages4str,
-				dots = tpl.dots,
-				tmp = 0,
-				tpl_page = function ( item ) {
+		get_pages = function (){
+			var diff = 2, pages = [page - diff, page + diff], pages4str, dots = tpl.dots, tmp = 0, tpl_page = function ( item ){
 					return _.template( tpl.pages, {
 						page   : item,
 						current: page
@@ -234,7 +203,7 @@
 			if ( pages[1] > max ) {
 				pages[1] = max;
 			}
-			pages4str = (function () {
+			pages4str = (function (){
 				var str = '';
 				for ( var i = pages[0]; i <= pages[1]; i++ ) {
 					str += tpl_page( i );
@@ -286,22 +255,22 @@
 		return self;
 	};
 
-	t_proto.pagerEvents = function () {
+	t_proto.pagerEvents = function (){
 		var self = this;
 
-		self.$pager.off( 'click', '.table-pager-arrows-prev' ).on( 'click', '.table-pager-arrows-prev', function ( e ) {
+		self.$pager.off( 'click', '.table-pager-arrows-prev' ).on( 'click', '.table-pager-arrows-prev', function ( e ){
 			e.preventDefault();
 			self.goto( self.get( 'start_page' ) - 1 );
 			return false;
 		} );
 
-		self.$pager.off( 'click', '.table-pager-arrows-next' ).on( 'click', '.table-pager-arrows-next', function ( e ) {
+		self.$pager.off( 'click', '.table-pager-arrows-next' ).on( 'click', '.table-pager-arrows-next', function ( e ){
 			e.preventDefault();
 			self.goto( self.get( 'start_page' ) + 1 );
 			return false;
 		} );
 
-		self.$pager.off( 'click', '.table-pager-pages-item' ).on( 'click', '.table-pager-pages-item', function ( e ) {
+		self.$pager.off( 'click', '.table-pager-pages-item' ).on( 'click', '.table-pager-pages-item', function ( e ){
 			e.preventDefault();
 			if ( $( e.target ).hasClass( 'table-pager-pages-item__on' ) ) {
 				return false;
@@ -310,7 +279,7 @@
 			return false;
 		} );
 
-		self.$pager.off( 'keypress', '.table-pager-goto' ).on( 'keypress', '.table-pager-goto', function ( e ) {
+		self.$pager.off( 'keypress', '.table-pager-goto' ).on( 'keypress', '.table-pager-goto', function ( e ){
 			if ( e.keyCode == 13 ) {
 				e.preventDefault();
 				self.goto( $( this ).val() );
@@ -318,19 +287,15 @@
 			}
 		} );
 
-		self.$pager.off( 'change', '.table-pager-page_size' ).on( 'change', '.table-pager-page_size', function ( e ) {
+		self.$pager.off( 'change', '.table-pager-page_size' ).on( 'change', '.table-pager-page_size', function ( e ){
 			e.preventDefault();
 			self.set( {page_size: parseInt( $( this ).val(), 10 ) } ).goto( 1 );
 			return false;
 		} );
 
-		self.$el.off( 'click', '.table-sorting' ).on( 'click', '.table-sorting', function ( e ) {
+		self.$el.off( 'click', '.table-sorting' ).on( 'click', '.table-sorting', function ( e ){
 			e.preventDefault();
-			var $this = $( this ),
-				was_sorted_by = self.get( 'sort_by' ),
-				sort_by = $this.data( 'sort_by' ),
-				sort_type = $this.data( 'sort_type' ) ,
-				reverse_sort_type = sort_type == 'asc' ? 'desc' : 'asc';
+			var $this = $( this ), was_sorted_by = self.get( 'sort_by' ), sort_by = $this.data( 'sort_by' ), sort_type = $this.data( 'sort_type' ) , reverse_sort_type = sort_type == 'asc' ? 'desc' : 'asc';
 
 			self.set( {
 				start_page: 1,
@@ -343,12 +308,8 @@
 		return self;
 	};
 
-	t_proto.getData = function () {
-		var self = this,
-			sort_by = self.get( 'sort_by' ),
-			data = self.get( 'data' ),
-			sort_type = self.get( 'sort_type' ),
-		// todo: filter data here;
+	t_proto.getData = function (){
+		var self = this, sort_by = self.get( 'sort_by' ), data = self.get( 'data' ), sort_type = self.get( 'sort_type' ), // todo: filter data here;
 
 			filtered_data = self.filterData( data ),
 
@@ -357,23 +318,16 @@
 		return sorted_data;
 	};
 
-	t_proto.filterData = function ( data ) {
-		var self = this,
-			filtered_data = [];
+	t_proto.filterData = function ( data ){
+		var self = this, filtered_data = [];
 		filtered_data = data;
 		return filtered_data;
 	};
 
-	t_proto.sortData = function ( data, sort_by ) {
+	t_proto.sortData = function ( data, sort_by ){
 		data = data || self.get( 'data' );
 		sort_by = sort_by || self.get( 'sort_by' );
-		var self = this,
-			titles = self.get( 'titles' ),
-			titles_length = titles.length,
-			sort_type = self.get( 'sort_type' ),
-			data_type = ((sort_by > 0 && sort_by <= titles_length) ? titles[sort_by - 1].type : '').toLowerCase(),
-			cache_key = sort_by.toString() + sort_type.toString(),
-			sorted_data = [];
+		var self = this, titles = self.get( 'titles' ), titles_length = titles.length, sort_type = self.get( 'sort_type' ), data_type = ((sort_by > 0 && sort_by <= titles_length) ? titles[sort_by - 1].type : '').toLowerCase(), cache_key = sort_by.toString() + sort_type.toString(), sorted_data = [];
 
 		if ( self.data_cache_key == cache_key ) {
 			return self.data;
@@ -381,7 +335,7 @@
 
 		if ( sort_by > 0 && sort_by <= titles_length ) {
 			if ( data_type == 'string' ) {
-				sorted_data = data.sort( function ( prev, next ) {
+				sorted_data = data.sort( function ( prev, next ){
 					var p = prev[sort_by - 1].toString();
 					var n = next[sort_by - 1].toString();
 
@@ -392,7 +346,7 @@
 					}
 				} );
 			} else if ( data_type == 'number' ) {
-				sorted_data = data.sort( function ( prev, next ) {
+				sorted_data = data.sort( function ( prev, next ){
 					var p = prev[sort_by - 1];
 					var n = next[sort_by - 1];
 					if ( sort_type == 'asc' ) {
@@ -412,16 +366,11 @@
 		return sorted_data;
 	};
 
-	t_proto.getTotal = function ( column ) {
-		var self = this,
-			total = 0,
-			titles = self.get( 'titles' ),
-			titles_length = titles.length,
-			data_type = ((column > 0 && column <= titles_length) ? titles[column - 1].type : '').toLowerCase(),
-			data = self.getData();
+	t_proto.getTotal = function ( column ){
+		var self = this, total = 0, titles = self.get( 'titles' ), titles_length = titles.length, data_type = ((column > 0 && column <= titles_length) ? titles[column - 1].type : '').toLowerCase(), data = self.getData();
 
 		if ( data_type == 'number' ) {
-			_.each( data, function ( item ) {
+			_.each( data, function ( item ){
 				total += parseInt( item[column - 1] );
 			} );
 		}
@@ -429,12 +378,8 @@
 		return total
 	};
 
-	t_proto.getPageData = function () {
-		var self = this,
-			page_size = self.get( 'page_size' ),
-			start_page = self.get( 'start_page' ),
-			data = self.getData(),
-			page_data = (function () {
+	t_proto.getPageData = function (){
+		var self = this, page_size = self.get( 'page_size' ), start_page = self.get( 'start_page' ), data = self.getData(), page_data = (function (){
 				var data4work;
 				if ( typeof page_size == 'number' ) {
 					data4work = data.slice( (start_page - 1) * page_size, start_page * page_size )
@@ -452,20 +397,14 @@
 	 * @param {number} page - page that should be rendered
 	 * @returns {*}
 	 */
-	t_proto.goto = function ( page ) {
+	t_proto.goto = function ( page ){
 
 		//	console.group( 'goto( ' + page + ' )' );
 		if ( !page ) {
 			return this;
 		}
-		var self = this,
-			page = parseInt( page, 10 ),
-			page_size = self.get( 'page_size' ),
-			data = self.getData(),
-			data_length = data.length,
-			max = (function ( page_size, data_length ) {
-				var max = data_length / page_size,
-					max_rounded = Math.floor( max );
+		var self = this, page = parseInt( page, 10 ), page_size = self.get( 'page_size' ), data = self.getData(), data_length = data.length, max = (function ( page_size, data_length ){
+				var max = data_length / page_size, max_rounded = Math.floor( max );
 				if ( max_rounded < max ) {
 					max = max_rounded + 1;
 				}
