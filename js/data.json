@@ -15,7 +15,7 @@
 			}
 		],
 		"page_size"  : 2,
-		"start_page" : 3,
+		"start_page" : 2,
 		"row_numbers": true,
 		"sort_by"    : 1,
 		"sorting"    : true,
@@ -38,5 +38,4 @@
 		"container"  : "#table_id",
 		"pager"      : "#table_id_pager"
 	}
-
 }

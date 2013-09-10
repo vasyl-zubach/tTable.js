@@ -8,10 +8,12 @@
 (function ( window, document, undefined ){
 
 	var defaults = {
+		start_page : 1,
+		page_sizes : [10, 25, 50],
 		page_size  : 10,
 		row_numbers: false,
-		start_page : 1,
-		page_sizes : [2, 5, 10],
+		nav_arrows : true,
+		goto       : true,
 		sort_type  : 'asc',
 		sorting    : true
 	};
@@ -58,7 +60,6 @@
 		var self = this;
 		self.config = _.extend( self.config, config );
 
-		//		console.log( 'Config: ', self.config );
 
 		self.$el = $( self.get( 'container' ) );
 		self.$pager = $( self.get( 'pager' ) );
@@ -183,85 +184,98 @@
 			tpl = self.tpl.pager,
 			page_size = parseInt( self.get( 'page_size' ), 10 ),
 			page_sizes = self.get( 'page_sizes' ),
+			page_sizes_available = !!page_sizes,
+			nav_arrows_available = self.get( 'nav_arrows' ),
+			goto_available = self.get( 'goto' ),
+			pages_available = self.get( 'show_pages' ),
 			page = parseInt( self.get( 'start_page' ), 10 ),
 			pager_str = '',
-			max = (function ( page_size, data_length ){
-				var max = data_length / page_size,
-					max_rounded = Math.floor( max );
-				if ( max_rounded < max ) {
-					max = max_rounded + 1;
-				}
-				return max;
-			})( page_size, self.get( 'data' ).length ),
-			get_pages = function (){
-				var diff = 2,
-					pages = [page - diff, page + diff],
-					pages4str = '',
-					dots = tpl.dots,
-					tmp = 0,
-					tpl_page = function ( item ){
-						return _.template( tpl.pages, {
-							page   : item,
-							current: page
-						} );
-					};
+			max, get_pages, pager;
 
-				if ( pages[1] > max ) {
-					tmp = pages[1] - max;
-					pages[1] = max;
-					pages[0] = pages[0] - tmp;
-				}
-				if ( pages[0] < 1 ) {
-					tmp = 0 - pages[0];
-					pages[0] = 1;
-					pages[1] = pages[1] + tmp + 1;
-				}
-				if ( pages[1] > max ) {
-					pages[1] = max;
-				}
-				pages4str = (function (){
-					var str = '';
-					for ( var i = pages[0]; i <= pages[1]; i++ ) {
-						str += tpl_page( i );
-					}
-					return str;
-				})();
+		if ( !page_size ) {
+			self.$pager.empty();
+			return self;
+		}
 
-				if ( pages[0] == 2 ) {
-					pages4str = tpl_page( 1 ) + pages4str;
-				}
-				if ( pages[0] == 3 ) {
-					pages4str = tpl_page( 1 ) + tpl_page( 2 ) + pages4str;
-				}
-				if ( pages[0] > 3 ) {
-					pages4str = tpl_page( 1 ) + dots + pages4str;
-				}
-				if ( pages[1] + 2 == max ) {
-					pages4str = pages4str + tpl_page( max - 1 ) + tpl_page( max );
-				}
-				if ( pages[1] + 1 == max ) {
-					pages4str = pages4str + tpl_page( max );
-				}
-				if ( pages[1] + 3 <= max ) {
-					pages4str = pages4str + dots + tpl_page( max );
-				}
-				return pages4str;
-			},
+		// get pages max size
+		max = (function ( page_size, data_length ){
+			var max = data_length / page_size,
+				max_rounded = Math.floor( max );
+			if ( max_rounded < max ) {
+				max = max_rounded + 1;
+			}
+			return max;
+		})( page_size, self.get( 'data' ).length );
 
-			pager = {
-				top      : tpl.wrap_top,
-				arrows   : _.template( tpl.arrows, {
-					prev_disabled: page == 1 ? 'table-pager-arrows-prev__disabled' : '',
-					next_disabled: page == max ? 'table-pager-arrows-next__disabled' : ''
-				} ),
-				pages    : get_pages(),
-				goto     : _.template( tpl.goto, {} ),
-				page_size: _.template( tpl.page_size, {
-					sizes  : page_sizes,
-					current: page_size
-				} ),
-				bottom   : tpl.wrap_bottom
-			};
+		get_pages = function (){
+			var diff = 2,
+				pages = [page - diff, page + diff],
+				pages4str,
+				dots = tpl.dots,
+				tmp = 0,
+				tpl_page = function ( item ){
+					return _.template( tpl.pages, {
+						page   : item,
+						current: page
+					} );
+				};
+
+			if ( pages[1] > max ) {
+				tmp = pages[1] - max;
+				pages[1] = max;
+				pages[0] = pages[0] - tmp;
+			}
+			if ( pages[0] < 1 ) {
+				tmp = 0 - pages[0];
+				pages[0] = 1;
+				pages[1] = pages[1] + tmp + 1;
+			}
+			if ( pages[1] > max ) {
+				pages[1] = max;
+			}
+			pages4str = (function (){
+				var str = '';
+				for ( var i = pages[0]; i <= pages[1]; i++ ) {
+					str += tpl_page( i );
+				}
+				return str;
+			})();
+
+			if ( pages[0] == 2 ) {
+				pages4str = tpl_page( 1 ) + pages4str;
+			}
+			if ( pages[0] == 3 ) {
+				pages4str = tpl_page( 1 ) + tpl_page( 2 ) + pages4str;
+			}
+			if ( pages[0] > 3 ) {
+				pages4str = tpl_page( 1 ) + dots + pages4str;
+			}
+			if ( pages[1] + 2 == max ) {
+				pages4str = pages4str + tpl_page( max - 1 ) + tpl_page( max );
+			}
+			if ( pages[1] + 1 == max ) {
+				pages4str = pages4str + tpl_page( max );
+			}
+			if ( pages[1] + 3 <= max ) {
+				pages4str = pages4str + dots + tpl_page( max );
+			}
+			return pages4str;
+		};
+
+		pager = {
+			top      : tpl.wrap_top,
+			arrows   : nav_arrows_available ? _.template( tpl.arrows, {
+				prev_disabled: page == 1 ? 'table-pager-arrows-prev__disabled' : '',
+				next_disabled: page == max ? 'table-pager-arrows-next__disabled' : ''
+			} ) : '',
+			pages    : pages_available ? get_pages() : '',
+			goto     : goto_available ? _.template( tpl.goto, {} ) : '',
+			page_size: page_sizes_available ? _.template( tpl.page_size, {
+				sizes  : page_sizes,
+				current: page_size
+			} ) : '',
+			bottom   : tpl.wrap_bottom
+		};
 
 
 		pager_str = pager.top + pager.arrows + pager.pages + pager.page_size + pager.goto + pager.bottom;
@@ -330,10 +344,31 @@
 
 	t_proto.getData = function (){
 		var self = this,
-			titles = self.get( 'titles' ),
-			titles_length = titles.length,
 			sort_by = self.get( 'sort_by' ),
 			data = self.get( 'data' ),
+			sort_type = self.get( 'sort_type' ),
+		// todo: filter data here;
+
+			filtered_data = self.filterData( data ),
+
+			sorted_data = self.sortData( filtered_data, sort_by );
+
+		return sorted_data;
+	};
+
+	t_proto.filterData = function ( data ){
+		var self = this,
+			filtered_data = [];
+		filtered_data = data;
+		return filtered_data;
+	};
+
+	t_proto.sortData = function ( data, sort_by ){
+		data = data || self.get( 'data' );
+		sort_by = sort_by || self.get( 'sort_by' );
+		var self = this,
+			titles = self.get( 'titles' ),
+			titles_length = titles.length,
 			sort_type = self.get( 'sort_type' ),
 			data_type = ((sort_by > 0 && sort_by <= titles_length) ? titles[sort_by - 1].type : '').toLowerCase(),
 			cache_key = sort_by.toString() + sort_type.toString(),
@@ -369,21 +404,10 @@
 		} else {
 			sorted_data = data;
 		}
-
-		// todo: filter data here;
-
 		if ( self.data_cache_key != cache_key ) {
 			self.data_cache_key = cache_key
 			self.data = sorted_data;
 		}
-
-		return self.data;
-	};
-
-	t_proto.sortData = function ( data, type ){
-		var self = this,
-			sorted_data = [];
-
 		return sorted_data;
 	};
 
