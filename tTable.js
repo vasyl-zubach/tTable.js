@@ -87,86 +87,15 @@
 	t_proto.update = function (){
 		var self = this,
 			html = {},
-			titles = self.get( 'titles' ),
-			data = self.get( 'data' ),
-			num = [
-				{"title": "#", "type": "number" }
-			],
-			is_row_numbers = self.get( 'row_numbers' ),
-			sorting_enabled = self.get( 'sorting' ),
-			sorted_by = self.get( 'sort_by' ),
-			sort_type = self.get( 'sort_type' ),
-			html_str = '';
+			html_str;
 
 		html.top = self.html.top || _.template( self.tpl.top, {} );
 
 		// Table header with titles
-		html.header = (function (){
-			var str = self.html.header || '';
-			if ( !str ) {
-				if ( is_row_numbers ) {
-					str += _.template( self.tpl.coll, {
-						data: {
-							html: num[0].title
-						}
-					} );
-				}
-			}
-
-			_.each( titles, function ( item, iterator ){
-				var sorting = '';
-				if ( sorting_enabled ) {
-					sorting = _.template( self.tpl.sorting, {
-						sort_by       : iterator + 1,
-						sort_type     : sort_type,
-						is_sort_column: sorted_by == iterator + 1
-					} );
-				}
-				str += _.template( self.tpl.coll, {
-					data: {
-						html: item.title + sorting
-					}
-				} );
-			} );
-
-			str = _.template( self.tpl.row, {
-				className: 'table-head',
-				colls    : str
-			} )
-
-			return str;
-		})();
+		html.header = self.__tableHeadHTML();
 
 		// All table rows with some data
-		html.body = (function (){
-			var str = '',
-				page_size = self.get( 'page_size' ),
-				start_page = self.get( 'start_page' ),
-				sort_by = self.get( 'sort_by' ),
-				num = page_size * (start_page - 1) + 1,
-				rows_data = self.getPageData();
-
-			_.each( rows_data, function ( row ){
-				var row_html = '';
-				if ( is_row_numbers ) {
-					row = [num].concat( row );
-					num++;
-				}
-				_.each( row, function ( item ){
-					row_html += _.template( self.tpl.coll, {
-						data: {
-							html: item
-						}
-					} );
-				} );
-				str += _.template( self.tpl.row, {
-					className: '',
-					colls    : row_html
-				} )
-			} );
-
-			return str;
-		})();
+		html.body = self.__tableBodyHTML();
 
 		// Table bottom
 		html.bottom = self.html.bottom || _.template( self.tpl.bottom, {} );
@@ -178,6 +107,83 @@
 		self.$el.html( html_str );
 		self.updatePager(); // update pager;
 		return self;
+	};
+
+	t_proto.__tableHeadHTML = function (){
+		var self = this,
+			is_row_numbers = self.get( 'row_numbers' ),
+			titles = self.get( 'titles' ),
+			num = [
+				{"title": "#", "type": "number" }
+			],
+			sorting_enabled = self.get( 'sorting' ),
+			sorted_by = self.get( 'sort_by' ),
+			sort_type = self.get( 'sort_type' ),
+			str = self.html.header || '';
+
+		if ( !str ) {
+			if ( is_row_numbers ) {
+				str += _.template( self.tpl.coll, {
+					data: {
+						html: num[0].title
+					}
+				} );
+			}
+		}
+
+		_.each( titles, function ( item, iterator ){
+			var sorting = '';
+			if ( sorting_enabled ) {
+				sorting = _.template( self.tpl.sorting, {
+					sort_by       : iterator + 1,
+					sort_type     : sort_type,
+					is_sort_column: sorted_by == iterator + 1
+				} );
+			}
+			str += _.template( self.tpl.coll, {
+				data: {
+					html: item.title + sorting
+				}
+			} );
+		} );
+
+		str = _.template( self.tpl.row, {
+			className: 'table-head',
+			colls    : str
+		} );
+		return str;
+	};
+
+	t_proto.__tableBodyHTML = function (){
+		var self = this,
+			str = '',
+			page_size = self.get( 'page_size' ),
+			start_page = self.get( 'start_page' ),
+			sort_by = self.get( 'sort_by' ),
+			num = page_size * (start_page - 1) + 1,
+			is_row_numbers = self.get( 'row_numbers' ),
+			rows_data = self.getPageData();
+
+		_.each( rows_data, function ( row ){
+			var row_html = '';
+			if ( is_row_numbers ) {
+				row = [num].concat( row );
+				num++;
+			}
+			_.each( row, function ( item ){
+				row_html += _.template( self.tpl.coll, {
+					data: {
+						html: item
+					}
+				} );
+			} );
+			str += _.template( self.tpl.row, {
+				className: '',
+				colls    : row_html
+			} )
+		} );
+
+		return str;
 	};
 
 	t_proto.updatePager = function (){
