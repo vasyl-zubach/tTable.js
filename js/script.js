@@ -57,7 +57,7 @@ $( document ).ready( function (){
 		success : function ( result ){
 			result.projects.formatter = {
 				"3": function (){
-					return this == 'work' || this == 'opensource' ? '<b>' + this + '</b>': this;
+					return this == 'work' || this == 'opensource' ? '<b>' + this + '</b>' : this;
 				}
 			};
 			ttt.table_id = new tTable( result.projects );
@@ -75,28 +75,60 @@ $( document ).ready( function (){
 		console.log( ttt.table_id );
 	} )
 
-	//*
-	ttt.long = new tTable( {
-		titles       : [
-			{
-				"title": "String",
-				"type" : "string"
-			},
-			{
-				"title": "Number",
-				"type" : "number"
-			}
+
+	ttt.ajax_table_id = new tTable( {
+		container  : '#ajax_table_id',
+		pager      : '#ajax_table_id_pager',
+		titles     : [
+			{ "title": "Project", "type": "string" },
+			{ "title": "Link", "type": "string" },
+			{ "title": "Type", "type": "string" }
 		],
-		"page_size"  : 10,
-		"start_page" : 1,
-		"row_numbers": true,
-		"sort_by"    : 1,
-		"sorting"    : true,
-		"data"       : fake_data,
-		"container"  : "#long_table_id",
-		"pager"      : "#long_table_id_pager",
-		page_sizes   : [10, 25, 50, 100, 250, 500]
+		page_sizes : [2, 3, 4, 5, 6, 7],
+		page_size  : 2,
+		start_page : 1,
+		row_numbers: true,
+		formatter  : {
+			"3": function (){
+				return this == 'work' || this == 'opensource' ? '<b>' + this + '</b>' : this;
+			}
+		},
+		ajax       : {
+			dataType    : 'json',
+			url_tpl     : 'php/ajax.php?limit=<%= from %>,<%= page_size %>&sort_by=<%= sort_by %>&sort_type=<%= sort_type %>',
+			prepare_data: function ( response ){
+				return _.map( response.data, function ( item ){
+					return _.toArray( item );
+				} );
+			},
+			full_size   : function ( response ){
+				return response.count;
+			}
+		}
 	} );
-	//*/
+
+	/*
+	 ttt.long = new tTable( {
+	 titles       : [
+	 {
+	 "title": "String",
+	 "type" : "string"
+	 },
+	 {
+	 "title": "Number",
+	 "type" : "number"
+	 }
+	 ],
+	 "page_size"  : 10,
+	 "start_page" : 1,
+	 "row_numbers": true,
+	 "sort_by"    : 1,
+	 "sorting"    : true,
+	 "data"       : fake_data,
+	 "container"  : "#long_table_id",
+	 "pager"      : "#long_table_id_pager",
+	 page_sizes   : [10, 25, 50, 100, 250, 500]
+	 } );
+	 */
 
 } );

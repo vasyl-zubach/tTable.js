@@ -11,6 +11,7 @@ if (!isset($sort_type)) {
 	$sort_type = "asc";
 }
 
+sleep(1);
 
 $limit = explode(",", $limit);
 
@@ -52,7 +53,7 @@ header('Content-type: application/json');
 
 echo json_encode(array(
 	"data" => $result,
-	"count" => count($result)
+	"count" => count($data_array)
 ));
 
 ?>
