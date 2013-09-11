@@ -57,6 +57,7 @@
 		},
 
 		loading: '<div class="table-loading">Loading data...</div>',
+		no_data: '<div class="table-loading">No data...</div>',
 
 		bottom: "</table>"
 	};
@@ -74,6 +75,8 @@
 		self.xhr = {};
 		self.xhr_key = '';
 		self.xhr_data = {};
+
+		self.loading = false;
 
 		self.goto( self.get( 'start_page' ) );
 		return self;
@@ -112,11 +115,15 @@
 		html.bottom = self.html.bottom || _.template( self.tpl.bottom, {} );
 
 		// inserting
-		if ( ajax && self.xhr.readyState !== 4 ) {
+		if ( self.loading ) {
 			html_str = html.top + html.header + html.bottom + self.tpl.loading;
 			self.$el.html( html_str );
 		} else {
-			html_str = html.top + html.header + html.body + html.bottom;
+			if ( !_.size( self.data ) ) {
+				html_str = html.top + html.header + html.bottom + self.tpl.no_data;
+			} else {
+				html_str = html.top + html.header + html.body + html.bottom;
+			}
 			self.$el.html( html_str );
 		}
 		self.updatePager(); // update pager;
@@ -420,6 +427,7 @@
 
 			self.xhr_data[xhr_key] = data;
 
+			self.loading = false;
 			self.countPages( data_size );
 			self.goto( page );
 		};
@@ -429,9 +437,10 @@
 		}
 
 		if ( self.xhr_key !== xhr_key ) {
-			if ( self.xhr.readyState ) {
+			if ( self.xhr.abort ) {
 				self.xhr.abort();
 			}
+			self.loading = true;
 			self.xhr = $.ajax( ajax_config );
 			self.xhr_key = xhr_key;
 		}
