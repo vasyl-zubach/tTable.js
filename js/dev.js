@@ -95,7 +95,10 @@ $( document ).ready( function (){
 		},
 		ajax       : {
 			dataType    : 'json',
-			url_tpl     : 'php/ajax.php?limit=<%= from %>,<%= page_size %>&sort_by=<%= sort_by %>&sort_type=<%= sort_type %>',
+			//			url         : function ( from, limit, sort_by, sort_type ){
+			//				return 'php/ajax.php?limit=' + from + ',' + limit + '&sort_by=' + sort_by + '&sort_type=' + sort_type;
+			//			},
+			url         : 'php/ajax.php',
 			prepare_data: function ( response ){
 				return _.map( response.data, function ( item ){
 					return _.toArray( item );

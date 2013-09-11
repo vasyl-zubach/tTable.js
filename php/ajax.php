@@ -1,9 +1,9 @@
 <?php
 
 $limit = $_GET['limit'];
-if (!isset($limit)) {
-	$limit = "0,2";
-}
+//if (!isset($limit)) {
+//	$limit = "0,2";
+//}
 
 $sort_by = $_GET['sort_by'];
 $sort_type = $_GET['sort_type'];
@@ -12,8 +12,6 @@ if (!isset($sort_type)) {
 }
 
 sleep(1);
-
-$limit = explode(",", $limit);
 
 $data_array = array(
 	array("1" => "DevMate", "2" => "<a href='http://devmate.com'>DevMate</a>", "3" => "work"),
@@ -47,7 +45,12 @@ if ($sort_by) {
 	array_multisort($data[$sort_by], $sort_type == "asc" ? SORT_ASC : SORT_DESC, SORT_STRING, $data_array);
 }
 
-$result = array_slice($data_array, $limit[0], $limit[1]);
+if (isset($limit)) {
+	$limit = explode(",", $limit);
+	$result = array_slice($data_array, $limit[0], $limit[1]);
+} else {
+	$result = $data_array;
+}
 header('Content-type: text/json');
 header('Content-type: application/json');
 

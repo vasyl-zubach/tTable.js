@@ -314,12 +314,13 @@
 
 		data = self.getData();
 		if ( !data_length ) {
-			data_length = data.length;
+			data_length = _.size( data );
 		}
 		max = data_length / page_size;
 		max_rounded = Math.floor( max );
 		max = max_rounded < max ? max_rounded + 1 : max;
 		self.pages_count = max;
+		self.data_size = data_length
 		return max > 0 ? max : 1;
 	};
 
@@ -391,25 +392,26 @@
 			page = self.get( 'start_page' ),
 			from = (page - 1) * page_size,
 			ajax = self.get( 'ajax' ),
+			ajax_per_page = typeof ajax.url === "function",
 			xhr_key = from.toString() + page_size.toString() + sort_by.toString() + sort_type.toString(),
-			new_data = [];
+			new_data = [],
+			ajax_config = _.cloneDeep( ajax );
 
 		from = (from < 0) ? 0 : from;
 
-		ajax.url = _.template( ajax.url_tpl, {
-			from     : from,
-			page_size: page_size,
-			sort_by  : sort_by,
-			sort_type: sort_type
-		} );
+		if ( ajax_per_page ) {
+			ajax_config.url = ajax.url( from, page_size, sort_by, sort_type );
+		}
 
-		ajax.success = function ( response ){
+		ajax_config.success = function ( response ){
 			var data = ajax.prepare_data( response );
-			var data_size = ajax.full_size( response );
+			var data_size = ajax_per_page ? ajax.full_size( response ) : data.length;
+
 			self.set( {data: data} );
 
 			self.data_size = data_size;
 			self.data = data;
+
 			self.xhr_data[xhr_key] = data;
 
 			self.countPages( data_size );
@@ -417,14 +419,14 @@
 		};
 
 		if ( self.xhr_data[xhr_key] ) {
-			return self.xhr_data[xhr_key];
+			return !ajax_per_page ? self.data : self.xhr_data[xhr_key];
 		}
 
 		if ( self.xhr_key !== xhr_key ) {
 			if ( self.xhr.readyState ) {
 				self.xhr.abort();
 			}
-			self.xhr = $.ajax( ajax );
+			self.xhr = $.ajax( ajax_config );
 			self.xhr_key = xhr_key;
 		}
 
@@ -437,10 +439,10 @@
 			data = self.get( 'data' ),
 			sort_type = self.get( 'sort_type' ),
 			ajax = self.get( 'ajax' ),
+			ajax_per_page = ajax && typeof ajax.url === "function",
 			sorted_data, filtered_data;
 
-		if ( !ajax ) {
-			// todo: filter data here;
+		if ( !ajax || (!ajax_per_page && _.size( self.data ) == self.data_size) ) {
 			filtered_data = self.filterData( data );
 			sorted_data = self.sortData( filtered_data, sort_by, sort_type );
 		} else {
@@ -555,31 +557,37 @@
 			start_page = self.get( 'start_page' ),
 			formatter = self.get( 'formatter' ),
 			ajax = self.get( 'ajax' ),
+			ajax_per_page = ajax && typeof ajax.url === "function",
 			data,
 			page_data;
 
 		if ( ajax ) {
-			page_data = self.xhr.readyState == 4 ? self.getData() : [];
+			data = self.xhr.readyState == 4 ? self.getData() : [];
 		} else {
 			data = self.getData();
-			page_data = (function (){
+		}
+
+		if ( !ajax_per_page ) {
+			page_data = (function ( data ){
 				var data4work;
-				if ( typeof page_size == 'number' ) {
+				if ( typeof page_size == 'number' && data ) {
 					data4work = data.slice( (start_page - 1) * page_size, start_page * page_size )
 				} else {
 					data4work = data;
 				}
 				return data4work;
-			})();
+			})( data );
+		} else {
+			page_data = data;
 		}
 
 		page_data = self.__prepareDataFormat( page_data, formatter );
+
 		return page_data;
 	};
 
 
 	/**
-	 *
 	 * @param {number} page - page that should be rendered
 	 * @returns {*}
 	 */
