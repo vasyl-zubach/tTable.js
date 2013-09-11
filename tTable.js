@@ -217,15 +217,7 @@
 			return self;
 		}
 
-		// get pages max size
-		max = (function ( page_size, data_length ){
-			var max = data_length / page_size,
-				max_rounded = Math.floor( max );
-			if ( max_rounded < max ) {
-				max = max_rounded + 1;
-			}
-			return max;
-		})( page_size, self.get( 'data' ).length );
+		max = self.countPages();
 
 		get_pages = function (){
 			var diff = 2,
@@ -303,6 +295,19 @@
 		self.$pager.html( pager_str );
 		self.pagerEvents();
 		return self;
+	};
+
+	t_proto.countPages = function (){
+		var self = this,
+			data = self.getData(),
+			data_length = data.length,
+			page_size = self.get( 'page_size' ),
+			max = data_length / page_size,
+			max_rounded = Math.floor( max );
+
+		max = max_rounded < max ? max_rounded + 1 : max;
+		self.pages_count = max;
+		return max;
 	};
 
 	t_proto.pagerEvents = function (){
@@ -405,8 +410,8 @@
 	};
 
 	t_proto.sortData = function ( data, sort_by ){
-		data = data || self.get( 'data' );
-		sort_by = sort_by || self.get( 'sort_by' );
+		data = data || this.get( 'data' );
+		sort_by = sort_by || this.get( 'sort_by' );
 		var self = this,
 			titles = self.get( 'titles' ),
 			titles_length = titles.length,
