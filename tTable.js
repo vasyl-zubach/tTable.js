@@ -15,10 +15,13 @@
 		row_numbers: false,
 		nav_arrows : true,
 		goto       : true,
-		sort_type  : 'asc',
+		sort_by    : 0,
 		sorting    : true,
+		sort_type  : 'asc',
 		prefix     : {},
-		suffix     : {}
+		suffix     : {},
+		data       : [],
+		titles     : []
 	};
 
 	var tTable = function ( config ){
@@ -30,6 +33,7 @@
 
 		return self.init( config );
 	};
+
 	var t_proto = tTable.prototype;
 	t_proto.cache = [];
 
@@ -62,10 +66,12 @@
 	t_proto.init = function ( config ){
 		var self = this;
 		self.config = _.extend( self.config, config );
-
-
 		self.$el = $( self.get( 'container' ) );
 		self.$pager = $( self.get( 'pager' ) );
+
+		self.xhr = {};
+		self.xhr_key = '';
+		self.xhr_data = {};
 
 		self.goto( self.get( 'start_page' ) );
 		return self;
@@ -75,7 +81,7 @@
 		var self = this,
 			val;
 
-		val = self.config[what] || null;
+		val = self.config[what];
 		return val;
 	};
 	t_proto.set = function ( what ){
@@ -210,14 +216,14 @@
 			pages_available = self.get( 'show_pages' ),
 			page = parseInt( self.get( 'start_page' ), 10 ),
 			pager_str = '',
-			max, get_pages, pager;
+			pages_count, get_pages, pager;
 
 		if ( !page_size ) {
 			self.$pager.empty();
 			return self;
 		}
 
-		max = self.countPages();
+		pages_count = self.countPages();
 
 		get_pages = function (){
 			var diff = 2,
@@ -232,9 +238,9 @@
 					} );
 				};
 
-			if ( pages[1] > max ) {
-				tmp = pages[1] - max;
-				pages[1] = max;
+			if ( pages[1] > pages_count ) {
+				tmp = pages[1] - pages_count;
+				pages[1] = pages_count;
 				pages[0] = pages[0] - tmp;
 			}
 			if ( pages[0] < 1 ) {
@@ -242,8 +248,8 @@
 				pages[0] = 1;
 				pages[1] = pages[1] + tmp + 1;
 			}
-			if ( pages[1] > max ) {
-				pages[1] = max;
+			if ( pages[1] > pages_count ) {
+				pages[1] = pages_count;
 			}
 			pages4str = (function (){
 				var str = '';
@@ -262,26 +268,26 @@
 			if ( pages[0] > 3 ) {
 				pages4str = tpl_page( 1 ) + dots + pages4str;
 			}
-			if ( pages[1] + 2 == max ) {
-				pages4str = pages4str + tpl_page( max - 1 ) + tpl_page( max );
+			if ( pages[1] + 2 == pages_count ) {
+				pages4str = pages4str + tpl_page( pages_count - 1 ) + tpl_page( pages_count );
 			}
-			if ( pages[1] + 1 == max ) {
-				pages4str = pages4str + tpl_page( max );
+			if ( pages[1] + 1 == pages_count ) {
+				pages4str = pages4str + tpl_page( pages_count );
 			}
-			if ( pages[1] + 3 <= max ) {
-				pages4str = pages4str + dots + tpl_page( max );
+			if ( pages[1] + 3 <= pages_count ) {
+				pages4str = pages4str + dots + tpl_page( pages_count );
 			}
 			return pages4str;
 		};
 
 		pager = {
 			top      : tpl.wrap_top,
-			arrows   : nav_arrows_available ? _.template( tpl.arrows, {
+			arrows   : nav_arrows_available && pages_count > 1 ? _.template( tpl.arrows, {
 				prev_disabled: page == 1 ? 'table-pager-arrows-prev__disabled' : '',
-				next_disabled: page == max ? 'table-pager-arrows-next__disabled' : ''
+				next_disabled: page == pages_count ? 'table-pager-arrows-next__disabled' : ''
 			} ) : '',
-			pages    : pages_available ? get_pages() : '',
-			goto     : goto_available ? _.template( tpl.goto, {} ) : '',
+			pages    : pages_available && pages_count > 1 ? get_pages() : '',
+			goto     : goto_available && pages_count > 1 ? _.template( tpl.goto, {} ) : '',
 			page_size: page_sizes_available ? _.template( tpl.page_size, {
 				sizes  : page_sizes,
 				current: page_size
@@ -297,17 +303,24 @@
 		return self;
 	};
 
-	t_proto.countPages = function (){
+	t_proto.countPages = function ( full_size ){
 		var self = this,
-			data = self.getData(),
-			data_length = data.length,
+			data,
+			data_length = self.data_size,
 			page_size = self.get( 'page_size' ),
-			max = data_length / page_size,
-			max_rounded = Math.floor( max );
+			ajax = self.get( 'ajax' ),
+			max,
+			max_rounded;
 
+		data = self.getData();
+		if ( !data_length ) {
+			data_length = data.length;
+		}
+		max = data_length / page_size;
+		max_rounded = Math.floor( max );
 		max = max_rounded < max ? max_rounded + 1 : max;
 		self.pages_count = max;
-		return max;
+		return max > 0 ? max : 1;
 	};
 
 	t_proto.pagerEvents = function (){
@@ -367,16 +380,72 @@
 		return self;
 	};
 
+
+	t_proto.getAJAXData = function (){
+
+		var self = this,
+			ajax = self.get( 'ajax' ),
+			sort_by = self.get( 'sort_by' ),
+			sort_type = self.get( 'sort_type' ),
+			page_size = self.get( 'page_size' ),
+			page = self.get( 'start_page' ),
+			from = (page - 1) * page_size,
+			ajax = self.get( 'ajax' ),
+			xhr_key = from.toString() + page_size.toString() + sort_by.toString() + sort_type.toString(),
+			new_data = [];
+
+		from = (from < 0) ? 0 : from;
+
+		ajax.url = _.template( ajax.url_tpl, {
+			from     : from,
+			page_size: page_size,
+			sort_by  : sort_by,
+			sort_type: sort_type
+		} );
+
+		ajax.success = function ( response ){
+			var data = ajax.prepare_data( response );
+			var data_size = ajax.full_size( response );
+			self.set( {data: data} );
+
+			self.data_size = data_size;
+			self.data = data;
+			self.xhr_data[xhr_key] = data;
+
+			self.countPages( data_size );
+			self.goto( page );
+		};
+
+		if ( self.xhr_data[xhr_key] ) {
+			return self.xhr_data[xhr_key];
+		}
+
+		if ( self.xhr_key !== xhr_key ) {
+			if ( self.xhr.readyState ) {
+				self.xhr.abort();
+			}
+			self.xhr = $.ajax( ajax );
+			self.xhr_key = xhr_key;
+		}
+
+		return new_data;
+	};
+
 	t_proto.getData = function (){
 		var self = this,
 			sort_by = self.get( 'sort_by' ),
 			data = self.get( 'data' ),
 			sort_type = self.get( 'sort_type' ),
-		// todo: filter data here;
+			ajax = self.get( 'ajax' ),
+			sorted_data, filtered_data;
 
-			filtered_data = self.filterData( data ),
-
-			sorted_data = self.sortData( filtered_data, sort_by );
+		if ( !ajax ) {
+			// todo: filter data here;
+			filtered_data = self.filterData( data );
+			sorted_data = self.sortData( filtered_data, sort_by, sort_type );
+		} else {
+			sorted_data = self.getAJAXData();
+		}
 
 		return sorted_data;
 	};
@@ -409,13 +478,14 @@
 		return data;
 	};
 
-	t_proto.sortData = function ( data, sort_by ){
+	t_proto.sortData = function ( data, sort_by, sort_type ){
 		data = data || this.get( 'data' );
 		sort_by = sort_by || this.get( 'sort_by' );
+		sort_type = sort_type || this.get( 'sort_type' )
+
 		var self = this,
 			titles = self.get( 'titles' ),
 			titles_length = titles.length,
-			sort_type = self.get( 'sort_type' ),
 			data_type = ((sort_by > 0 && sort_by <= titles_length) ? titles[sort_by - 1].type : '').toLowerCase(),
 			cache_key = sort_by.toString() + sort_type.toString(),
 			sorted_data = [];
@@ -484,7 +554,14 @@
 			page_size = self.get( 'page_size' ),
 			start_page = self.get( 'start_page' ),
 			formatter = self.get( 'formatter' ),
-			data = self.getData(),
+			ajax = self.get( 'ajax' ),
+			data,
+			page_data;
+
+		if ( ajax ) {
+			page_data = self.xhr.readyState == 4 ? self.getData() : [];
+		} else {
+			data = self.getData();
 			page_data = (function (){
 				var data4work;
 				if ( typeof page_size == 'number' ) {
@@ -494,9 +571,9 @@
 				}
 				return data4work;
 			})();
+		}
 
 		page_data = self.__prepareDataFormat( page_data, formatter );
-
 		return page_data;
 	};
 
@@ -507,24 +584,14 @@
 	 * @returns {*}
 	 */
 	t_proto.goto = function ( page ){
-
 		if ( !page ) {
 			return this;
 		}
-		var self = this,
-			page = parseInt( page, 10 ),
-			page_size = self.get( 'page_size' ),
-			data = self.getData(),
-			data_length = data.length,
-			max = (function ( page_size, data_length ){
-				var max = data_length / page_size,
-					max_rounded = Math.floor( max );
-				if ( max_rounded < max ) {
-					max = max_rounded + 1;
-				}
-				return max;
-			})( page_size, self.get( 'data' ).length );
+		page = parseInt( page, 10 );
 
+		var self = this,
+			page_size = self.get( 'page_size' ),
+			max = self.countPages();
 
 		if ( page <= max && page > 0 ) {
 			self.set( {start_page: page} ).update();

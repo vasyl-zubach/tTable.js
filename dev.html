@@ -8,15 +8,13 @@
 
 <body>
 
+
 <h1>tTable.js - work with tables like a boss.</h1>
 <hr/>
 <h2>Demo table config and result: [<button class="table_id--update">Update</button>] [<button id="table_id_object">console.log()</button>]</h2>
+<!--
 <pre><code id="table_id_config">ttt.project = new tTable( {
-	"titles"     : [...<!--
-		{ "title": "Project", "type" : "string" },
-		{ "title": "Link", "type" : "string" },
-		{ "title": "Type", "type" : "string" }
-	-->],
+	"titles"     : [...],
 	"start_page" : <span contenteditable="true" data-start_page>2</span>,
 	"row_numbers": <span contenteditable="true" data-row_numbers>true</span>,
 	"sort_by"    : <span contenteditable="true" data-sort_by>1</span>,
@@ -26,40 +24,28 @@
 	"nav_arrows" : <span contenteditable="true" data-nav_arrows>true</span>,
 	"goto"       : <span contenteditable="true" data-goto>true</span>,
 	"show_pages" : <span contenteditable="true" data-show_pages>true</span>,
-	"data"       : [...] <!--[
-		["DevMate", "&lt;a href='http://devmate.com'&gt;DevMate&lt;/a&gt;", "work" ],
-		["MacPaw", "&lt;a href='http://macpaw.com'&gt;MacPaw&lt;/a&gt;", "work"],
-		["Ensoul.Me", "&lt;a href='http://ensoul.me'&gt;Ensoul.me&lt;/a&gt;", "work"],
-		["TjRus.com", "&lt;a href='http://tjrus.com'&gt;TjRus.com&lt;/a&gt;", "personal"],
-		["Imageless iPhone", "&lt;a href='http://tjrus.com/iphone'&gt;Imageless iPhone&lt;/a&gt;", "personal"],
-		["Imageless Lumia", "&lt;a href='http://tjrus.com/lumia'&gt;Imageless Lumia&lt;/a&gt;", "personal"],
-		["_v_.js", "&lt;a href='http://github.com/TjRus/_v_.js'&gt;_v_.js&lt;/a&gt;", "git"],
-		["tFormer.js", "&lt;a href='http://github.com/TjRus/tFormer.js'&gt;tFormer.js&lt;/a&gt;", "git"],
-		["tTable.js", "&lt;a href='http://github.com/TjRus/tTable.js'&gt;tTable.js&lt;/a&gt;", "git"],
-		["aer.js", "&lt;a href='http://github.com/TjRus/aer.js'>aer.js&lt;/a&gt;", "git"],
-		["Imageless iPhone", "&lt;a href='http://github.com/TjRus/iPhone.js'&gt;iPhone.js&lt;/a>", "git"],
-		["Imageless Lumia", "&lt;a href='http://github.com/TjRus/Lumia.js'&gt;Lumia.js&lt;/a>", "git"],
-		["_v_.js", "&lt;a href='http://tjrus.github.io/_v_.js'&gt;_v_.js&lt;/a>", "opensource"],
-		["tFormer.js", "&lt;a href='http://tformerjs.com/'&gt;tFormer.js&lt;/a&gt;", "opensource"]
-	]-->,
+	"data"       : [...],
 	"container"  : "#table_id",
 	"pager"      : "#table_id_pager"
 } );
 </code></pre>
-<!--<h2>Demo table:</h2>-->
+-->
 <div id="table_id"></div>
 <div id="table_id_pager"></div>
 
+<br/>
+<hr/>
+<h2>AJAX demo table:</h2>
+
+<div id="ajax_table_id"></div>
+<div id="ajax_table_id_pager"></div>
 
 
 <br/>
 <hr/>
 <h2>Demo table with long random-generated data:</h2>
 
-<div id="long_table_id"></div>
-
-<br/>
-
+<div id="long_table_id"></div><br/>
 <div id="long_table_id_pager"></div>
 
 
