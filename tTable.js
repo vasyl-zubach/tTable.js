@@ -56,6 +56,8 @@
 			wrap_bottom : '</div>'
 		},
 
+		loading: '<div class="table-loading">Loading data...</div>',
+
 		bottom: "</table>"
 	};
 	t_proto.html = {
@@ -95,6 +97,7 @@
 	t_proto.update = function (){
 		var self = this,
 			html = {},
+			ajax = self.get( 'ajax' ),
 			html_str;
 
 		html.top = self.html.top || _.template( self.tpl.top, {} );
@@ -108,11 +111,14 @@
 		// Table bottom
 		html.bottom = self.html.bottom || _.template( self.tpl.bottom, {} );
 
-		// full table str
-		html_str = html.top + html.header + html.body + html.bottom;
-
 		// inserting
-		self.$el.html( html_str );
+		if ( ajax && self.xhr.readyState !== 4 ) {
+			html_str = html.top + html.header + html.bottom + self.tpl.loading;
+			self.$el.html( html_str );
+		} else {
+			html_str = html.top + html.header + html.body + html.bottom;
+			self.$el.html( html_str );
+		}
 		self.updatePager(); // update pager;
 		return self;
 	};
