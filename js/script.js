@@ -26,30 +26,7 @@ $( document ).ready( function (){
 				data.push( [str, num] );
 			}
 			return data;
-		})(),
-		table_update = function ( id ){
-			var config = ttt[id].config,
-				$config = $( '#' + id + '_config' );
-			config.page_size = parseInt( $config.find( '[data-page_size]' ).text(), 10 );
-			config.start_page = parseInt( $config.find( '[data-start_page]' ).text(), 10 );
-			config.row_numbers = $config.find( '[data-row_numbers]' ).text() == "true";
-			config.sort_by = parseInt( $config.find( '[data-sort_by]' ).text(), 10 );
-			config.sorting = $config.find( '[data-sorting]' ).text() == "true";
-
-			config.nav_arrows = $config.find( '[data-nav_arrows]' ).text() == "true";
-			config.show_pages = $config.find( '[data-show_pages]' ).text() == "true";
-			config.goto = $config.find( '[data-goto]' ).text() == "true";
-			config.page_sizes = $config.find( '[data-page_sizes]' ).text();
-			if ( config.page_sizes == 0 || config.page_sizes == "false" || config.page_sizes == "null" || config.page_sizes == "undefined" ) {
-				config.page_sizes = false;
-			}
-			if ( config.page_sizes ) {
-				config.page_sizes = config.page_sizes.split( ',' );
-			}
-
-			console.log( config );
-			ttt[id] = new tTable( config );
-		};
+		})();
 
 	$.ajax( {
 		url     : 'js/data.json',
@@ -64,71 +41,28 @@ $( document ).ready( function (){
 		}
 	} );
 
-	$( 'code:not(.prettyprint)' ).addClass( 'prettyprint' ).addClass( 'linenums' );
-	prettyPrint();
 
-	$( '.table_id--update' ).off( 'click' ).on( 'click', function (){
-		table_update( 'table_id' );
-	} );
-
-	$( '#table_id_object' ).off( 'click' ).on( 'click', function (){
-		console.log( ttt.table_id );
-	} )
-
-
-	ttt.ajax_table_id = new tTable( {
-		container  : '#ajax_table_id',
-		pager      : '#ajax_table_id_pager',
-		titles     : [
-			{ "title": "Project", "type": "string" },
-			{ "title": "Link", "type": "string" },
-			{ "title": "Type", "type": "string" }
-		],
-		page_sizes : [2, 3, 4, 5, 6, 7],
-		page_size  : 2,
-		start_page : 1,
-		row_numbers: true,
-		formatter  : {
-			"3": function (){
-				return this == 'work' || this == 'opensource' ? '<b>' + this + '</b>' : this;
-			}
-		},
-		ajax       : {
-			dataType    : 'json',
-			url_tpl     : 'php/ajax.php?limit=<%= from %>,<%= page_size %>&sort_by=<%= sort_by %>&sort_type=<%= sort_type %>',
-			prepare_data: function ( response ){
-				return _.map( response.data, function ( item ){
-					return _.toArray( item );
-				} );
+	ttt.long = new tTable( {
+		titles       : [
+			{
+				"title": "String",
+				"type" : "string"
 			},
-			full_size   : function ( response ){
-				return response.count;
+			{
+				"title": "Number",
+				"type" : "number"
 			}
-		}
+		],
+		"page_size"  : 10,
+		"start_page" : 1,
+		"row_numbers": true,
+		"sort_by"    : 1,
+		"sorting"    : true,
+		"data"       : fake_data,
+		"container"  : "#long_table_id",
+		"pager"      : "#long_table_id_pager",
+		page_sizes   : [10, 25, 50, 100, 250, 500]
 	} );
 
-	/*
-	 ttt.long = new tTable( {
-	 titles       : [
-	 {
-	 "title": "String",
-	 "type" : "string"
-	 },
-	 {
-	 "title": "Number",
-	 "type" : "number"
-	 }
-	 ],
-	 "page_size"  : 10,
-	 "start_page" : 1,
-	 "row_numbers": true,
-	 "sort_by"    : 1,
-	 "sorting"    : true,
-	 "data"       : fake_data,
-	 "container"  : "#long_table_id",
-	 "pager"      : "#long_table_id_pager",
-	 page_sizes   : [10, 25, 50, 100, 250, 500]
-	 } );
-	 */
 
 } );

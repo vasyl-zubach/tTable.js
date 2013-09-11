@@ -15,6 +15,7 @@
 			}
 		],
 		"page_size"  : 2,
+		"page_sizes" : [2, 5, 10, 15, 25],
 		"start_page" : 2,
 		"row_numbers": true,
 		"sort_by"    : 1,
