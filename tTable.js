@@ -137,7 +137,7 @@
 			num = [
 				{"title": "#", "type": "number" }
 			],
-			sorting_enabled = self.get( 'sorting' ),
+			sorting = self.get( 'sorting' ),
 			sorted_by = self.get( 'sort_by' ),
 			sort_type = self.get( 'sort_type' ),
 			str = self.html.header || '';
@@ -153,17 +153,19 @@
 		}
 
 		_.each( titles, function ( item, iterator ){
-			var sorting = '';
-			if ( sorting_enabled ) {
-				sorting = _.template( self.tpl.sorting, {
-					sort_by       : iterator + 1,
+			var sorting_html = '',
+				column_num = iterator + 1;
+			console.log(sorting, column_num, _.contains( sorting, column_num ));
+			if ( sorting === true || _.contains( sorting, column_num ) ) {
+				sorting_html = _.template( self.tpl.sorting, {
+					sort_by       : column_num,
 					sort_type     : sort_type,
-					is_sort_column: sorted_by == iterator + 1
+					is_sort_column: sorted_by == column_num
 				} );
 			}
 			str += _.template( self.tpl.coll, {
 				data: {
-					html: item.title + sorting
+					html: item.title + sorting_html
 				}
 			} );
 		} );
