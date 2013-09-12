@@ -83,10 +83,14 @@ $( document ).ready( function (){
 			{ "title": "Project", "type": "string", "key": "name" },
 			{ "title": "Link", "type": "string", "key": "link" },
 			{ "title": "Type", "type": "string", "key": "type" }
+			//			{ "title": "Project", "type": "string" },
+			//			{ "title": "Link", "type": "string" },
+			//			{ "title": "Type", "type": "string" }
 		],
 		page_sizes : [2, 3, 4, 5, 6, 7],
 		page_size  : 2,
 		start_page : 1,
+		sorting    : [1,3],
 		row_numbers: true,
 		formatter  : {
 			"3": function (){
@@ -95,10 +99,10 @@ $( document ).ready( function (){
 		},
 		ajax       : {
 			dataType    : 'json',
-						url         : function ( from, limit, sort_by, sort_type ){
-							return 'php/ajax.php?limit=' + from + ',' + limit + '&sort_by=' + sort_by + '&sort_type=' + sort_type;
-						},
-//			url         : 'php/ajax.php',
+			url         : function ( from, limit, sort_by, sort_type ){
+				return 'php/ajax.php?limit=' + from + ',' + limit + '&sort_by=' + sort_by + '&sort_type=' + sort_type;
+			},
+			//			url         : 'php/ajax.php',
 			prepare_data: function ( response ){
 				return _.map( response.data, function ( item ){
 					return _.toArray( item );
