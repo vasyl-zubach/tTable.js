@@ -80,9 +80,9 @@ $( document ).ready( function (){
 		container  : '#ajax_table_id',
 		pager      : '#ajax_table_id_pager',
 		titles     : [
-			{ "title": "Project", "type": "string" },
-			{ "title": "Link", "type": "string" },
-			{ "title": "Type", "type": "string" }
+			{ "title": "Project", "type": "string", "key": "name" },
+			{ "title": "Link", "type": "string", "key": "link" },
+			{ "title": "Type", "type": "string", "key": "type" }
 		],
 		page_sizes : [2, 3, 4, 5, 6, 7],
 		page_size  : 2,
