@@ -155,7 +155,6 @@
 		_.each( titles, function ( item, iterator ){
 			var sorting_html = '',
 				column_num = iterator + 1;
-			console.log(sorting, column_num, _.contains( sorting, column_num ));
 			if ( sorting === true || _.contains( sorting, column_num ) ) {
 				sorting_html = _.template( self.tpl.sorting, {
 					sort_by       : column_num,
