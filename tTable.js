@@ -398,22 +398,23 @@
 	t_proto.getAJAXData = function (){
 
 		var self = this,
-			ajax = self.get( 'ajax' ),
-			sort_by = self.get( 'sort_by' ),
+			titles = self.get( 'titles' ),
+			sort_by = parseInt( self.get( 'sort_by' ), 10 ),
+			sort_key = sort_by > 0 ? (titles[sort_by - 1].key || sort_by) : sort_by,
 			sort_type = self.get( 'sort_type' ),
 			page_size = self.get( 'page_size' ),
 			page = self.get( 'start_page' ),
 			from = (page - 1) * page_size,
 			ajax = self.get( 'ajax' ),
 			ajax_per_page = typeof ajax.url === "function",
-			xhr_key = from.toString() + page_size.toString() + sort_by.toString() + sort_type.toString(),
+			xhr_key = from.toString() + page_size.toString() + sort_key.toString() + sort_type.toString(),
 			new_data = [],
 			ajax_config = _.cloneDeep( ajax );
 
 		from = (from < 0) ? 0 : from;
 
 		if ( ajax_per_page ) {
-			ajax_config.url = ajax.url( from, page_size, sort_by, sort_type );
+			ajax_config.url = ajax.url( from, page_size, sort_key, sort_type );
 		}
 
 		ajax_config.success = function ( response ){
