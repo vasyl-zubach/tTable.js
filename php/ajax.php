@@ -1,9 +1,6 @@
 <?php
 
 $limit = $_GET['limit'];
-//if (!isset($limit)) {
-//	$limit = "0,2";
-//}
 
 $sort_by = $_GET['sort_by'];
 $sort_type = $_GET['sort_type'];
@@ -14,35 +11,31 @@ if (!isset($sort_type)) {
 sleep(1);
 
 $data_array = array(
-	array("1" => "DevMate", "2" => "<a href='http://devmate.com'>DevMate</a>", "3" => "work"),
-	array("1" => "MacPaw", "2" => "<a href='http://macpaw.com'>MacPaw</a>", "3" => "work"),
-	array("1" => "Ensoul.Me", "2" => "<a href='http://ensoul.me'>Ensoul.me</a>", "3" => "work"),
-	array("1" => "TjRus.com", "2" => "<a href='http://tjrus.com'>TjRus.com</a>", "3" => "personal"),
-	array("1" => "Imageless iPhone", "2" => "<a href='http://tjrus.com/iphone'>Imageless iPhone</a>", "3" => "personal"),
-	array("1" => "Imageless Lumia", "2" => "<a href='http://tjrus.com/lumia'>Imageless Lumia</a>", "3" => "personal"),
-	array("1" => "_v_.js", "2" => "<a href='http://github.com/TjRus/_v_.js'>_v_.js</a>", "3" => "git"),
-	array("1" => "tFormer.js", "2" => "<a href='http://github.com/TjRus/tFormer.js'>tFormer.js</a>", "3" => "git"),
-	array("1" => "tTable.js", "2" => "<a href='http://github.com/TjRus/tTable.js'>tTable.js</a>", "3" => "git"),
-	array("1" => "aer.js", "2" => "<a href='http://github.com/TjRus/aer.js'>aer.js</a>", "3" => "git"),
-	array("1" => "Imageless iPhone", "2" => "<a href='http://github.com/TjRus/iPhone.js'>iPhone.js</a>", "3" => "git"),
-	array("1" => "Imageless Lumia", "2" => "<a href='http://github.com/TjRus/Lumia.js'>Lumia.js</a>", "3" => "git"),
-	array("1" => "_v_.js", "2" => "<a href='http://tjrus.github.io/_v_.js'>_v_.js</a>", "3" => "opensource"),
-	array("1" => "tFormer.js", "2" => "<a href='http://tformerjs.com/'>tFormer.js</a>", "3" => "opensource")
+	array("name" => "DevMate", "link" => "<a href='http://devmate.com'>DevMate</a>", "type" => "work"),
+	array("name" => "MacPaw", "link" => "<a href='http://macpaw.com'>MacPaw</a>", "type" => "work"),
+	array("name" => "Ensoul.Me", "link" => "<a href='http://ensoul.me'>Ensoul.me</a>", "type" => "work"),
+	array("name" => "TjRus.com", "link" => "<a href='http://tjrus.com'>TjRus.com</a>", "type" => "personal"),
+	array("name" => "Imageless iPhone", "link" => "<a href='http://tjrus.com/iphone'>Imageless iPhone</a>", "type" => "personal"),
+	array("name" => "Imageless Lumia", "link" => "<a href='http://tjrus.com/lumia'>Imageless Lumia</a>", "type" => "personal"),
+	array("name" => "_v_.js", "link" => "<a href='http://github.com/TjRus/_v_.js'>_v_.js</a>", "type" => "git"),
+	array("name" => "tFormer.js", "link" => "<a href='http://github.com/TjRus/tFormer.js'>tFormer.js</a>", "type" => "git"),
+	array("name" => "tTable.js", "link" => "<a href='http://github.com/TjRus/tTable.js'>tTable.js</a>", "type" => "git"),
+	array("name" => "aer.js", "link" => "<a href='http://github.com/TjRus/aer.js'>aer.js</a>", "type" => "git"),
+	array("name" => "Imageless iPhone", "link" => "<a href='http://github.com/TjRus/iPhone.js'>iPhone.js</a>", "type" => "git"),
+	array("name" => "Imageless Lumia", "link" => "<a href='http://github.com/TjRus/Lumia.js'>Lumia.js</a>", "type" => "git"),
+	array("name" => "_v_.js", "link" => "<a href='http://tjrus.github.io/_v_.js'>_v_.js</a>", "type" => "opensource"),
+	array("name" => "tFormer.js", "link" => "<a href='http://tformerjs.com/'>tFormer.js</a>", "type" => "opensource")
 );
 
-$data = array(
-	"1" => array(),
-	"2" => array(),
-	"3" => array()
-);
-foreach ($data_array as $key => $row) {
-	$data["1"][$key] = $row['1'];
-	$data["2"][$key] = $row['2'];
-	$data["3"][$key] = $row['3'];
+$data = array();
+foreach ($data_array as $k => $v) {
+	$data['name'][$k] = $v['name'];
+	$data['link'][$k] = $v['link'];
+	$data['type'][$k] = $v['type'];
 }
 
 if ($sort_by) {
-	array_multisort($data[$sort_by], $sort_type == "asc" ? SORT_ASC : SORT_DESC, SORT_STRING, $data_array);
+	array_multisort($data[$sort_by], $sort_type == "asc" ? SORT_ASC : SORT_DESC, $data_array);
 }
 
 if (isset($limit)) {
