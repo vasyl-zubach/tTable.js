@@ -20,8 +20,15 @@
 		sort_type  : 'asc',
 		prefix     : {},
 		suffix     : {},
-		data       : [],
-		titles     : []
+
+		search               : false,
+		search_auto          : true,
+		// search_container : "",
+		search_case_sensitive: false,
+		search_value         : "",
+
+		data  : [],
+		titles: []
 	};
 
 	var tTable = function ( config ){
@@ -59,6 +66,8 @@
 		loading: '<div class="table-loading">Loading data...</div>',
 		no_data: '<div class="table-loading">No data...</div>',
 
+		search: '<input type="text" name="table_search" class="table-search-input" placeholder="Search" value="<%= value %>">',
+
 		bottom: "</table>"
 	};
 	t_proto.html = {
@@ -78,7 +87,17 @@
 
 		self.loading = false;
 
+		if ( self.get( 'search' ) ) {
+			self.search = self.get( 'search_value' );
+			self.$search = $( self.get( 'search_container' ) );
+			self.addSearch();
+			if ( self.search ) {
+				self.searchData();
+			}
+		}
+
 		self.goto( self.get( 'start_page' ) );
+
 		return self;
 	};
 
@@ -94,6 +113,17 @@
 		for ( var key in what ) {
 			self.config[key] = what[key];
 		}
+		return self;
+	};
+
+	t_proto.addSearch = function (){
+		var self = this,
+			search_value = self.get( 'search_value' );
+
+		self.$search.html( _.template( self.tpl.search, {
+			value: search_value
+		} ) );
+
 		return self;
 	};
 
@@ -317,35 +347,39 @@
 		return self;
 	};
 
-	t_proto.countPages = function ( full_size ){
+	t_proto.countPages = function (){
 		var self = this,
 			data,
-			data_length = self.data_size,
+			data_length = self.ajax_data_size,
 			page_size = self.get( 'page_size' ),
 			ajax = self.get( 'ajax' ),
 			max,
 			max_rounded;
 
-		data = self.getData();
-		if ( !data_length ) {
+		if ( self.ajax_data_size ) {
+			data_length = self.ajax_data_size;
+		} else {
+			data = self.getData();
 			data_length = _.size( data );
 		}
+
 		max = data_length / page_size;
 		max_rounded = Math.floor( max );
 		max = max_rounded < max ? max_rounded + 1 : max;
 		self.pages_count = max;
-		self.data_size = data_length
 		return max > 0 ? max : 1;
 	};
 
 	t_proto.pagerEvents = function (){
 		var self = this;
 
-		self.$pager.off( 'click', '.table-pager-arrows-prev' ).on( 'click', '.table-pager-arrows-prev', function ( e ){
-			e.preventDefault();
-			self.goto( self.get( 'start_page' ) - 1 );
-			return false;
-		} );
+		if ( self.get( 'nav_arrows' ) ) {
+			self.$pager.off( 'click', '.table-pager-arrows-prev' ).on( 'click', '.table-pager-arrows-prev', function ( e ){
+				e.preventDefault();
+				self.goto( self.get( 'start_page' ) - 1 );
+				return false;
+			} );
+		}
 
 		self.$pager.off( 'click', '.table-pager-arrows-next' ).on( 'click', '.table-pager-arrows-next', function ( e ){
 			e.preventDefault();
@@ -353,44 +387,69 @@
 			return false;
 		} );
 
-		self.$pager.off( 'click', '.table-pager-pages-item' ).on( 'click', '.table-pager-pages-item', function ( e ){
-			e.preventDefault();
-			if ( $( e.target ).hasClass( 'table-pager-pages-item__on' ) ) {
-				return false;
-			}
-			self.goto( $( this ).data( 'goto' ) );
-			return false;
-		} );
-
-		self.$pager.off( 'keypress', '.table-pager-goto' ).on( 'keypress', '.table-pager-goto', function ( e ){
-			if ( e.keyCode == 13 ) {
+		if ( self.get( 'show_pages' ) ) {
+			self.$pager.off( 'click', '.table-pager-pages-item' ).on( 'click', '.table-pager-pages-item', function ( e ){
 				e.preventDefault();
-				self.goto( $( this ).val() );
+				if ( $( e.target ).hasClass( 'table-pager-pages-item__on' ) ) {
+					return false;
+				}
+				self.goto( $( this ).data( 'goto' ) );
 				return false;
-			}
-		} );
+			} );
+		}
 
-		self.$pager.off( 'change', '.table-pager-page_size' ).on( 'change', '.table-pager-page_size', function ( e ){
-			e.preventDefault();
-			self.set( {page_size: parseInt( $( this ).val(), 10 ) } ).goto( 1 );
-			return false;
-		} );
+		if ( self.get( 'goto' ) ) {
+			self.$pager.off( 'keypress', '.table-pager-goto' ).on( 'keypress', '.table-pager-goto', function ( e ){
+				if ( e.keyCode == 13 ) {
+					e.preventDefault();
+					self.goto( $( this ).val() );
+					return false;
+				}
+			} );
+		}
 
-		self.$el.off( 'click', '.table-sorting' ).on( 'click', '.table-sorting', function ( e ){
-			e.preventDefault();
-			var $this = $( this ),
-				was_sorted_by = self.get( 'sort_by' ),
-				sort_by = $this.data( 'sort_by' ),
-				sort_type = $this.data( 'sort_type' ) ,
-				reverse_sort_type = sort_type == 'asc' ? 'desc' : 'asc';
+		if ( !!self.get( 'page_sizes' ) ) {
+			self.$pager.off( 'change', '.table-pager-page_size' ).on( 'change', '.table-pager-page_size', function ( e ){
+				e.preventDefault();
+				self.set( {
+					page_size: parseInt( $( this ).val(), 10 )
+				} ).goto( 1 );
+				return false;
+			} );
+		}
 
-			self.set( {
-				start_page: 1,
-				sort_by   : sort_by,
-				sort_type : was_sorted_by == sort_by ? reverse_sort_type : sort_type
-			} ).update();
-			return false;
-		} );
+		if ( self.get( 'sorting' ) ) {
+			self.$el.off( 'click', '.table-sorting' ).on( 'click', '.table-sorting', function ( e ){
+				e.preventDefault();
+				var $this = $( this ),
+					was_sorted_by = self.get( 'sort_by' ),
+					sort_by = $this.data( 'sort_by' ),
+					sort_type = $this.data( 'sort_type' ) ,
+					reverse_sort_type = sort_type == 'asc' ? 'desc' : 'asc';
+
+				self.set( {
+					sort_by  : sort_by,
+					sort_type: was_sorted_by == sort_by ? reverse_sort_type : sort_type
+				} ).goto( 1 );
+				return false;
+			} );
+		}
+
+		if ( self.get( 'search' ) ) {
+			//			self.$search.off( 'keypress', '.table-search-input' ).on( 'keypress', '.table-search-input', function ( e ){
+			var search_auto = self.get( 'search_auto' ),
+				search_event = self.get( 'search_auto' ) ? 'input' : 'keypress';
+
+			self.$search.off( search_event, '.table-search-input' ).on( search_event, '.table-search-input', function ( e ){
+				var value = this.value;
+				if ( search_auto || e.keyCode == 13 ) {
+					self.search = value;
+					self.set( {
+						search_value: value
+					} ).goto( 1 );
+				}
+			} );
+		}
 
 		return self;
 	};
@@ -424,7 +483,7 @@
 
 			self.set( {data: data} );
 
-			self.data_size = data_size;
+			self.ajax_data_size = data_size;
 			self.data = data;
 
 			self.xhr_data[xhr_key] = data;
@@ -457,16 +516,41 @@
 			sort_type = self.get( 'sort_type' ),
 			ajax = self.get( 'ajax' ),
 			ajax_per_page = ajax && typeof ajax.url === "function",
-			sorted_data, filtered_data;
+			sorted_data, filtered_data, result_data;
 
 		if ( !ajax || (!ajax_per_page && _.size( self.data ) == self.data_size) ) {
-			filtered_data = self.filterData( data );
-			sorted_data = self.sortData( filtered_data, sort_by, sort_type );
+			sorted_data = self.sortData( data, sort_by, sort_type );
+			filtered_data = self.filterData( sorted_data );
+			result_data = self.searchData( filtered_data, self.search );
 		} else {
-			sorted_data = self.getAJAXData();
+			result_data = self.getAJAXData();
 		}
 
-		return sorted_data;
+		return result_data;
+	};
+
+
+	t_proto.searchData = function ( data, search ){
+		data = data || this.getData();
+		search = search || this.search;
+		var self = this,
+			new_data;
+
+		if ( !search ) {
+			return data;
+		}
+
+		new_data = _.filter( data, function ( row ){
+			var results = 0;
+			_.each( row, function ( item ){
+				if ( (_.isObject( item ) && _.contains( item.value, search )) || _.contains( item, search ) ) {
+					results += 1;
+				}
+			} );
+			return results > 0;
+		} );
+		self.search_data = new_data;
+		return new_data;
 	};
 
 	t_proto.filterData = function ( data ){
