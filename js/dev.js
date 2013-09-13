@@ -56,8 +56,8 @@ $( document ).ready( function (){
 		dataType: 'json',
 		success : function ( result ){
 			result.projects.formatter = {
-				"3": function (){
-					return this == 'work' || this == 'opensource' ? '<b>' + this + '</b>' : this;
+				"3": function ( value ){
+					return value == 'work' || value == 'opensource' ? '<b>' + value + '</b>' : value;
 				}
 			};
 			ttt.table_id = new tTable( result.projects );
@@ -99,8 +99,8 @@ $( document ).ready( function (){
 		},
 		ajax       : {
 			dataType    : 'json',
-			url         : function ( from, limit, sort_by, sort_type, search ){
-				return 'php/ajax.php?limit=' + from + ',' + limit + '&sort_by=' + sort_by + '&sort_type=' + sort_type + '&search=' + search;
+			url         : function ( from, limit, sort_by, sort_type, search, sensitive ){
+				return 'php/ajax.php?limit=' + from + ',' + limit + '&sort_by=' + sort_by + '&sort_type=' + sort_type + '&search=' + search + '&sensitive=' + sensitive;
 			},
 			//	url : 'php/ajax.php',
 			prepare_data: function ( response ){
@@ -113,11 +113,11 @@ $( document ).ready( function (){
 			}
 		},
 
-		"search"               : true,
-		"search_auto"          : false,
-		"search_container"     : "#ajax_table_id_search",
-		"search_case_sensitive": false,
-		"search_value"         : ""
+		"search"          : true,
+		"search_auto"     : false,
+		"search_container": "#ajax_table_id_search",
+		"search_sensitive": false,
+		"search_value"    : ""
 	} );
 
 	/*

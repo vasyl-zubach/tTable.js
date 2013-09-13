@@ -21,11 +21,11 @@
 		prefix     : {},
 		suffix     : {},
 
-		search               : false,
-		search_auto          : true,
+		search          : false,
+		search_auto     : true,
 		// search_container : "",
-		search_case_sensitive: false,
-		search_value         : "",
+		search_sensitive: false,
+		search_value    : "",
 
 		data  : [],
 		titles: []
@@ -276,7 +276,7 @@
 			goto_available = self.get( 'goto' ),
 			pages_available = self.get( 'show_pages' ),
 			page = parseInt( self.get( 'start_page' ), 10 ),
-			pager_str = '',
+			pager_str,
 			pages_count, get_pages, pager;
 
 		if ( !page_size ) {
@@ -360,7 +360,7 @@
 		pager_str = pager.top + pager.arrows + pager.pages + pager.page_size + pager.goto + pager.bottom;
 
 		self.$pager.html( pager_str );
-		self.pagerEvents();
+		self.bindEvents();
 		return self;
 	};
 
@@ -376,87 +376,126 @@
 		return max > 0 ? max : 1;
 	};
 
-	t_proto.pagerEvents = function (){
-		var self = this;
+	t_proto.bindEvents = function (){
+		var self = this,
+			evnts = {
+				nav_arrows: function (){
+					self.$pager.off( 'click', '.table-pager-arrows-prev' ).on( 'click', '.table-pager-arrows-prev', function ( e ){
+						e.preventDefault();
+						self.goto( self.get( 'start_page' ) - 1 );
+						return false;
+					} );
+					self.$pager.off( 'click', '.table-pager-arrows-next' ).on( 'click', '.table-pager-arrows-next', function ( e ){
+						e.preventDefault();
+						self.goto( self.get( 'start_page' ) + 1 );
+						return false;
+					} );
+				},
+
+				pagination: function (){
+					self.$pager.off( 'click', '.table-pager-pages-item' ).on( 'click', '.table-pager-pages-item', function ( e ){
+						e.preventDefault();
+						if ( $( e.target ).hasClass( 'table-pager-pages-item__on' ) ) {
+							return false;
+						}
+						self.goto( $( this ).data( 'goto' ) );
+						return false;
+					} );
+				},
+
+				goto: function (){
+					self.$pager.off( 'keypress', '.table-pager-goto' ).on( 'keypress', '.table-pager-goto', function ( e ){
+						if ( e.keyCode == 13 ) {
+							e.preventDefault();
+							self.goto( $( this ).val() );
+							return false;
+						}
+					} );
+				},
+
+				page_sizes: function (){
+					self.$pager.off( 'change', '.table-pager-page_size' ).on( 'change', '.table-pager-page_size', function ( e ){
+						e.preventDefault();
+						self.set( {
+							page_size: parseInt( $( this ).val(), 10 )
+						} ).goto( 1 );
+						return false;
+					} );
+				},
+
+				sorting: function (){
+					self.$el.off( 'click', '.table-sorting' ).on( 'click', '.table-sorting', function ( e ){
+						e.preventDefault();
+						var $this = $( this ),
+							was_sorted_by = self.get( 'sort_by' ),
+							sort_by = $this.data( 'sort_by' ),
+							sort_type = $this.data( 'sort_type' ) ,
+							reverse_sort_type = sort_type == 'asc' ? 'desc' : 'asc';
+						self.set( {
+							sort_by  : sort_by,
+							sort_type: was_sorted_by == sort_by ? reverse_sort_type : sort_type
+						} ).goto( 1 );
+						return false;
+					} );
+				},
+
+				search: function (){
+					var search_auto = self.get( 'search_auto' ),
+						search_event = search_auto ? 'input keypress' : 'keypress',
+						search_sensitive = self.get( 'search_sensitive' );
+
+					self.$search.off( search_event, '.table-search-input' ).on( search_event, '.table-search-input', function ( e ){
+						var value = this.value;
+						if ( !search_sensitive ) {
+							value = value.toLowerCase();
+						}
+						if ( (search_auto || e.keyCode == 13) && self.search != value ) {
+							self.search = value;
+							self.set( {
+								search_value: value
+							} ).goto( 1 );
+						}
+					} );
+
+					self.$search.off( 'blur', '.table-search-input' ).on( 'blur', '.table-search-input', function ( e ){
+						var value = this.value;
+						if ( !search_sensitive ) {
+							value = value.toLowerCase();
+						}
+						if ( self.search != value ) {
+							self.search = value;
+							self.set( {
+								search_value: value
+							} ).goto( 1 );
+						}
+					} );
+
+				}
+			};
 
 		if ( self.get( 'nav_arrows' ) ) {
-			self.$pager.off( 'click', '.table-pager-arrows-prev' ).on( 'click', '.table-pager-arrows-prev', function ( e ){
-				e.preventDefault();
-				self.goto( self.get( 'start_page' ) - 1 );
-				return false;
-			} );
+			evnts.nav_arrows();
 		}
 
-		self.$pager.off( 'click', '.table-pager-arrows-next' ).on( 'click', '.table-pager-arrows-next', function ( e ){
-			e.preventDefault();
-			self.goto( self.get( 'start_page' ) + 1 );
-			return false;
-		} );
-
 		if ( self.get( 'show_pages' ) ) {
-			self.$pager.off( 'click', '.table-pager-pages-item' ).on( 'click', '.table-pager-pages-item', function ( e ){
-				e.preventDefault();
-				if ( $( e.target ).hasClass( 'table-pager-pages-item__on' ) ) {
-					return false;
-				}
-				self.goto( $( this ).data( 'goto' ) );
-				return false;
-			} );
+			evnts.pagination();
 		}
 
 		if ( self.get( 'goto' ) ) {
-			self.$pager.off( 'keypress', '.table-pager-goto' ).on( 'keypress', '.table-pager-goto', function ( e ){
-				if ( e.keyCode == 13 ) {
-					e.preventDefault();
-					self.goto( $( this ).val() );
-					return false;
-				}
-			} );
+			evnts.goto();
 		}
 
 		if ( !!self.get( 'page_sizes' ) ) {
-			self.$pager.off( 'change', '.table-pager-page_size' ).on( 'change', '.table-pager-page_size', function ( e ){
-				e.preventDefault();
-				self.set( {
-					page_size: parseInt( $( this ).val(), 10 )
-				} ).goto( 1 );
-				return false;
-			} );
+			evnts.page_sizes();
 		}
 
 		if ( self.get( 'sorting' ) ) {
-			self.$el.off( 'click', '.table-sorting' ).on( 'click', '.table-sorting', function ( e ){
-				e.preventDefault();
-				var $this = $( this ),
-					was_sorted_by = self.get( 'sort_by' ),
-					sort_by = $this.data( 'sort_by' ),
-					sort_type = $this.data( 'sort_type' ) ,
-					reverse_sort_type = sort_type == 'asc' ? 'desc' : 'asc';
-
-				self.set( {
-					sort_by  : sort_by,
-					sort_type: was_sorted_by == sort_by ? reverse_sort_type : sort_type
-				} ).goto( 1 );
-				return false;
-			} );
+			evnts.sorting();
 		}
 
 		if ( self.get( 'search' ) ) {
-			//			self.$search.off( 'keypress', '.table-search-input' ).on( 'keypress', '.table-search-input', function ( e ){
-			var search_auto = self.get( 'search_auto' ),
-				search_event = self.get( 'search_auto' ) ? 'input' : 'keypress';
-
-			self.$search.off( search_event, '.table-search-input' ).on( search_event, '.table-search-input', function ( e ){
-				var value = this.value;
-				if ( search_auto || e.keyCode == 13 ) {
-					self.search = value;
-					self.set( {
-						search_value: value
-					} ).goto( 1 );
-				}
-			} );
+			evnts.search();
 		}
-
 		return self;
 	};
 
@@ -472,6 +511,7 @@
 			ajax = self.get( 'ajax' ),
 			ajax_per_page = typeof ajax.url === "function",
 			search = self.search,
+			search_sensitive = self.get( 'search_sensitive' ).toString(),
 			xhr_key = from.toString() + page_size.toString() + sort_key.toString() + sort_type.toString() + search,
 			new_data,
 			ajax_config = _.cloneDeep( ajax );
@@ -479,7 +519,7 @@
 		from = (from < 0) ? 0 : from;
 
 		if ( ajax_per_page ) {
-			ajax_config.url = ajax.url( from, page_size, sort_key, sort_type, search );
+			ajax_config.url = ajax.url( from, page_size, sort_key, sort_type, search, search_sensitive );
 		}
 
 		ajax_config.success = function ( response ){
@@ -544,7 +584,8 @@
 		data = data || this.getData();
 		search = search || this.search;
 		var self = this,
-			new_data;
+			new_data,
+			search_sensitive = self.get( 'search_sensitive' );
 
 		if ( !search ) {
 			return data;
@@ -552,8 +593,19 @@
 		new_data = _.filter( data, function ( row ){
 			var results = 0;
 			_.each( row, function ( item ){
-				if ( (_.isObject( item ) && _.contains( item.value, search )) || _.contains( item, search ) ) {
-					results += 1;
+				if ( search_sensitive ) {
+					if ( (_.isObject( item ) && _.contains( item.value, search )) || _.contains( item, search ) ) {
+						results += 1;
+					}
+				} else {
+
+					if ( _.isObject( item ) ) {
+						if ( item.value.toLowerCase().indexOf( search ) !== -1 ) {
+							results += 1;
+						}
+					} else if ( item.indexOf( search ) !== -1 ) {
+						results += 1;
+					}
 				}
 			} );
 			return results > 0;
@@ -581,7 +633,7 @@
 					if ( !_.isObject( item ) ) {
 						data[i][col] = {
 							value    : item,
-							formatted: formatter[key].apply( item )
+							formatted: formatter[key]( item )
 						};
 					}
 				}
