@@ -36,7 +36,14 @@
 			["_v_.js", "<a href='http://tjrus.github.io/_v_.js'>_v_.js</a>", "opensource"],
 			["tFormer.js", "<a href='http://tformerjs.com/'>tFormer.js</a>", "opensource"]
 		],
-		"container"  : "#table_id",
-		"pager"      : "#table_id_pager"
+
+		"search"               : true,
+		"search_auto"          : false,
+		"search_container"     : "#table_id_search",
+		"search_case_sensitive": false,
+		"search_value"         : "",
+
+		"container": "#table_id",
+		"pager"    : "#table_id_pager"
 	}
 }
