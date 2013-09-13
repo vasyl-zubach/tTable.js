@@ -93,8 +93,8 @@ $( document ).ready( function (){
 		sorting    : [1, 3],
 		row_numbers: true,
 		formatter  : {
-			"3": function (){
-				return this == 'work' || this == 'opensource' ? '<b>' + this + '</b>' : this;
+			"3": function (value){
+				return value == 'work' || value == 'opensource' ? '<b>' + value + '</b>' : value;
 			}
 		},
 		ajax       : {
