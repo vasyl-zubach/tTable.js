@@ -1,14 +1,7 @@
 <?php
-
-$limit = $_GET['limit'];
-
-$sort_by = $_GET['sort_by'];
-$sort_type = $_GET['sort_type'];
-if (!isset($sort_type)) {
-	$sort_type = "asc";
-}
-
-sleep(1);
+// set json headers
+header('Content-type: text/json');
+header('Content-type: application/json');
 
 $data_array = array(
 	array("name" => "DevMate", "link" => "<a href='http://devmate.com'>DevMate</a>", "type" => "work"),
@@ -27,6 +20,19 @@ $data_array = array(
 	array("name" => "tFormer.js", "link" => "<a href='http://tformerjs.com/'>tFormer.js</a>", "type" => "opensource")
 );
 
+
+// our output params
+$limit = $_GET['limit'];
+$sort_by = $_GET['sort_by'];
+$sort_type = $_GET['sort_type'];
+if (!isset($sort_type)) {
+	$sort_type = "asc";
+}
+$search = $_GET['search'];
+
+sleep(1); // response delay
+
+// data sorting
 $data = array();
 foreach ($data_array as $k => $v) {
 	$data['name'][$k] = $v['name'];
@@ -38,15 +44,37 @@ if ($sort_by) {
 	array_multisort($data[$sort_by], $sort_type == "asc" ? SORT_ASC : SORT_DESC, $data_array);
 }
 
+// here goes searching in array
+if (isset($search) && !empty($search)) {
+	$new_data_array = array();
+	foreach ($data_array as $row) {
+		$search_result = 0;
+		foreach ($row as $col) {
+			if (strpos($col, $search) !== false){
+				$search_result++;
+			}
+		}
+		if ($search_result > 0){
+			$new_data_array[] = $row;
+		}
+//		if (in_array($search, $row, false)) {
+//
+//		}
+	}
+	$data_array = $new_data_array;
+}
+//$data_array = $data_array;
+
+
+// cut the data in the limit
 if (isset($limit)) {
 	$limit = explode(",", $limit);
 	$result = array_slice($data_array, $limit[0], $limit[1]);
 } else {
 	$result = $data_array;
 }
-header('Content-type: text/json');
-header('Content-type: application/json');
 
+// return our json
 echo json_encode(array(
 	"data" => $result,
 //	"data" => [],

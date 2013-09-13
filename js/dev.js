@@ -99,10 +99,10 @@ $( document ).ready( function (){
 		},
 		ajax       : {
 			dataType    : 'json',
-			url         : function ( from, limit, sort_by, sort_type ){
-				return 'php/ajax.php?limit=' + from + ',' + limit + '&sort_by=' + sort_by + '&sort_type=' + sort_type;
+			url         : function ( from, limit, sort_by, sort_type, search ){
+				return 'php/ajax.php?limit=' + from + ',' + limit + '&sort_by=' + sort_by + '&sort_type=' + sort_type + '&search=' + search;
 			},
-			//			url         : 'php/ajax.php',
+			//	url : 'php/ajax.php',
 			prepare_data: function ( response ){
 				return _.map( response.data, function ( item ){
 					return _.toArray( item );
@@ -111,36 +111,42 @@ $( document ).ready( function (){
 			full_size   : function ( response ){
 				return response.count;
 			}
-		}
-	} );
-
-/*
-	ttt.long = new tTable( {
-		titles       : [
-			{
-				"title": "String",
-				"type" : "string"
-			},
-			{
-				"title": "Number",
-				"type" : "number"
-			}
-		],
-		"page_size"  : 10,
-		"start_page" : 1,
-		"row_numbers": true,
-		"sort_by"    : 1,
-		"sorting"    : true,
-		"data"       : fake_data,
-		"container"  : "#long_table_id",
-		"pager"      : "#long_table_id_pager",
-		page_sizes   : [10, 25, 50, 100, 250, 500],
+		},
 
 		"search"               : true,
-		"search_auto"          : true,
-		"search_container"     : "#long_table_id_search",
+		"search_auto"          : false,
+		"search_container"     : "#ajax_table_id_search",
 		"search_case_sensitive": false,
 		"search_value"         : ""
 	} );
-*/
+
+	/*
+	 ttt.long = new tTable( {
+	 titles       : [
+	 {
+	 "title": "String",
+	 "type" : "string"
+	 },
+	 {
+	 "title": "Number",
+	 "type" : "number"
+	 }
+	 ],
+	 "page_size"  : 10,
+	 "start_page" : 1,
+	 "row_numbers": true,
+	 "sort_by"    : 1,
+	 "sorting"    : true,
+	 "data"       : fake_data,
+	 "container"  : "#long_table_id",
+	 "pager"      : "#long_table_id_pager",
+	 page_sizes   : [10, 25, 50, 100, 250, 500],
+
+	 "search"               : true,
+	 "search_auto"          : true,
+	 "search_container"     : "#long_table_id_search",
+	 "search_case_sensitive": false,
+	 "search_value"         : ""
+	 } );
+	 */
 } );
