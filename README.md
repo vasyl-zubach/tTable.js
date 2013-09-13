@@ -20,6 +20,7 @@ Features
  - Count totals;
  - Data output formaters;
  - Receiving pages data with AJAX for each page;
+ - Search;
 
 
 TODO:
@@ -28,9 +29,9 @@ TODO:
  - Column metrics;
  - Infinit scroll (also with AJAX);
  - Events;
- - Search;
 
-Will try to implement this features :)
+
+Working on them :)
 
 =========
 
