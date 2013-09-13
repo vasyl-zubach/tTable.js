@@ -91,7 +91,7 @@
 		if ( self.get( 'search' ) ) {
 			self.search = self.get( 'search_value' );
 			self.$search = $( self.get( 'search_container' ) );
-			self.addSearch();
+			self.renderSearch();
 			if ( self.search ) {
 				self.searchData();
 			}
@@ -117,7 +117,7 @@
 		return self;
 	};
 
-	t_proto.addSearch = function (){
+	t_proto.renderSearch = function (){
 		var self = this,
 			search_value = self.get( 'search_value' );
 
@@ -128,7 +128,7 @@
 		return self;
 	};
 
-	t_proto.update = function (){
+	t_proto.renderTable = function (){
 		var self = this,
 			html = {},
 			html_str;
@@ -159,23 +159,6 @@
 		return self;
 	};
 
-	t_proto.dataSize = function (){
-		var self = this,
-			data = self.getData(),
-			ajax = self.get( 'ajax' ) || {},
-			ajax_per_page = typeof ajax.url === "function",
-			size = 0;
-
-		if ( ajax_per_page ) {
-			size = self.ajax_data_size;
-		} else if ( self.search ) {
-			size = _.size( self.search_data );
-		} else {
-			size = _.size( self.data );
-		}
-
-		return size > 0 ? size : 0;
-	};
 
 	t_proto.__tableHeadHTML = function (){
 		var self = this,
@@ -364,18 +347,6 @@
 		return self;
 	};
 
-	t_proto.countPages = function (){
-		var self = this,
-			data_length = self.dataSize(),
-			page_size = self.get( 'page_size' ),
-			max = data_length / page_size,
-			max_rounded = Math.floor( max );
-
-		max = max_rounded < max ? max_rounded + 1 : max;
-		self.pages_count = max;
-		return max > 0 ? max : 1;
-	};
-
 	t_proto.bindEvents = function (){
 		var self = this,
 			evnts = {
@@ -499,6 +470,36 @@
 		return self;
 	};
 
+
+	t_proto.countPages = function (){
+		var self = this,
+			data_length = self.dataSize(),
+			page_size = self.get( 'page_size' ),
+			max = data_length / page_size,
+			max_rounded = Math.floor( max );
+
+		max = max_rounded < max ? max_rounded + 1 : max;
+		self.pages_count = max;
+		return max > 0 ? max : 1;
+	};
+
+	t_proto.dataSize = function (){
+		var self = this,
+			data = self.getData(),
+			ajax = self.get( 'ajax' ) || {},
+			ajax_per_page = typeof ajax.url === "function",
+			size = 0;
+
+		if ( ajax_per_page ) {
+			size = self.ajax_data_size;
+		} else if ( self.search ) {
+			size = _.size( self.search_data );
+		} else {
+			size = _.size( self.data );
+		}
+
+		return size > 0 ? size : 0;
+	};
 
 	t_proto.getAJAXData = function (){
 		var self = this,
@@ -782,15 +783,18 @@
 
 		var self = this,
 			page_size = self.get( 'page_size' ),
-			max_pages = self.countPages();
+			max_pages = self.countPages(),
+			set_updates = {},
+			key = 'start_page';
 
 		if ( page <= max_pages && page > 0 ) {
-			self.set( {start_page: page} ).update();
+			set_updates[key] = page;
 		} else if ( page <= 0 ) {
-			self.set( {start_page: 1} ).update();
+			set_updates[key] = 1;
 		} else {
-			self.set( {start_page: max_pages} ).update();
+			set_updates[key] = max_pages;
 		}
+		self.set( set_updates ).renderTable();
 		return self;
 	};
 
