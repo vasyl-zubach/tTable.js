@@ -29,6 +29,8 @@ if (!isset($sort_type)) {
 	$sort_type = "asc";
 }
 $search = $_GET['search'];
+$sensitive = $_GET['sensitive'];
+
 
 sleep(1); // response delay
 
@@ -50,21 +52,21 @@ if (isset($search) && !empty($search)) {
 	foreach ($data_array as $row) {
 		$search_result = 0;
 		foreach ($row as $col) {
-			if (strpos($col, $search) !== false){
+			if ($sensitive == 'false') {
+				$col = strtolower($col);
+				$search = strtolower($search);
+			}
+
+			if (strpos($col, $search) !== false) {
 				$search_result++;
 			}
 		}
-		if ($search_result > 0){
+		if ($search_result > 0) {
 			$new_data_array[] = $row;
 		}
-//		if (in_array($search, $row, false)) {
-//
-//		}
 	}
 	$data_array = $new_data_array;
 }
-//$data_array = $data_array;
-
 
 // cut the data in the limit
 if (isset($limit)) {
