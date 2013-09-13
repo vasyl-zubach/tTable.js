@@ -37,11 +37,11 @@
 			["tFormer.js", "<a href='http://tformerjs.com/'>tFormer.js</a>", "opensource"]
 		],
 
-		"search"               : true,
-		"search_auto"          : false,
-		"search_container"     : "#table_id_search",
-		"search_case_sensitive": false,
-		"search_value"         : "",
+		"search"          : true,
+		"search_auto"     : true,
+		"search_container": "#table_id_search",
+		"search_sensitive": false,
+		"search_value"    : "",
 
 		"container": "#table_id",
 		"pager"    : "#table_id_pager"
