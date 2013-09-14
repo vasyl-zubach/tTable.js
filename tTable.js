@@ -23,6 +23,8 @@
 
 		hover_cols: false,
 
+		hidden_cols: [],
+
 		search          : false,
 		search_auto     : true,
 		// search_container : "",
@@ -175,6 +177,7 @@
 			sort_type = self.get( 'sort_type' ),
 			str = self.html.header || '',
 			hover_cols = self.get( 'hover_cols' ),
+			hidden_cols = self.get( 'hidden_cols' ),
 			colgroups = 0;
 
 		if ( !str ) {
@@ -191,19 +194,23 @@
 		_.each( titles, function ( item, iterator ){
 			var sorting_html = '',
 				column_num = iterator + 1;
-			colgroups += 1;
-			if ( sorting === true || _.contains( sorting, column_num ) ) {
-				sorting_html = _.template( self.tpl.sorting, {
-					sort_by       : column_num,
-					sort_type     : sort_type,
-					is_sort_column: sorted_by == column_num
+
+			if ( !hidden_cols || hidden_cols.indexOf( column_num ) === -1 ) {
+				colgroups += 1;
+
+				if ( sorting === true || _.contains( sorting, column_num ) ) {
+					sorting_html = _.template( self.tpl.sorting, {
+						sort_by       : column_num,
+						sort_type     : sort_type,
+						is_sort_column: sorted_by == column_num
+					} );
+				}
+				str += _.template( self.tpl.coll, {
+					data: {
+						html: item.title + sorting_html
+					}
 				} );
 			}
-			str += _.template( self.tpl.coll, {
-				data: {
-					html: item.title + sorting_html
-				}
-			} );
 		} );
 
 		str = _.template( self.tpl.row, {
@@ -214,7 +221,8 @@
 			str = Array( colgroups + 1 ).join( self.tpl.colgroup ) + str;
 		}
 		return str;
-	};
+	}
+	;
 
 	t_proto.__tableBodyHTML = function (){
 		var self = this,
@@ -226,7 +234,8 @@
 			suffix = self.get( 'suffix' ),
 			num = page_size * (start_page - 1) + 1,
 			is_row_numbers = self.get( 'row_numbers' ),
-			rows_data = self.getPageData();
+			rows_data = self.getPageData(),
+			hidden_cols = self.get( 'hidden_cols' );
 
 		_.each( rows_data, function ( row ){
 			var row_html = '';
@@ -235,20 +244,23 @@
 				num++;
 			}
 			_.each( row, function ( item, iterator ){
+
 				var value = !_.isObject( item ) ? item : item.formatted,
 					row_id = iterator + (is_row_numbers ? 0 : 1);
 
-				if ( prefix[row_id] ) {
-					value = prefix[row_id] + value;
-				}
-				if ( suffix[row_id] ) {
-					value = value + suffix[row_id];
-				}
-				row_html += _.template( self.tpl.coll, {
-					data: {
-						html: value
+				if ( !hidden_cols || hidden_cols.indexOf( row_id ) === -1 ) {
+					if ( prefix[row_id] ) {
+						value = prefix[row_id] + value;
 					}
-				} );
+					if ( suffix[row_id] ) {
+						value = value + suffix[row_id];
+					}
+					row_html += _.template( self.tpl.coll, {
+						data: {
+							html: value
+						}
+					} );
+				}
 			} );
 			str += _.template( self.tpl.row, {
 				className: '',
