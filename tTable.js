@@ -107,6 +107,31 @@
 		return self;
 	};
 
+	t_proto.destroy = function (){
+		var self = this;
+		if ( self.$search ) {
+			self.$search
+				.off( 'input keypress blur', '.table-search-input' );
+			self.$search.empty();
+		}
+		if ( self.$el ) {
+			self.$el
+				.off( 'click', '.table-sorting' );
+			self.$el.undelegate( 'td', 'mouseover mouseleave' );
+			self.$el.empty();
+		}
+		if ( self.$pager ) {
+			self.$pager
+				.off( 'click', '.table-pager-arrows-prev' )
+				.off( 'click', '.table-pager-arrows-next' )
+				.off( 'click', '.table-pager-pages-item' )
+				.off( 'keypress', '.table-pager-goto' )
+				.off( 'change', '.table-pager-page_size' );
+			self.$pager.empty();
+		}
+		return self;
+	};
+
 	t_proto.get = function ( what ){
 		var self = this,
 			val;
