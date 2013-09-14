@@ -93,7 +93,7 @@ $( document ).ready( function (){
 		sorting    : [1, 3],
 		row_numbers: true,
 		formatter  : {
-			"3": function (value){
+			"3": function ( value ){
 				return value == 'work' || value == 'opensource' ? '<b>' + value + '</b>' : value;
 			}
 		},

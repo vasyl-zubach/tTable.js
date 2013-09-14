@@ -21,6 +21,8 @@
 		prefix     : {},
 		suffix     : {},
 
+		hover_cols: false,
+
 		search          : false,
 		search_auto     : true,
 		// search_container : "",
@@ -48,10 +50,11 @@
 		top   : "<table>",
 		header: "<tr><%= data.colls || '' %></tr>",
 
-		row    : "<tr class='<%= className %>'><%= colls %></tr>",
-		coll   : "<td><%= data.html || '' %></td>",
-		sorting: '<div class="table-sorting" data-sort_type="<%= sort_type %>" data-sort_by="<%= sort_by %>" <%= is_sort_column ? "data-sort" : "" %>><div class="table-sorting-asc"></div><div class="table-sorting-desc"></div></div>',
-		pager  : {
+		colgroup: '<colgroup></colgroup>',
+		row     : "<tr class='<%= className %>'><%= colls %></tr>",
+		coll    : "<td><%= data.html || '' %></td>",
+		sorting : '<div class="table-sorting" data-sort_type="<%= sort_type %>" data-sort_by="<%= sort_by %>" <%= is_sort_column ? "data-sort" : "" %>><div class="table-sorting-asc"></div><div class="table-sorting-desc"></div></div>',
+		pager   : {
 			wrap_top    : '<div class="table-pager">',
 			arrows      : '<span class="table-pager-arrows"><a href="#" class="table-pager-arrows-prev <%= prev_disabled %>">prev</a><a href="#" class="table-pager-arrows-next <%= next_disabled %>">next</a></span>',
 			pages_top   : '<span class="table-pager-pages">',
@@ -170,10 +173,13 @@
 			sorting = self.get( 'sorting' ),
 			sorted_by = self.get( 'sort_by' ),
 			sort_type = self.get( 'sort_type' ),
-			str = self.html.header || '';
+			str = self.html.header || '',
+			hover_cols = self.get( 'hover_cols' ),
+			colgroups = 0;
 
 		if ( !str ) {
 			if ( is_row_numbers ) {
+				colgroups += 1;
 				str += _.template( self.tpl.coll, {
 					data: {
 						html: num[0].title
@@ -185,6 +191,7 @@
 		_.each( titles, function ( item, iterator ){
 			var sorting_html = '',
 				column_num = iterator + 1;
+			colgroups += 1;
 			if ( sorting === true || _.contains( sorting, column_num ) ) {
 				sorting_html = _.template( self.tpl.sorting, {
 					sort_by       : column_num,
@@ -203,6 +210,9 @@
 			className: 'table-head',
 			colls    : str
 		} );
+		if ( hover_cols ) {
+			str = Array( colgroups + 1 ).join( self.tpl.colgroup ) + str;
+		}
 		return str;
 	};
 
@@ -440,7 +450,24 @@
 							} ).goto( 1 );
 						}
 					} );
+				},
 
+				hover_cols: function (){
+					var $colgroups = self.$el.find( 'colgroup' ),
+						row_numbers = self.get( 'row_numbers' ),
+						hover_cols = self.get( 'hover_cols' );
+
+					self.$el.delegate( 'td', 'mouseover mouseleave', function ( e ){
+						var $this = $( this ),
+							index = $this.index();
+						if ( (!row_numbers || index !== 0) && (_.isArray( hover_cols ) && hover_cols.indexOf( index + (row_numbers ? 0 : 1) ) !== -1) ) {
+							if ( e.type == 'mouseover' ) {
+								$colgroups.eq( index ).addClass( 'table-col-hover' );
+							} else {
+								$colgroups.eq( index ).removeClass( 'table-col-hover' );
+							}
+						}
+					} );
 				}
 			};
 
@@ -467,6 +494,11 @@
 		if ( self.get( 'search' ) ) {
 			evnts.search();
 		}
+
+		if ( self.get( 'hover_cols' ) ) {
+			evnts.hover_cols();
+		}
+
 		return self;
 	};
 

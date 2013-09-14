@@ -8,12 +8,12 @@ html, body {
 }
 
 [contenteditable] {
-	box-shadow: 0 0 1px 1px #000;
-	padding: 0 10px;
+	box-shadow : 0 0 1px 1px #000;
+	padding    : 0 10px;
 }
 
 h1 {
-	line-height: 40px;
+	line-height : 40px;
 }
 
 hr {
@@ -21,7 +21,7 @@ hr {
 	background : #ccc;
 	height     : 1px;
 	overflow   : hidden;
-	margin: 30px 0;
+	margin     : 30px 0;
 }
 
 table {
@@ -43,8 +43,9 @@ table tr:nth-child(2n+1) {
 	background : rgba(0, 0, 0, .03);
 }
 
-table tr:hover {
-	background : rgba(0, 0, 0, .1);
+table tr:hover,
+.table-col-hover {
+	background : #e5e5e5 !important;
 }
 
 table td {

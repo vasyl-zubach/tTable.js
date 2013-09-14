@@ -14,9 +14,9 @@
 				"type" : "string"
 			}
 		],
-		"page_size"  : 2,
+		"page_size"  : 10,
 		"page_sizes" : [2, 5, 10, 15, 25],
-		"start_page" : 2,
+		"start_page" : 1,
 		"row_numbers": true,
 		"sort_by"    : 1,
 		"sorting"    : true,
@@ -44,6 +44,8 @@
 		"search_value"    : "",
 
 		"container": "#table_id",
-		"pager"    : "#table_id_pager"
+		"pager"    : "#table_id_pager",
+
+		"hover_cols": [1, 2]
 	}
 }
