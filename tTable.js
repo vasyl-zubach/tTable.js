@@ -529,19 +529,19 @@
 
 	t_proto.dataSize = function (){
 		var self = this,
-			data = self.getData(),
 			ajax = self.get( 'ajax' ) || {},
 			ajax_per_page = typeof ajax.url === "function",
-			size = 0;
+			size = 0,
+			data;
 
 		if ( ajax_per_page ) {
+			self.getData();
 			size = self.ajax_data_size;
 		} else if ( self.search ) {
 			size = _.size( self.search_data );
 		} else {
-			size = _.size( self.data );
+			size = _.size( self.get( 'data' ) );
 		}
-
 		return size > 0 ? size : 0;
 	};
 
@@ -703,9 +703,8 @@
 		var self = this,
 			titles = self.get( 'titles' ),
 			titles_length = titles.length,
-			sort_by = self.get( 'sort_by' ),
-			sert_data_type = ((sort_by > 0 && sort_by <= titles_length) ? titles[sort_by - 1].type : '').toLowerCase();
-		return sert_data_type;
+			sort_by = self.get( 'sort_by' );
+		return ((sort_by > 0 && sort_by <= titles_length) ? titles[sort_by - 1].type : '').toLowerCase();
 	};
 
 	t_proto.sortData = function ( data, sort_by, sort_type ){
@@ -717,7 +716,10 @@
 			titles = self.get( 'titles' ),
 			titles_length = titles.length,
 			data_type = self.getSortDataType(),
-			cache_key = sort_by.toString() + sort_type.toString(),
+			ajax = self.get( 'ajax' ) || {},
+			ajax_per_page = ajax && typeof ajax.url === "function",
+			data_size = ajax_per_page ? '' : self.dataSize(),
+			cache_key = sort_by.toString() + sort_type.toString() + data_size.toString(),
 			sorted_data = [];
 
 		if ( self.data_cache_key == cache_key ) {
@@ -815,6 +817,106 @@
 	};
 
 
+	t_proto.addRow = function ( row ){
+		var self = this,
+			ajax = self.get( 'ajax' ),
+			ajax_per_page = ajax && typeof ajax.url === "function",
+			data;
+
+		if ( ajax_per_page ) {
+			console.error( 'Error while adding row to ajax per page driven table' );
+			return self;
+		}
+
+		data = self.get( 'data' );
+		data.push( row );
+
+		self.goto( self.get( 'start_page' ) );
+		return self;
+	};
+
+	t_proto.updateRow = function ( update, where ){
+		var self = this,
+			ajax = self.get( 'ajax' ),
+			ajax_per_page = ajax && typeof ajax.url === "function",
+			data,
+			match_size = _.size( where ),
+			data_size;
+
+		if ( ajax_per_page ) {
+			console.error( 'Error while deleting rows from ajax per page driven table' );
+			return self;
+		}
+
+		data = self.get( 'data' );
+		data_size = self.dataSize();
+
+		for ( var row = 0; row < data_size; row++ ) {
+			var match = 0;
+
+			for ( var key in where ) {
+				var col_id = parseInt( key, 10 ) - 1,
+					item = data[row][col_id];
+
+				if ( _.isObject( item ) ) {
+					if ( item.value == where[key] ) {
+						match += 1;
+					}
+				} else if ( item == where[key] ) {
+					match += 1;
+				}
+			}
+
+			if ( match === match_size ) {
+				_.each( update, function ( value, key ){
+					data[row][key - 1] = value;
+				} );
+			}
+		}
+		self.goto( self.get( 'start_page' ) );
+		return self;
+	};
+
+	t_proto.delRow = function ( where ){
+		var self = this,
+			ajax = self.get( 'ajax' ),
+			ajax_per_page = ajax && typeof ajax.url === "function",
+			data,
+			cleaned_data = [],
+			match_size = _.size( where );
+
+		if ( ajax_per_page ) {
+			console.error( 'Error while deleting rows from ajax per page driven table' );
+			return self;
+		}
+
+		data = self.get( 'data' );
+
+		_.each( data, function ( row ){
+			var match = 0
+			_.each( where, function ( value, key ){
+				if ( _.isObject( row[key - 1] ) ) {
+					if ( row[key - 1].value == value ) {
+						match += 1;
+					}
+				} else if ( row[key - 1] == value ) {
+					match += 1;
+				}
+			} );
+			if ( match < match_size ) {
+				cleaned_data.push( row );
+			}
+		} );
+		data = cleaned_data;
+
+		self.set( {data: cleaned_data} );
+		self.data = cleaned_data;
+
+		self.goto( self.get( 'start_page' ) );
+		return self;
+	};
+
+
 	/**
 	 * @param {number} page - page that should be rendered
 	 * @returns {*}
@@ -844,4 +946,5 @@
 
 	window.tTable = tTable;
 
-})( window, document );
+})
+	( window, document );

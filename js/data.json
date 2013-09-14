@@ -14,7 +14,7 @@
 				"type" : "string"
 			}
 		],
-		"page_size"  : 10,
+		"page_size"  : 2,
 		"page_sizes" : [2, 5, 10, 15, 25],
 		"start_page" : 1,
 		"row_numbers": true,
