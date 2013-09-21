@@ -1,41 +1,77 @@
 /* Code highlight */
 
 /* ----------------------------------------- */
-code .str { color : #a0a019; }
-code .kwd { color : #9faa6f; }
-code .com { color : #686c75; }
-code .typ { color : #606; }
-code .lit { color : #8250e6; }
-code .pun,
-code .opn,
-code .clo { color : #2e2e2e; }
-code .tag { color : #f386ac; }
-code .atn { color : #9fd0ec; }
-code .atv { color : #dcc175; }
-code .dec,
-code .var { color : #606; }
-code .fun { color : red; }
 
-code .pln { color : #48484C !important; }
-code .str { color : #DD1144 !important; }
-code .kwd { color : #1E347B !important; }
-code .com { color : #93A1A1 !important; }
-code .typ { color : teal !important; }
-code .lit { color : #195F91 !important; }
-code .pun { color : #93A1A1 !important; }
-code .opn { color : #93A1A1 !important; }
-code .clo { color : #93A1A1 !important; }
-code .tag { color : #008 !important; }
-code .atn { color : teal !important; }
-code .atv { color : #DD1144 !important; }
-code .dec { color : teal !important; }
-code .var { color : teal !important; }
-code .fun { color : #DC322F !important; }
+code .pln {
+	color : #48484c;
+}
+
+code .str {
+	color : #d14;
+}
+
+code .kwd {
+	color : #1e347b;
+}
+
+code .com {
+	color : #93a1a1;
+}
+
+code .typ {
+	color : teal;
+}
+
+code .lit {
+	color : #195f91;
+}
+
+code .pun {
+	color : #93a1a1;
+}
+
+code .opn {
+	color : #93a1a1;
+}
+
+code .clo {
+	color : #93a1a1;
+}
+
+code .tag {
+	color : #008;
+}
+
+code .atn {
+	color : teal;
+}
+
+code .atv {
+	color : #d14;
+}
+
+code .dec {
+	color : teal;
+}
+
+code .var {
+	color : teal;
+}
+
+code .fun {
+	color : #dc322f;
+}
 
 /* ----------------------------------------- */
 
-code ol { margin : 0; padding : 0; }
-code ol li { list-style : none; }
+code ol {
+	margin  : 0;
+	padding : 0;
+}
+
+code ol li {
+	list-style : none;
+}
 
 /* ----------------------- */
 code .linenums {
@@ -68,8 +104,8 @@ code .linenums li:before {
 	text-align        : right;
 	display           : block;
 	width             : 25px;
-	font-size         : 11px;
-	line-height       : 20px;
+	font-size         : 10px;
+	line-height       : 18px;
 	color             : #ccc;
 }
 
@@ -81,7 +117,7 @@ code {
 	width       : auto;
 	font-family : Lucida Console, Monaco, Andale Mono, "MS Gothic", monospace;
 	display     : inline;
-	font-size   : 13px !important;
+	font-size   : 12px !important;
 	color       : #50535a;
 	border-left : 1px #ddd solid;
 }
@@ -122,7 +158,7 @@ pre {
 	overflow    : hidden;
 	box-shadow  : 0 0 0 1px #e8e8e8;
 	display     : block;
-	line-height : 20px;
+	line-height : 18px;
 	background  : #f5f5f5;
 	/*margin      : 0 -30px;*/
 	padding     : 0 0 0 30px !important;

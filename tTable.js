@@ -7,34 +7,57 @@
 
 (function ( window, document, undefined ){
 
+
+	/**
+	 * Table defaults
+	 * @type {{page: number, show_pages: boolean, page_sizes: Array, page_size: number, row_numbers: boolean, nav_arrows: boolean, goto: boolean, sort_by: number, sorting: boolean, sort_type: string, prefix: {}, suffix: {}, hover_cols: boolean, hidden_cols: Array, search: boolean, search_auto: boolean, search_sensitive: boolean, search_value: string, data: Array, titles: Array}}
+	 */
 	var defaults = {
-		start_page : 1,
-		show_pages : true,
-		page_sizes : [10, 25, 50],
-		page_size  : 10,
+		container: null,
+		titles   : [],
+		data     : [],
+
 		row_numbers: false,
-		nav_arrows : true,
-		goto       : true,
-		sort_by    : 0,
-		sorting    : true,
-		sort_type  : 'asc',
-		prefix     : {},
-		suffix     : {},
 
-		hover_cols: false,
+		pager     : null,
+		page      : 1,
+		show_pages: true,
+		page_size : 10,
+		page_sizes: [10, 25, 50],
+		nav_arrows: true,
+		goto      : true,
 
+		sort_by  : 0,
+		sorting  : true,
+		sort_type: 'asc',
+
+		prefix   : {},
+		suffix   : {},
+		formatter: null,
+
+		hover_cols : false,
 		hidden_cols: [],
 
+		search_container: null,
 		search          : false,
 		search_auto     : true,
-		// search_container : "",
 		search_sensitive: false,
 		search_value    : "",
 
-		data  : [],
-		titles: []
+		ajax: null
+
+		// todo:
+		//		filter: {
+		//			"3": "git"
+		//		},
 	};
 
+
+	/**
+	 * Constructor
+	 * @param config
+	 * @returns {*}
+	 */
 	var tTable = function ( config ){
 		if ( !(this instanceof tTable) ) {
 			return new tTable( config );
@@ -48,8 +71,9 @@
 	var t_proto = tTable.prototype;
 	t_proto.cache = [];
 
+	// TODO: move tpl
 	t_proto.tpl = {
-		top   : "<table>",
+		top   : "<table class='tTable'>",
 		header: "<tr><%= data.colls || '' %></tr>",
 
 		colgroup: '<colgroup></colgroup>',
@@ -75,13 +99,21 @@
 
 		bottom: "</table>"
 	};
+
+	// TODO: move caching HTML
 	t_proto.html = {
 
 	};
 
 
+	/**
+	 * Initialize table
+	 * @param {object} config - table config
+	 * @returns {*}
+	 */
 	t_proto.init = function ( config ){
-		var self = this;
+		var self = this,
+			ajax;
 		self.config = _.extend( self.config, config );
 		self.$el = $( self.get( 'container' ) );
 		self.$pager = $( self.get( 'pager' ) );
@@ -93,6 +125,12 @@
 
 		self.loading = false;
 
+		ajax = self.get( 'ajax' );
+
+		if ( ajax && typeof ajax.url == 'string' && !self.ajax_data_size ) {
+			self.getAJAXData();
+		}
+
 		if ( self.get( 'search' ) ) {
 			self.search = self.get( 'search_value' );
 			self.$search = $( self.get( 'search_container' ) );
@@ -102,11 +140,16 @@
 			}
 		}
 
-		self.goto( self.get( 'start_page' ) );
+		self.goto( self.get( 'page' ) );
 
 		return self;
 	};
 
+
+	/**
+	 * Destroy table - remove events and DOM objects
+	 * @returns {*}
+	 */
 	t_proto.destroy = function (){
 		var self = this;
 		if ( self.$search ) {
@@ -132,6 +175,12 @@
 		return self;
 	};
 
+
+	/**
+	 * Get table property value
+	 * @param {string} what - table property name
+	 * @returns {*}
+	 */
 	t_proto.get = function ( what ){
 		var self = this,
 			val;
@@ -139,6 +188,13 @@
 		val = self.config[what];
 		return val;
 	};
+
+
+	/**
+	 * Update you table properties
+	 * @param {object} what - { property : new_value, ....}
+	 * @returns {*}
+	 */
 	t_proto.set = function ( what ){
 		var self = this;
 		for ( var key in what ) {
@@ -147,6 +203,11 @@
 		return self;
 	};
 
+
+	/**
+	 * Render search field
+	 * @returns {*}
+	 */
 	t_proto.renderSearch = function (){
 		var self = this,
 			search_value = self.get( 'search_value' );
@@ -158,6 +219,11 @@
 		return self;
 	};
 
+
+	/**
+	 * Update table viewport
+	 * @returns {*}
+	 */
 	t_proto.renderTable = function (){
 		var self = this,
 			html = {},
@@ -186,10 +252,16 @@
 		}
 		self.$el.html( html_str );
 		self.updatePager(); // update pager;
+		self.bindEvents();
 		return self;
 	};
 
 
+	/**
+	 * Gethering table head HTML
+	 * @returns {*|string}
+	 * @private
+	 */
 	t_proto.__tableHeadHTML = function (){
 		var self = this,
 			is_row_numbers = self.get( 'row_numbers' ),
@@ -246,18 +318,22 @@
 			str = Array( colgroups + 1 ).join( self.tpl.colgroup ) + str;
 		}
 		return str;
-	}
-	;
+	};
 
+	/**
+	 * Gethering table body HTML for defined page
+	 * @returns {string}
+	 * @private
+	 */
 	t_proto.__tableBodyHTML = function (){
 		var self = this,
 			str = '',
 			page_size = self.get( 'page_size' ),
-			start_page = self.get( 'start_page' ),
+			page = self.get( 'page' ),
 			sort_by = self.get( 'sort_by' ),
 			prefix = self.get( 'prefix' ),
 			suffix = self.get( 'suffix' ),
-			num = page_size * (start_page - 1) + 1,
+			num = page_size * (page - 1) + 1,
 			is_row_numbers = self.get( 'row_numbers' ),
 			rows_data = self.getPageData(),
 			hidden_cols = self.get( 'hidden_cols' );
@@ -296,6 +372,11 @@
 		return str;
 	};
 
+
+	/**
+	 * Rendering table pager
+	 * @returns {*}
+	 */
 	t_proto.updatePager = function (){
 		var self = this,
 			tpl = self.tpl.pager,
@@ -305,7 +386,7 @@
 			nav_arrows_available = self.get( 'nav_arrows' ),
 			goto_available = self.get( 'goto' ),
 			pages_available = self.get( 'show_pages' ),
-			page = parseInt( self.get( 'start_page' ), 10 ),
+			page = parseInt( self.get( 'page' ), 10 ),
 			pager_str,
 			pages_count, get_pages, pager;
 
@@ -390,22 +471,26 @@
 		pager_str = pager.top + pager.arrows + pager.pages + pager.page_size + pager.goto + pager.bottom;
 
 		self.$pager.html( pager_str );
-		self.bindEvents();
 		return self;
 	};
 
+
+	/**
+	 * creating all needed events for table working
+	 * @returns {*}
+	 */
 	t_proto.bindEvents = function (){
 		var self = this,
 			evnts = {
 				nav_arrows: function (){
 					self.$pager.off( 'click', '.table-pager-arrows-prev' ).on( 'click', '.table-pager-arrows-prev', function ( e ){
 						e.preventDefault();
-						self.goto( self.get( 'start_page' ) - 1 );
+						self.goto( self.get( 'page' ) - 1 );
 						return false;
 					} );
 					self.$pager.off( 'click', '.table-pager-arrows-next' ).on( 'click', '.table-pager-arrows-next', function ( e ){
 						e.preventDefault();
-						self.goto( self.get( 'start_page' ) + 1 );
+						self.goto( self.get( 'page' ) + 1 );
 						return false;
 					} );
 				},
@@ -494,10 +579,10 @@
 						row_numbers = self.get( 'row_numbers' ),
 						hover_cols = self.get( 'hover_cols' );
 
-					self.$el.delegate( 'td', 'mouseover mouseleave', function ( e ){
+					self.$el.undelegate( 'td', 'mouseover mouseleave' ).delegate( 'td', 'mouseover mouseleave', function ( e ){
 						var $this = $( this ),
 							index = $this.index();
-						if ( (!row_numbers || index !== 0) && (_.isArray( hover_cols ) && hover_cols.indexOf( index + (row_numbers ? 0 : 1) ) !== -1) ) {
+						if ( (!row_numbers || index !== 0) && ((_.isArray( hover_cols ) && hover_cols.indexOf( index + (row_numbers ? 0 : 1) ) !== -1) || hover_cols === true) ) {
 							if ( e.type == 'mouseover' ) {
 								$colgroups.eq( index ).addClass( 'table-col-hover' );
 							} else {
@@ -540,6 +625,10 @@
 	};
 
 
+	/**
+	 * Method that calculates available pages count for filtered and searched data
+	 * @returns {number}
+	 */
 	t_proto.countPages = function (){
 		var self = this,
 			data_length = self.dataSize(),
@@ -552,10 +641,16 @@
 		return max > 0 ? max : 1;
 	};
 
+
+	/**
+	 * method that calculates and return table data size
+	 * @returns {number}
+	 */
 	t_proto.dataSize = function (){
 		var self = this,
 			ajax = self.get( 'ajax' ) || {},
 			ajax_per_page = typeof ajax.url === "function",
+			filters = _.size( self.get( 'filter' ) ),
 			size = 0,
 			data;
 
@@ -564,19 +659,26 @@
 			size = self.ajax_data_size;
 		} else if ( self.search ) {
 			size = _.size( self.search_data );
+		} else if ( filters ) {
+			size = _.size( self.filtered_data );
 		} else {
 			size = _.size( self.get( 'data' ) );
 		}
 		return size > 0 ? size : 0;
 	};
 
+
+	/**
+	 * Method for getting table data with ajax
+	 * @returns {*}
+	 */
 	t_proto.getAJAXData = function (){
 		var self = this,
 			titles = self.get( 'titles' ),
 			sort_key = self.getSortKey(),
 			sort_type = self.getSortType(),
 			page_size = self.get( 'page_size' ),
-			page = self.get( 'start_page' ),
+			page = self.get( 'page' ),
 			from = (page - 1) * page_size,
 			ajax = self.get( 'ajax' ),
 			ajax_per_page = typeof ajax.url === "function",
@@ -629,6 +731,11 @@
 	};
 
 
+	/**
+	 * Method for getting table data (filtered, searched and cutted to page size)
+	 * Or if we have ajax per page driven table - it will run detAJAXData()
+	 * @returns {*}
+	 */
 	t_proto.getData = function (){
 		var self = this,
 			sort_by = self.get( 'sort_by' ),
@@ -638,7 +745,7 @@
 			ajax_per_page = ajax && typeof ajax.url === "function",
 			sorted_data, filtered_data, result_data;
 
-		if ( !ajax || (!ajax_per_page && _.size( self.data ) == self.ajax_data_size) ) {
+		if ( !ajax || (!ajax_per_page && _.size( self.data ) == self.ajax_data_size ) ) {
 			sorted_data = self.sortData( data, sort_by, sort_type );
 			filtered_data = self.filterData( sorted_data );
 			result_data = self.searchData( filtered_data, self.search );
@@ -650,6 +757,12 @@
 	};
 
 
+	/**
+	 * Method for searching data in table that can be associated with search string
+	 * @param {array} data - data in which we are searching for something
+	 * @param {string} search - search string
+	 * @returns {*}
+	 */
 	t_proto.searchData = function ( data, search ){
 		data = data || this.getData();
 		search = search || this.search;
@@ -684,13 +797,51 @@
 		return new_data;
 	};
 
+
+	/**
+	 * Method for filtering table data according to defined / setted table filters
+	 * @param {array} data - table data that should be filtered
+	 * @returns {Array}
+	 */
 	t_proto.filterData = function ( data ){
 		var self = this,
-			filtered_data = [];
-		filtered_data = data;
+			filtered_data = [],
+			filter = self.get( 'filter' ),
+			match_size = _.size( filter ),
+			data_size = _.size( data );
+
+		if ( _.size( filter ) > 0 ) {
+			for ( var row = 0; row < data_size; row++ ) {
+				var match = 0;
+				_.each( filter, function ( value, key ){
+					var item = data[row][key - 1];
+					if ( _.isObject( item ) ) {
+						if ( item.value == value ) {
+							match += 1;
+						}
+					} else if ( item == value ) {
+						match += 1;
+					}
+				} );
+				if ( match == match_size ) {
+					filtered_data.push( data[row] );
+				}
+			}
+		} else {
+			filtered_data = data;
+		}
+		self.filtered_data = filtered_data;
 		return filtered_data;
 	};
 
+
+	/**
+	 * Method for formatting data according to defined column formatters
+	 * @param {array} data - data that should be formatted
+	 * @param {object} formatter - object with formatters defined while creating the table
+	 * @returns {*}
+	 * @private
+	 */
 	t_proto.__prepareDataFormat = function ( data, formatter ){
 		var self = this,
 			data_length = (data || []).length;
@@ -712,18 +863,34 @@
 		return data;
 	};
 
+
+	/**
+	 * Method for getting sorting key
+	 * By default it will be column id in human readable format,
+	 * but if developer defines `key` property in titles it will return that `key` value related to proper column id
+	 * @returns {*|String|*|Number}
+	 */
 	t_proto.getSortKey = function (){
 		var self = this,
 			titles = self.get( 'titles' ),
-			sort_by = parseInt( self.get( 'sort_by' ), 10 ),
-			sort_key = sort_by > 0 ? (titles[sort_by - 1].key || sort_by) : sort_by;
-		return sort_key;
+			sort_by = parseInt( self.get( 'sort_by' ), 10 );
+		return sort_by > 0 ? (titles[sort_by - 1].key || sort_by) : sort_by;
 	};
 
+
+	/**
+	 * Method for getting sort_type string ('asc' or 'desc')
+	 * @returns {*}
+	 */
 	t_proto.getSortType = function (){
 		return this.get( 'sort_type' );
 	};
 
+
+	/**
+	 * Method for finding sort data type (string or number) that defined in titles
+	 * @returns {string}
+	 */
 	t_proto.getSortDataType = function (){
 		var self = this,
 			titles = self.get( 'titles' ),
@@ -732,6 +899,14 @@
 		return ((sort_by > 0 && sort_by <= titles_length) ? titles[sort_by - 1].type : '').toLowerCase();
 	};
 
+
+	/**
+	 * Method for sorting table rows (data) by defined column and sort_type ('asc', 'desc')
+	 * @param {array} data - table data. If not defined - get it from the main table object
+	 * @param {number} sort_by - number of column
+	 * @param {string} sort_type - sort type ('asc', 'desc')
+	 * @returns {*}
+	 */
 	t_proto.sortData = function ( data, sort_by, sort_type ){
 		data = data || this.get( 'data' );
 		sort_by = sort_by || this.get( 'sort_by' );
@@ -789,6 +964,11 @@
 		return sorted_data;
 	};
 
+	/**
+	 * Method that calculate total sum of table data in some predefined column
+	 * @param column
+	 * @returns {number}
+	 */
 	t_proto.getTotal = function ( column ){
 		var self = this,
 			total = 0,
@@ -806,10 +986,15 @@
 		return total
 	};
 
+
+	/**
+	 * Method for getting data array with table data related to current page
+	 * @returns {*}
+	 */
 	t_proto.getPageData = function (){
 		var self = this,
 			page_size = self.get( 'page_size' ),
-			start_page = self.get( 'start_page' ),
+			page = self.get( 'page' ),
 			formatter = self.get( 'formatter' ),
 			ajax = self.get( 'ajax' ),
 			ajax_per_page = ajax && typeof ajax.url === "function",
@@ -826,7 +1011,7 @@
 			page_data = (function ( data ){
 				var data4work;
 				if ( typeof page_size == 'number' && data ) {
-					data4work = data.slice( (start_page - 1) * page_size, start_page * page_size )
+					data4work = data.slice( (page - 1) * page_size, page * page_size )
 				} else {
 					data4work = data;
 				}
@@ -841,7 +1026,12 @@
 		return page_data;
 	};
 
-
+	/**
+	 * Method for adding row to the table
+	 * @param {array} row - array with row data.
+	 * It will be concatenated with table data array and table will be automatically updated
+	 * @returns {*}
+	 */
 	t_proto.addRow = function ( row ){
 		var self = this,
 			ajax = self.get( 'ajax' ),
@@ -856,10 +1046,31 @@
 		data = self.get( 'data' );
 		data.push( row );
 
-		self.goto( self.get( 'start_page' ) );
+		self.goto( self.get( 'page' ) );
 		return self;
 	};
 
+	/**
+	 * Method for updating row(s) data
+	 * @param {object} update - object with new update data for row(s)
+	 * Update structure {col_id: 'value'}, col_id here responds to table column id in human readable format (starts with 1)
+	 * update = {
+	 *     col_id : 'col_value',
+	 *     other_col_id : 'col_value',
+	 *     ...
+	 * }
+	 * @param {object} where - object with data that scripts need to find row that will be updated
+	 * Where structure {col_id: 'value'}, col_id here responds to table column id in human readable format (starts with 1)
+	 * update = {
+	 *     col_id : 'col_value',
+	 *     other_col_id : 'col_value',
+	 *     ...
+	 * }
+	 *
+	 * At first scripts goes to data and searches for all rows that are relative to `where` config
+	 * Than it changes all relative to `update` data
+	 * @returns {*}
+	 */
 	t_proto.updateRow = function ( update, where ){
 		var self = this,
 			ajax = self.get( 'ajax' ),
@@ -898,10 +1109,21 @@
 				} );
 			}
 		}
-		self.goto( self.get( 'start_page' ) );
+		self.goto( self.get( 'page' ) );
 		return self;
 	};
 
+	/**
+	 * Method for deleting row(s) form table data
+	 * @param {object} where - object with data that scripts need to find row(s) that will be updated
+	 * Where structure {col_id: 'value'}, col_id here responds to table column id in human readable format (starts with 1)
+	 * update = {
+	 *     col_id : 'col_value',
+	 *     other_col_id : 'col_value',
+	 *     ...
+	 * }
+	 * @returns {*}
+	 */
 	t_proto.delRow = function ( where ){
 		var self = this,
 			ajax = self.get( 'ajax' ),
@@ -937,12 +1159,13 @@
 		self.set( {data: cleaned_data} );
 		self.data = cleaned_data;
 
-		self.goto( self.get( 'start_page' ) );
+		self.goto( self.get( 'page' ) );
 		return self;
 	};
 
 
 	/**
+	 * Method for updating viewport with table data related to defined page number
 	 * @param {number} page - page that should be rendered
 	 * @returns {*}
 	 */
@@ -956,7 +1179,7 @@
 			page_size = self.get( 'page_size' ),
 			max_pages = self.countPages(),
 			set_updates = {},
-			key = 'start_page';
+			key = 'page';
 
 		if ( page <= max_pages && page > 0 ) {
 			set_updates[key] = page;
@@ -971,5 +1194,4 @@
 
 	window.tTable = tTable;
 
-})
-	( window, document );
+})( window, document );

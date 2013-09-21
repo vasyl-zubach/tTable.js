@@ -64,8 +64,6 @@ $( document ).ready( function (){
 		}
 	} );
 
-	$( 'code:not(.prettyprint)' ).addClass( 'prettyprint' ).addClass( 'linenums' );
-	prettyPrint();
 
 	$( '.table_id--update' ).off( 'click' ).on( 'click', function (){
 		table_update( 'table_id' );

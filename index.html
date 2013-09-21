@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>tTable.js</title>
+	<title>tTable.js - Work with tables like a boss!</title>
 
-	<meta property="og:title" content="tTable.js - plugin for work with table data." />
-	<meta property="og:image" content="http://tjrus.com/img/my_img.min.jpg" />
+	<meta property="og:title" content="tTable.js - plugin for work with table data."/>
+	<meta property="og:image" content="http://tjrus.com/img/my_img.min.jpg"/>
 	<meta property="og:description" content="tTable.js - plugin for work with table data. It's actually a simple @MacPaw FedEX Day project."/>
 
 	<meta itemprop="name" content="tTable.js - plugin for work with table data.">
 	<meta itemprop="description" content="tTable.js - plugin for work with table data. It's actually a simple @MacPaw FedEX Day project.">
 	<meta itemprop="image" content="http://tjrus.com/img/my_img.min.jpg">
 
-
 	<link href="css/style.css" type="text/css" rel="stylesheet"/>
+	<link href="css/tTable.css" type="text/css" rel="stylesheet"/>
+	<link href="css/prettify.css" type="text/css" rel="stylesheet"/>
 
 	<script type="text/javascript">
 		var _gaq = _gaq || [];
@@ -43,126 +44,804 @@
 	fjs.parentNode.insertBefore( js, fjs );
 }( document, 'script', 'facebook-jssdk' ));</script>
 
-<h1>tTable.js - plugin for work with table data.</h1>
-<p>Developed by <a href="http://twitter.com/TjRus" target="_blank">@TjRus</a></p>
-<p><a href="https://twitter.com/TjRus" class="twitter-follow-button" data-show-count="true" data-lang="en">Follow @TjRus</a></p>
-<p>
-	<a href="https://twitter.com/share" class="twitter-share-button" data-counturl="http://tjrus.com/tTable.js/" data-text="tTable.js - plugin for work with tables. Developed during one FedEx Day in MacPaw" data-via="TjRus" data-lang="en">Tweet</a>
-	<script>!function ( d, s, id ){
-		var js, fjs = d.getElementsByTagName( s )[0];
-		if ( !d.getElementById( id ) ) {
-			js = d.createElement( s );
-			js.id = id;
-			js.src = "//platform.twitter.com/widgets.js";
-			fjs.parentNode.insertBefore( js, fjs );
+	<div class="header">
+		<h1>tTable.js - work with tables like a boss.</h1>
+		<div class="btn-follow">
+			<a href="https://twitter.com/TjRus" class="twitter-follow-button" data-show-count="false" data-lang="en">Follow @TjRus</a>
+		</div>
+		<div class="nav">
+			<a href="https://github.com/TjRus/tTable.js">GitHub</a>
+			<a href="https://github.com/TjRus/tTable.js/issues">Issues</a>
+			<a href="https://github.com/TjRus/tTable.js/wiki">Wiki</a>
+			<a href="http://tjrus.com/">TjRus</a>
+		</div>
+	</div>
+
+
+
+<div class="body-content">
+
+	<div class="visual">
+		<!-- Features list -->
+		<ul class="features">
+			<h3>Features:</h3>
+			<li>Row numbers;</li>
+			<li>Column sorting;</li>
+			<li>Column output data formatter functions;</li>
+			<li>Data prefixes and suffixes;</li>
+			<li>Search;</li>
+			<li>Receiving table data with AJAX request;</li>
+			<li>Table hidden data;</li>
+			<li>Rows and columns hover effect;</li>
+			<li>Pagination / Navigation arrows / GoTo / Page Size;</li>
+			<li>Loading / No-Data states;</li>
+			<li>Update / Add / Delete row functions;</li>
+			<li>... and more ...</li>
+		</ul>
+
+		<!-- Table Visual icon -->
+		<div class="tTable-icon">
+			<div class="tTable-icon-header">
+				<div class="tTable-icon-header-row">
+					<div class="tTable-icon-header-num"></div>
+					<div class="tTable-icon-header-col"><div class="tTable-icon-header-col-sorting"></div></div>
+					<div class="tTable-icon-header-col"><div class="tTable-icon-header-col-sorting"></div></div>
+					<div class="tTable-icon-header-col"><div class="tTable-icon-header-col-sorting"></div></div>
+				</div>
+			</div>
+			<div class="tTable-icon-body">
+				<div class="tTable-icon-body-row">
+					<div class="tTable-icon-body-num"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+				</div>
+				<div class="tTable-icon-body-row">
+					<div class="tTable-icon-body-num"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+				</div>
+				<div class="tTable-icon-body-row">
+					<div class="tTable-icon-body-num"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+				</div>
+				<div class="tTable-icon-body-row">
+					<div class="tTable-icon-body-num"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+				</div>
+				<div class="tTable-icon-body-row">
+					<div class="tTable-icon-body-num"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+				</div>
+				<div class="tTable-icon-body-row">
+					<div class="tTable-icon-body-num"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+				</div>
+				<div class="tTable-icon-body-row">
+					<div class="tTable-icon-body-num"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+				</div>
+				<div class="tTable-icon-body-row">
+					<div class="tTable-icon-body-num"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+				</div>
+				<div class="tTable-icon-body-row">
+					<div class="tTable-icon-body-num"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+					<div class="tTable-icon-body-col"></div>
+				</div>
+			</div>
+			<div class="tTable-icon-pager">
+				<div class="tTable-icon-pager-nav-prev"></div>
+				<div class="tTable-icon-pager-nav-next"></div>
+				<div class="tTable-icon-pager-pagination"></div>
+				<div class="tTable-icon-pager-goto"></div>
+				<div class="tTable-icon-pager-page_size"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="social-line">
+		<div class="btn btn-tweet">
+			<a href="https://twitter.com/share" class="twitter-share-button" data-counturl="http://tjrus.com/tTable.js/" data-text="tTable.js - plugin for work with tables. Developed during one FedEx Day in MacPaw" data-via="TjRus" data-lang="en">Tweet</a>
+			<script>!function ( d, s, id ){
+				var js, fjs = d.getElementsByTagName( s )[0];
+				if ( !d.getElementById( id ) ) {
+					js = d.createElement( s );
+					js.id = id;
+					js.src = "//platform.twitter.com/widgets.js";
+					fjs.parentNode.insertBefore( js, fjs );
+				}
+			}( document, "script", "twitter-wjs" );</script>
+		</div>
+
+		<div class="btn btn-plusone">
+			<div class="g-plusone" data-size="medium" data-href="http://tjrus.com/tTable.js/"></div>
+			<script type="text/javascript">
+				(function (){
+					var po = document.createElement( 'script' );
+					po.type = 'text/javascript';
+					po.async = true;
+					po.src = 'https://apis.google.com/js/plusone.js';
+					var s = document.getElementsByTagName( 'script' )[0];
+					s.parentNode.insertBefore( po, s );
+				})();
+			</script>
+		</div>
+		<div class="btn btn-like">
+			<div class="fb-like" data-href="http://tjrus.com/tTable.js/" data-width="450" data-layout="button_count" data-show-faces="false" data-send="false"></div>
+		</div>
+		<div class="btn btn-star">
+			<iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=TjRus&repo=tTable.js&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="130" height="20"></iframe>
+		</div>
+		<div class="btn btn-fork">
+			<iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=TjRus&repo=tTable.js&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="130" height="20"></iframe>
+		</div>
+	</div>
+
+	<h2>Install & Use</h2>
+	<ul>
+		<li>Download sources (jQuery.js, Lodash.js, tTable.js and tTable.css)</li>
+		<pre><code class="prettyprint linenums lang-bash">git clone https://github.com/TjRus/tTable.js</code></pre>
+		<li>Include on a page:</li>
+		<pre><code class="prettyprint linenums lang-html">&lt;link href="css/tTable.css" type="text/css" rel="stylesheet"/&gt;
+&lt;script src="js/libs/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script src="js/libs/lodash.min.js"&gt;&lt;/script&gt;
+&lt;script src="tTable.js"&gt;&lt;/script&gt;</code></pre>
+		<li>Use:</li>
+		<pre><code class="prettyprint linenums lang-javascript">var my_table = new tTable( { /* table config */ } );</code></pre>
+		<p>Table config details you can find in <a href="#documentation">documentation</a> below or in <a href="playground.html">playground</a> page.</p>
+	</ul>
+
+	<hr/>
+	<br/><br/>
+	<h2>Demos:</h2>
+	<div class="pg-tabs">
+		<div class="pg-tabs-item pg-tabs-item__on" data-tab="data-driven">Data driven table</div>
+		<div class="pg-tabs-item" data-tab="ajax-driven">AJAX driven table</div>
+		<div class="pg-tabs-item" data-tab="ajaxpage-driven">AJAX/page driven table</div>
+		<br class="clear"/>
+	</div>
+
+	<div class="pg pg__on" data-container="data-driven">
+		<div class="pg-content">
+			<p>Data driven table means that you've already have a data that you should pass to your table and it should works. So u just create you table config (titles, data, etc..) and everything should work.</p>
+			<div id="table_id"></div>
+			<div id="table_id_pager"></div>
+			<div id="table_id_search"></div>
+			<br/>
+			<div class="show_hide_code" data-2show="table_id_code" data-show="Show JavaScript code" data-hide="Hide JavaScript code">Show JavaScript code</div>
+			<pre data-code="table_id_code"><code class="linenums prettyprint lang-javascript"> // Defining new data driven table
+var table_id = new tTable( {
+	titles : [
+		{ "title": "Project", "type" : "string" },
+		{ "title": "Link", "type" : "string" },
+		{ "title": "Type", "type" : "string" }
+	],
+	page_size : 2,
+	page_sizes : [2, 3, 4, 5, 6, 7],
+	start_page : 1,
+	row_numbers : true,
+	sort_by : 1,
+	sorting : true,
+	data : [
+		["DevMate", "&lt;a href='http://devmate.com'&gt;DevMate&lt;/a&gt;", "work" ],
+		["TjRus.com", "&lt;a href='http://tjrus.com'&gt;TjRus.com&lt;/a&gt;", "personal"],
+		// ... other rows
+	],
+	search : true,
+	search_auto : true,
+	search_container : "#table_id_search",
+	search_sensitive : true,
+	search_value : "",
+	container : "#table_id",
+	pager : "#table_id_pager",
+	hover_cols : [1, 2],
+	formatter:  {
+		"3": function ( value ){
+			return value == 'work' || value == 'opensource' ? '&lt;b&gt;' + value + '&lt;/b&gt;' : value;
 		}
-	}( document, "script", "twitter-wjs" );</script>
-</p>
-<p>
-	<div class="g-plusone" data-size="medium" data-href="http://tjrus.com/tTable.js/"></div>
-	<script type="text/javascript">
-		(function (){
-			var po = document.createElement( 'script' );
-			po.type = 'text/javascript';
-			po.async = true;
-			po.src = 'https://apis.google.com/js/plusone.js';
-			var s = document.getElementsByTagName( 'script' )[0];
-			s.parentNode.insertBefore( po, s );
-		})();
-	</script>
-</p>
-<p>
-	<div class="fb-like" data-href="http://tjrus.com/tTable.js/" data-width="450" data-layout="button_count" data-show-faces="false" data-send="false"></div>
-</p>
+	}
+} );
+</code></pre>
+		</div>
+	</div>
+
+	<div class="pg" data-container="ajax-driven">
+		<div class="pg-content">
+			<p>AJAX Data driven table means that at the moment of table creation you don't have your data for table, and all the data will be get with AJAX request once. You only need to configure your ajax settings. You can specify them as simple jQuery ajax options in ajax property. There is only two important ajax properties on this step:</p>
+			<pre><code class="prettyprint linenums lang-javascript">ajax: {
+	url: 'your_ajax_url.php?maybe=with&some=params', // url should be string
+	prepare_data : function ( response ){ // prepare your data for tTable
+		// response here is what your backend will return in AJAX request
+		// you should prepare your data array in proper format for tTable.js
+		return data;
+	}
+}</code></pre>
+			<div id="ajax_table_id"></div>
+			<div id="ajax_table_id_pager"></div>
+			<div id="ajax_table_id_search"></div>
+			<br/>
+			<div class="show_hide_code" data-2show="ajax_table_id_code" data-show="Show JavaScript code" data-hide="Hide JavaScript code">Show JavaScript code</div>
+			<pre data-code="ajax_table_id_code"><code class="linenums prettyprint lang-javascript">// AJAX data driven table
+var ajax_table_id = new tTable( {
+	container : '#ajax_table_id',
+	pager : '#ajax_table_id_pager',
+	titles : [
+		{ "title": "Project", "type": "string", "key": "name" },
+		{ "title": "Link", "type": "string", "key": "link" },
+		{ "title": "Type", "type": "string", "key": "type" }
+	],
+	page_sizes : [2, 3, 4, 5, 6, 7],
+	page_size : 2,
+	start_page : 1,
+	sorting : [1, 3],
+	row_numbers : true,
+	formatter : {
+		"3" : function ( value ){
+			return value == 'work' || value == 'opensource' ? '<b>' + value + '</b>' : value;
+		}
+	},
+	ajax : {
+		dataType : 'json',
+		url : 'php/ajax.php',
+		prepare_data : function ( response ){
+			return _.map( response.data, function ( item ){
+				return _.toArray( item );
+			} );
+		}
+	},
+	search : true,
+	search_auto : false,
+	search_container : "#ajax_table_id_search",
+	search_sensitive : false,
+	search_value : ""
+} );</code></pre>
+		</div>
+	</div>
+
+	<div class="pg" data-container="ajaxpage-driven">
+		<div class="pg-content">
+			<p>AJAX per page data driven table means that at the moment of table creation you don't have your data for table, and the data for current page will be get with AJAX request. You only need to configure your ajax settings. You can specify them as simple jQuery ajax options in ajax property. There is only three important ajax properties on this step:</p>
+			<pre><code class="prettyprint linenums lang-javascript">ajax: {
+	// url property should be function, that returns an url for getting specified page data.
+	url : function ( from, limit, sort_by, sort_type, search, sensitive ){
+		return 'php/ajax.php?limit=' + from + ',' + limit + '&sort_by=' + sort_by + '&sort_type=' + sort_type + '&search=' + search + '&sensitive=' + sensitive;
+	},
+	prepare_data : function ( response ){
+		// response here is what your backend will return in AJAX request
+		// you should prepare your data array in proper format for tTable.js
+		return data;
+	},
+	full_size : function ( response ){
+		// you should place information of your full table data size somewhere in your response and return in in this function
+		return response.count;
+	}
+}</code></pre>
+			<div id="ajax_per_page_table_id"></div>
+			<div id="ajax_per_page_table_id_pager"></div>
+			<div id="ajax_per_page_table_id_search"></div>
+			<br/>
+			<div class="show_hide_code" data-2show="ajax_per_page_table_id_code" data-show="Show JavaScript code" data-hide="Hide JavaScript code">Show JavaScript code</div>
+			<pre data-code="ajax_per_page_table_id_code"><code class="linenums prettyprint lang-javascript">// AJAX per page data driven table
+var ajax_per_page_table_id = new tTable( {
+		container : '#ajax_per_page_table_id',
+		pager : '#ajax_per_page_table_id_pager',
+		titles : [
+			{ "title": "Project", "type": "string", "key": "name" },
+			{ "title": "Link", "type": "string", "key": "link" },
+			{ "title": "Type", "type": "string", "key": "type" }
+		],
+		page_sizes : [2, 3, 4, 5, 6, 7],
+		page_size : 2,
+		start_page : 1,
+		sorting : [1, 3],
+		row_numbers : true,
+		formatter : {
+			"3" : function ( value ){
+				return value == 'work' || value == 'opensource' ? '<b>' + value + '</b>' : value;
+			}
+		},
+		ajax : {
+			dataType : 'json',
+			url : function ( from, limit, sort_by, sort_type, search, sensitive ){
+				return 'php/ajax.php?limit=' + from + ',' + limit + '&sort_by=' + sort_by + '&sort_type=' + sort_type + '&search=' + search + '&sensitive=' + sensitive;
+			},
+			prepare_data : function ( response ){
+				return _.map( response.data, function ( item ){
+					return _.toArray( item );
+				} );
+			},
+			full_size : function ( response ){
+				return response.count;
+			}
+		},
+		search : true,
+		search_auto : false,
+		search_container : "#ajax_per_page_table_id_search",
+		search_sensitive : false,
+		search_value : ""
+	} );</code></pre>
+		</div>
+	</div>
+
+
+	<div id="documentation"></div>
+	<hr/>
+	<br/><br/>
+	<h2>Documentation:</h2>
+
+	<h3>Config:</h3>
+	<p>Config is an {Object} with tTable options for table displaying and control.</p>
+	<p>Here are available config properties:</p>
+<table class="doc-table">
+	<tr class="doc-table-header">
+		<td>Property name</td>
+		<td>Type</td>
+		<td>Default</td>
+		<td>Description</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">container</span><b class="important">*</b></td>
+		<td>String</td>
+		<td>undefined</td>
+		<td>
+			String selector of DOM element in which table will be rendered.<br/>
+			(!) in jQuery style '#some_table_id'
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">titles</span><b class="important">*</b></td>
+		<td>Array</td>
+		<td>[ ]</td>
+		<td>
+			Array with table data structure. Each element of this array is an object with structure:
+			<pre><code class="prettyprint linenums lang-javascript">{
+	title: 'Your column title',
+	type: 'string', // available values - 'string', 'number'
+	key: 'key_value' // only for AJAX per page driven table. This value will be sent via AJAX request as a sort column value.
+}</code></pre>
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">data</span><b class="important">*</b></td>
+		<td>Array</td>
+		<td>[ ]</td>
+		<td>Table data array. Each data array element is an array for table row. Each table row array element is a value for table cel.</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">row_numbers</span></td>
+		<td>Boolean</td>
+		<td>false</td>
+		<td>Responsible for displaying row numbers or not.</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">pager</span></td>
+		<td>String</td>
+		<td>undefined</td>
+		<td>
+			Selector of DOM element in which pager will be rendered.<br/>
+			(!) in jQuery style '#some_table_id_pager'
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">page</span></td>
+		<td>Number</td>
+		<td>1</td>
+		<td>Defines the table start page or page that should be rendered.</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">show_pages</span></td>
+		<td>Boolean</td>
+		<td>true</td>
+		<td>Tell the script should it render table pagination or not.</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">page_size</span></td>
+		<td>Number</td>
+		<td>10</td>
+		<td>Defines the table page size (how many rows will be displayed on the table page)</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">page_sizes</span></td>
+		<td>Boolean, Array</td>
+		<td>[10, 25, 50]</td>
+		<td>
+			Should script show page size selector or not.
+			<ul>
+				<li><span class="example">false</span> - page size selector wouldn't be displayed;</li>
+				<li>
+					<span class="example">true</span> - page size selector will be displayed in pager container with default page sizes;
+				</li>
+				<li>
+					<span class="example">[5, 7, ...]</span> - page size selector will be displayed with select options that defined in this property
+				</li>
+			</ul>
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">nav_arrows</span></td>
+		<td>Boolean</td>
+		<td>true</td>
+		<td>Responsible for displaying navigation arrows.</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">goto</span></td>
+		<td>Boolean</td>
+		<td>true</td>
+		<td>Responsible for displaying goto field.</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">sorting</span></td>
+		<td>Boolean, Array</td>
+		<td>true</td>
+		<td>
+			Defines column sorting.
+			<ul>
+				<li><span class="example">true</span> - enable sorting;</li>
+				<li><span class="example">false</span> - disable sorting;</li>
+				<li><span class="example">[1,3,4 ... ]</span> - enable sorting for defined columns;</li>
+			</ul>
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">sort_by</span></td>
+		<td>number</td>
+		<td>0</td>
+		<td>Set the default column for data sorting.</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">sort_type</span></td>
+		<td>string</td>
+		<td>'asc'</td>
+		<td>Defines column sort type. Available values:
+			<span class="example">'asc'</span><span class="example">'desc'</span></td>
+	</tr>
+
+	<tr>
+		<td><span class="code">prefix</span></td>
+		<td>object</td>
+		<td>{ }</td>
+		<td>
+			Defined column prefixes. Objects key should be column number in human readable format (starts from 1).<br/>Example:
+			<pre><code class="prettyprint linenums lang-javascript">{
+	"2": '$ ', // 2nd table column values will be displayed with '$ ' prefix
+	"3": "+" // 3rd table column values will be displayed with '+' prefix
+}</code></pre>
+	</tr>
+
+	<tr>
+		<td><span class="code">suffix</span></td>
+		<td>object</td>
+		<td>{ }</td>
+		<td>
+			Defined column suffixes. Objects key should be column number in human readable format (starts from 1).<br/>Example:
+			<pre><code class="prettyprint linenums lang-javascript">{
+	"2": '%' // 2nd table column values will be displayed with '%' suffix
+}</code></pre>
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">formatter</span></td>
+		<td>object</td>
+		<td>{ }</td>
+		<td>
+			Object with functions for formatting table column data. Its properties should be column ids, and values - formatter function with value argument.<br/> Example:
+			<pre><code class="prettyprint linenums lang-javascript">formatter: {
+	"3": function( value ) {
+		return value == 'work' || value == 'opensource' ? '&lt;b&gt;' + value + '&lt;/b&gt;' : value;
+	}
+}</code></pre>
+		</td>
+	</tr>
+
+
+	<tr>
+		<td><span class="code">hover_cols</span></td>
+		<td>boolean, array</td>
+		<td>false</td>
+		<td>
+			Defines will table columns be highlighted on mouse over or not.
+			<ul>
+				<li><span class="example">false</span> - no column highlighting;</li>
+				<li><span class="example">true</span> - column highlighting for all columns except row numbers;</li>
+				<li><span class="example">[1, 2]</span> - column highlighting only for defined columns;</li>
+			</ul>
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">hidden_cols</span></td>
+		<td>array</td>
+		<td>[ ]</td>
+		<td>Defines what columns will be hidden in table. You also should specify titles for hidden columns.</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">search_container</span></td>
+		<td>string</td>
+		<td>null</td>
+		<td>Defines DOM element for search input element.</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">search</span></td>
+		<td>boolean</td>
+		<td>false</td>
+		<td>Search functionality disabled or enabled.</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">search_auto</span></td>
+		<td>boolean</td>
+		<td>true</td>
+		<td>Search will reacts on each changing of search query immediately. If
+			<span class="example">false</span> - search will be only on enter key press or lost focus from the search field.
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">search_sensitive</span></td>
+		<td>boolean</td>
+		<td>false</td>
+		<td>Turn on/off search case sensitive mode.</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">search_value</span></td>
+		<td>string</td>
+		<td>""</td>
+		<td>Defines default search value.</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">ajax</span></td>
+		<td>object</td>
+		<td>null</td>
+		<td>
+			Special functionality for ajax driven tables. Detailed info you can find here -
+			<a href="https://github.com/TjRus/tTable.js/wiki/Table-types#ajax-data-driven-table">AJAX driven tables</a>
+		</td>
+	</tr>
+
+</table>
+
+
+<h3>Methods:</h3>
+<table class="doc-table">
+	<tr class="doc-table-header">
+		<td>Method</td>
+		<td>Returns</td>
+		<td>Description</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">init()</span></td>
+		<td>tTable</td>
+		<td>Initialize tTable: insert table / pages / search to their containers, gett needed data and enable listening of proper table events.</td>
+	</tr>
+	<tr>
+		<td><span class="code">destroy()</span></td>
+		<td>tTable</td>
+		<td>Destroy table - remove events and DOM objects.</td>
+	</tr>
+	<tr>
+		<td><span class="code">get( what )</span></td>
+		<td>{*}</td>
+		<td>
+			Get tTable property value.
+			<ul>
+				<li><span class="example">what</span> - property name;</li>
+			</ul>
+		</td>
+	</tr>
+	<tr>
+		<td><span class="code">set( what )</span></td>
+		<td>tTable</td>
+		<td>
+			Update you table properties
+			<ul>
+				<li>
+					<span class="example">what</span> - object with properties and their values: { property : new_value, ....};
+				</li>
+			</ul>
+		</td>
+	</tr>
+	<tr>
+		<td><span class="code">countPages()</span></td>
+		<td>number</td>
+		<td>
+			Method that calculates available pages count for filtered and searched data.
+		</td>
+	</tr>
+	<tr>
+		<td><span class="code">dataSize()</span></td>
+		<td>number</td>
+		<td>
+			Method that calculates and return table data size.
+		</td>
+	</tr>
+	<tr>
+		<td><span class="code">getData()</span></td>
+		<td>array</td>
+		<td>
+			Method for getting table data (filtered, searched and cutted to page size). Or if we have ajax per page driven table - it will run AJAX request and then update table with new data;
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">getPageData()</span></td>
+		<td>array</td>
+		<td>
+			Method for getting data array with table data related to current page.
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">searchData(data, search)</span></td>
+		<td>array</td>
+		<td>
+			Method for searching data in table that can be associated with search string.
+			<ul>
+				<li><span class="example">data</span> - data in which we are searching for something;</li>
+				<li><span class="example">search</span> - search string;</li>
+			</ul>
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">getSortKey()</span></td>
+		<td>string</td>
+		<td>Method for getting sorting key. By default it will be column id in human readable format, but if developer defines `key` property in titles it will return that `key` value related to proper column id.</td>
+	</tr>
+	<tr>
+		<td><span class="code">getSortType()</span></td>
+		<td>string</td>
+		<td>Method for getting sort_type string ('asc' or 'desc')</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">getSortDataType()</span></td>
+		<td>string</td>
+		<td>Method for finding sort data type ('string' or 'number') that defined in titles.</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">sortData( data, sort_by, sort_type )</span></td>
+		<td>array</td>
+		<td>
+			Method for sorting table rows (data) by defined column and sort_type ('asc', 'desc').
+			<ul>
+				<li><span class="example">data</span> - table data. If not defined - get it from the main table object;
+				</li>
+				<li><span class="example">sort_by</span> - number of sort column;</li>
+				<li><span class="example">sort_type</span> - sort type ('asc', 'desc');</li>
+			</ul>
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">getTotal( column )</span></td>
+		<td>number</td>
+		<td>Method that calculate total sum of table data in some defined column.</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">addRow( row )</span></td>
+		<td>tTable</td>
+		<td>
+			Method for adding row to the table.
+			<ul>
+				<li>
+					<span class="example">row</span> - array with row data. It will be concatenated with table data array and table will be automatically updated;
+				</li>
+			</ul>
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">updateRow( update, where )</span></td>
+		<td>tTable</td>
+		<td>
+			Method for updating row(s) data
+			<ul>
+				<li>
+					<span class="example">update</span> - object with new update data for row(s). Update structure {col_id: 'value'}, col_id here relates to table column id in human readable format (starts with 1);
+				</li>
+				<li>
+					<span class="example">where</span> - object with data that scripts need to find row that will be updated. Where structure {col_id: 'value'}, col_id here relates to table column id in human readable format (starts with 1);
+				</li>
+			</ul>
+			At first scripts goes to data and searches for all rows that are relative to `where` config. Than it changes all relative to `update` data
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">delRow( where )</span></td>
+		<td>tTable</td>
+		<td>
+			Method for deleting row(s) form table data
+			<ul>
+				<li>
+					<span class="example">where</span> - object with data that scripts need to find row(s) that will be updated. Where structure {col_id: 'value'}, col_id here relates to table column id in human readable format (starts with 1);
+				</li>
+			</ul>
+		</td>
+	</tr>
+
+	<tr>
+		<td><span class="code">goto( page )</span></td>
+		<td>tTable</td>
+		<td>
+			Method for updating viewport with table data related to defined page number
+			<ul>
+				<li>
+					<span class="example">page</span> - page that should be rendered;
+				</li>
+			</ul>
+		</td>
+	</tr>
+
+</table>
+
+
 <hr/>
-
-<h2><a href="http://macpaw.com" target="_blank">MacPaw</a> FedEX Day project</h2>
-<p>It's actually a simple @MacPaw FedEX Day project</p>
-<p>Hours of development:</p>
-<ul>
-	<li>start at "September 5, 2013 at 12:00 AM"</li>
-	<li>end at "September 6, 2013 at 12:00 AM"</li>
-	<li>total - 1 day (actually 8-9 work hours :) )</li>
-</ul>
-
-<p>GitHub: </p>
-<ul>
-	<li><a href="http://github.com/TjRus/tTable.js">http://github.com/TjRus/tTable.js</a></li>
-	<li>
-		<iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=TjRus&repo=tTable.js&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="130" height="20"></iframe>
-	</li>
-	<li>
-		<iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=TjRus&repo=tTable.js&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="130" height="20"></iframe>
-	</li>
-</ul>
-
-<hr/>
-<h2>Features</h2>
-<ul>
-	<li>Rows numbers;</li>
-	<li>Navigation Arrows;</li>
-	<li>Pagination;</li>
-	<li>GoTo page;</li>
-	<li>Page size;</li>
-	<li>Column sorting;</li>
-	<li>Count totals;</li>
-</ul>
-
-<hr/>
-<h2>TODO:</h2>
-<ul>
-	<li>Column filters;</li>
-	<li>Column metrics;</li>
-	<li>Data outpus formaters;</li>
-	<li>Receiving pages data with AJAX for each page;</li>
-	<li>Infinit scroll (also with AJAX);</li>
-	<li>Events;</li>
-	<li>Search;</li>
-</ul>
-
-<hr/>
-
-<p>Will try to implement this features :)</p>
-
-<p><b>Thanks ;)</b></p>
-
-
-<hr/>
-<h2>Demo table:</h2>
-<div id="table_id"></div>
-<div id="table_id_pager"></div>
-
-<br/>
-<hr/>
-<h2>Demo table with long random-generated data:</h2>
-<div id="long_table_id"></div>
-<br/>
-<div id="long_table_id_pager"></div>
-
 <br/><br/>
-<hr/>
-	<div id="disqus_thread"></div>
-	<script type="text/javascript">
-		/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-		var disqus_shortname = 'ttable'; // required: replace example with your forum shortname
-		var disqus_url = 'http://tjrus.com/tTable.js';
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+	/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+	var disqus_shortname = 'ttable'; // required: replace example with your forum shortname
+	var disqus_url = 'http://tjrus.com/tTable.js';
 
-		/* * * DON'T EDIT BELOW THIS LINE * * */
-		(function (){
-			var dsq = document.createElement( 'script' );
-			dsq.type = 'text/javascript';
-			dsq.async = true;
-			dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-			(document.getElementsByTagName( 'head' )[0] || document.getElementsByTagName( 'body' )[0]).appendChild( dsq );
-		})();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+	/* * * DON'T EDIT BELOW THIS LINE * * */
+	(function (){
+		var dsq = document.createElement( 'script' );
+		dsq.type = 'text/javascript';
+		dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName( 'head' )[0] || document.getElementsByTagName( 'body' )[0]).appendChild( dsq );
+	})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 
+</div>
 
 <script src="js/libs/jquery.min.js"></script>
 <script src="js/libs/lodash.min.js"></script>
+<script src="js/libs/prettify.js"></script>
 <script src="tTable.js"></script>
-<script src="js/script.js"></script>
+<script src="js/libs/tFormer.min.js"></script>
+<script src="js/docs.js"></script>
 </body>
 </html>

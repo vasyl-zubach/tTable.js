@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>tTable.js - Work with tables like a boss!</title>
+
+	<meta property="og:title" content="tTable.js - plugin for work with table data."/>
+	<meta property="og:image" content="http://tjrus.com/img/my_img.min.jpg"/>
+	<meta property="og:description" content="tTable.js - plugin for work with table data. It's actually a simple @MacPaw FedEX Day project."/>
+
+	<meta itemprop="name" content="tTable.js - plugin for work with table data.">
+	<meta itemprop="description" content="tTable.js - plugin for work with table data. It's actually a simple @MacPaw FedEX Day project.">
+	<meta itemprop="image" content="http://tjrus.com/img/my_img.min.jpg">
+
+	<link href="css/style.css" type="text/css" rel="stylesheet"/>
+	<link href="css/tTable.css" type="text/css" rel="stylesheet"/>
+	<link href="css/prettify.css" type="text/css" rel="stylesheet"/>
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push( ['_setAccount', 'UA-26203716-1'] );
+		_gaq.push( ['_setDomainName', 'tjrus.com'] );
+		_gaq.push( ['_trackPageview'] );
+
+		(function (){
+			var ga = document.createElement( 'script' );
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName( 'script' )[0];
+			s.parentNode.insertBefore( ga, s );
+		})();
+	</script>
+</head>
+
+<body>
+
+<div id="fb-root"></div>
+<script>(function ( d, s, id ){
+	var js, fjs = d.getElementsByTagName( s )[0];
+	if ( d.getElementById( id ) ) return;
+	js = d.createElement( s );
+	js.id = id;
+	js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=202781623089747";
+	fjs.parentNode.insertBefore( js, fjs );
+}( document, 'script', 'facebook-jssdk' ));</script>
+
+<div class="header">
+	<h1>tTable.js - work with tables like a boss.</h1>
+	<div class="btn-follow">
+		<a href="https://twitter.com/TjRus" class="twitter-follow-button" data-show-count="false" data-lang="en">Follow @TjRus</a>
+	</div>
+	<div class="nav">
+		<a href="https://github.com/TjRus/tTable.js">GitHub</a>
+		<a href="https://github.com/TjRus/tTable.js/issues">Issues</a>
+		<a href="https://github.com/TjRus/tTable.js/wiki">Wiki</a>
+		<a href="http://tjrus.com/">TjRus</a>
+	</div>
+</div>
+
+
+<h2>Simple table playground:</h2>
+<div class="pg pg__on" data-container="playground">
+	<div class="pg-sidebar">
+		<form id="form_pg">
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">row_numbers</div>
+			<div class="pg-side-el-value">
+				<select name="row_numbers">
+					<option value="true">true</option>
+					<option value="false">false</option>
+				</select>
+			</div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">page</div>
+			<div class="pg-side-el-value">
+				<select name="page">
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+				</select>
+			</div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">show_pages</div>
+			<div class="pg-side-el-value">
+				<select name="show_pages">
+					<option value="true">true</option>
+					<option value="false">false</option>
+				</select>
+			</div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">page_size</div>
+			<div class="pg-side-el-value"><input type="text" name="page_size" value="3"/></div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">page_sizes</div>
+			<div class="pg-side-el-value"><input type="text" name="page_sizes" value="2, 3, 4, 5, 6, 7"/></div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">nav_arrows</div>
+			<div class="pg-side-el-value">
+				<select name="nav_arrows">
+					<option value="true">true</option>
+					<option value="false">false</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">goto</div>
+			<div class="pg-side-el-value">
+				<select name="goto">
+					<option value="true">true</option>
+					<option value="false">false</option>
+				</select>
+			</div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">sort_by</div>
+			<div class="pg-side-el-value"><input type="text" name="sort_by" value="0"/></div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">sorting</div>
+			<div class="pg-side-el-value">
+				<select name="sorting">
+					<option value="true">true</option>
+					<option value="false">false</option>
+				</select>
+			</div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">sort_type</div>
+			<div class="pg-side-el-value">
+				<select name="sort_type">
+					<option value="asc">asc</option>
+					<option value="desc">desc</option>
+				</select>
+			</div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">prefix</div>
+			<div class="pg-side-el-value">
+				"1": <input type="text" name="prefix_1" value=""/><br/>
+				"2": <input type="text" name="prefix_2" value=""/><br/>
+				"3": <input type="text" name="prefix_3" value=""/><br/>
+			</div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">suffix</div>
+			<div class="pg-side-el-value">
+				"1": <input type="text" name="suffix_1" value=""/><br/>
+				"2": <input type="text" name="suffix_2" value=""/><br/>
+				"3": <input type="text" name="suffix_3" value=""/><br/>
+			</div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">hover_cols</div>
+			<div class="pg-side-el-value">
+				<select name="hover_cols">
+					<option value="true">true</option>
+					<option value="false">false</option>
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="1,2" selected>1, 2</option>
+					<option value="1,3">1, 3</option>
+					<option value="2,3">2, 3</option>
+				</select>
+			</div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">hidden_cols</div>
+			<div class="pg-side-el-value"><input type="text" name="hidden_cols" value=""/></div>
+		</div>
+
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">search</div>
+			<div class="pg-side-el-value">
+				<select name="search">
+					<option value="true">true</option>
+					<option value="false">false</option>
+				</select>
+			</div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">search_auto</div>
+			<div class="pg-side-el-value">
+				<select name="search_auto">
+					<option value="true">true</option>
+					<option value="false">false</option>
+				</select>
+			</div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-property">search_sensitive</div>
+			<div class="pg-side-el-value">
+				<select name="search_sensitive">
+					<option value="true">true</option>
+					<option value="false" selected>false</option>
+				</select>
+			</div>
+		</div>
+		<div class="pg-side-el">
+			<div class="pg-side-el-value">
+				<input type="submit" value="Update table"/>
+			</div>
+		</div>
+		</form>
+
+	</div>
+	<div class="pg-content">
+		<div id="table_id"></div>
+		<div id="table_id_pager"></div>
+		<div id="table_id_search"></div>
+
+		<br/>
+		<div class="show_hide_code" data-2show="table_id_code" data-show="Show JavaScript code" data-hide="Hide JavaScript code">Show JavaScript code</div>
+		<div data-code="table_id_code" class="pg-code-container"></div>
+	</div>
+	<br class="clear"/>
+</div>
+
+<br/><br/>
+<div class="social-line">
+	<div class="btn btn-tweet">
+		<a href="https://twitter.com/share" class="twitter-share-button" data-counturl="http://tjrus.com/tTable.js/" data-text="tTable.js - plugin for work with tables. Developed during one FedEx Day in MacPaw" data-via="TjRus" data-lang="en">Tweet</a>
+	</div>
+
+	<div class="btn btn-plusone">
+		<div class="g-plusone" data-size="medium" data-href="http://tjrus.com/tTable.js/"></div>
+	</div>
+
+	<div class="btn btn-like">
+		<div class="fb-like" data-href="http://tjrus.com/tTable.js/" data-width="450" data-layout="button_count" data-show-faces="false" data-send="false"></div>
+	</div>
+
+	<div class="btn btn-star">
+		<iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=TjRus&repo=tTable.js&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="130" height="20"></iframe>
+	</div>
+
+	<div class="btn btn-fork">
+		<iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=TjRus&repo=tTable.js&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="130" height="20"></iframe>
+	</div>
+</div>
+
+<br/><br/>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+	/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+	var disqus_shortname = 'ttable'; // required: replace example with your forum shortname
+	var disqus_url = 'http://tjrus.com/tTable.js';
+
+	/* * * DON'T EDIT BELOW THIS LINE * * */
+	(function (){
+		var dsq = document.createElement( 'script' );
+		dsq.type = 'text/javascript';
+		dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName( 'head' )[0] || document.getElementsByTagName( 'body' )[0]).appendChild( dsq );
+	})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+<script src="js/libs/jquery.min.js"></script>
+<script src="js/libs/lodash.min.js"></script>
+<script src="js/libs/prettify.js"></script>
+<script src="tTable.js"></script>
+<script src="js/libs/tFormer.min.js"></script>
+<script src="js/playdround.js"></script>
+
+<!-- Twitter -->
+<script>!function ( d, s, id ){
+	var js, fjs = d.getElementsByTagName( s )[0];
+	if ( !d.getElementById( id ) ) {
+		js = d.createElement( s );
+		js.id = id;
+		js.src = "//platform.twitter.com/widgets.js";
+		fjs.parentNode.insertBefore( js, fjs );
+	}
+}( document, "script", "twitter-wjs" );</script>
+
+<!-- Google Plus -->
+<script type="text/javascript">
+	(function (){
+		var po = document.createElement( 'script' );
+		po.type = 'text/javascript';
+		po.async = true;
+		po.src = 'https://apis.google.com/js/plusone.js';
+		var s = document.getElementsByTagName( 'script' )[0];
+		s.parentNode.insertBefore( po, s );
+	})();
+</script>
+
+
+
+<script type="text/template" class="pg-code-container-tpl">
+<pre><code class="prettyprint linenums lang-javascript">table_pg = new tTable( {
+	titles          : [
+		{ "title": "Project", "type": "string" },
+		{ "title": "Link", "type": "string" },
+		{ "title": "Type", "type": "string" }
+	],<%
+
+	var defaults = {
+		row_numbers: false,
+		pager     : null,
+		page      : 1,
+		show_pages: true,
+		page_size : 10,
+		page_sizes: [10, 25, 50],
+		nav_arrows: true,
+		goto      : true,
+		sort_by  : 0,
+		sorting  : true,
+		sort_type: 'asc',
+		prefix   : {},
+		suffix   : {},
+		formatter: null,
+		hover_cols : false,
+		hidden_cols: [],
+		search_container: null,
+		search          : false,
+		search_auto     : true,
+		search_sensitive: false,
+		search_value    : "",
+		ajax: null
+	};
+
+	%>
+	<% if(defaults.page_size != data.page_size) { %>page_size       : <%= data.page_size %>,
+	<% } %><% if(defaults.page_sizes != data.page_sizes) { %>page_sizes      : [<%= data.page_sizes.join(', ') %>],
+	<% } %><% if(defaults.page != data.page) { %>page            : <%= data.page %>,
+	<% } %><% if(defaults.row_numbers != data.row_numbers) { %>row_numbers     : <%= data.row_numbers.toString() %>,
+	<% } %><% if(defaults.sort_by != data.sort_by) { %>sort_by         : <%= data.sort_by %>,
+	<% } %><% if(defaults.sorting != data.sorting) { %>sorting         : <%= data.sorting.toString() %>,
+	<% } %>data            : [
+		["DevMate", "&lt;a href='http://devmate.com'&gt;DevMate&lt;/a&gt;", "work" ],
+		["MacPaw", "&lt;a href='http://macpaw.com'&gt;MacPaw&lt;/a&gt;", "work"],
+		["Ensoul.Me", "&lt;a href='http://ensoul.me'&gt;Ensoul.me&lt;/a&gt;", "work"],
+		["TjRus.com", "&lt;a href='http://tjrus.com'&gt;TjRus.com&lt;/a&gt;", "personal"],
+		["Imageless iPhone", "&lt;a href='http://tjrus.com/iphone'&gt;Imageless iPhone&lt;/a&gt;", "personal"],
+		["Imageless Lumia", "&lt;a href='http://tjrus.com/lumia'&gt;Imageless Lumia&lt;/a&gt;", "personal"],
+		["_v_.js", "&lt;a href='http://github.com/TjRus/_v_.js'&gt;_v_.js&lt;/a&gt;", "git"],
+		["tFormer.js", "&lt;a href='http://github.com/TjRus/tFormer.js'&gt;tFormer.js&lt;/a&gt;", "git"],
+		["tTable.js", "&lt;a href='http://github.com/TjRus/tTable.js'&gt;tTable.js&lt;/a&gt;", "git"],
+		["aer.js", "&lt;a href='http://github.com/TjRus/aer.js'&gt;aer.js&lt;/a&gt;", "git"],
+		["Imageless iPhone", "&lt;a href='http://github.com/TjRus/iPhone.js'&gt;iPhone.js&lt;/a&gt;", "git"],
+		["Imageless Lumia", "&lt;a href='http://github.com/TjRus/Lumia.js'&gt;Lumia.js&lt;/a&gt;", "git"],
+		["_v_.js", "&lt;a href='http://tjrus.github.io/_v_.js'&gt;_v_.js&lt;/a&gt;", "opensource"],
+		["tFormer.js", "&lt;a href='http://tformerjs.com/'&gt;tFormer.js&lt;/a&gt;", "opensource"]
+	],
+	<% if(defaults.search != data.search) { %>search          : <%= data.search.toString() %>,
+	<% } %><% if(defaults.search_auto != data.search_auto) { %>search_auto     : <%= data.search_auto.toString() %>,
+	<% } %>search_container: "#table_id_search",
+	<% if(defaults.search_sensitive != data.search_sensitive) { %>search_sensitive: <%= data.search_sensitive.toString() %>,
+	<% } %>container       : "#table_id",
+	pager           : "#table_id_pager",
+	<% if(defaults.hover_cols != data.hover_cols) { %>hover_cols      : <%= _.isArray(data.hover_cols) ? '[' + data.hover_cols.join(', ') + ']' : data.hover_cols.toString() %>,
+	<% } %>formatter       : {
+		"3": function ( value ){
+			return value == 'work' || value == 'opensource' ? '&lt;b&gt;' + value + '&lt;/b&gt;' : value;
+		}
+	}
+} );
+</code></pre>
+</script>
+
+
+
+</body>
+</html>
