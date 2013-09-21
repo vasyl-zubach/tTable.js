@@ -39,6 +39,9 @@ body {
 		margin      : 0;
 		padding     : 0;
 		font-size   : 20px;
+		a {
+			color : #000;
+		}
 	}
 	.nav {
 		float   : right;
@@ -93,7 +96,7 @@ body {
 .btn-follow {
 	position : absolute;
 	top      : 15px;
-	right    : 320px;
+	right    : 310px;
 }
 
 $width : 350px;
@@ -285,10 +288,11 @@ b {
 }
 
 hr {
-	background    : #ccc;
-	height        : 1px;
-	border        : 0;
-	border-bottom : 1px #fff solid;
+	height     : 1px;
+	background : #ccc;
+	display    : block;
+	border     : 0;
+	box-shadow : 0 1px 0 #fff;
 }
 
 .pg {
@@ -358,6 +362,19 @@ hr {
 
 .pg-tabs-item__on {
 	background : #fff;
+}
+
+.btn-pg-update {
+	background    : #ccc;
+	border        : 0;
+	line-height   : 30px;
+	padding       : 0 10px;
+	font-size     : 13px;
+	font-weight   : bold;
+	text-shadow   : 0 1px 0 rgba(255, 255, 255, .5);
+	color         : #464646;
+	border-radius : 2px;
+	cursor        : pointer;
 }
 
 .show_hide_code {

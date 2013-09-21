@@ -213,3 +213,11 @@
 	height : 20px;
 	margin : 5px;
 }
+
+/* tTable search */
+
+.table-search-input {
+	width   : 200px;
+	padding : 3px 10px;
+	font-size: 13px;
+}

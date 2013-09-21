@@ -1,0 +1,17 @@
+{
+  "name": "tTable",
+  "title": "Work with tables like a boss",
+  "url": "http://tjrus.com/tTable.js/",
+  "author": "Vasiliy Zubach (aka TjRus)",
+  "copyright": "2013",
+  "version": "0.5.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/TjRus/tTable.js.git"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.4"
+  }
+}
