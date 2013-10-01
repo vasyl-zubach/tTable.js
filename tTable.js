@@ -413,6 +413,16 @@
 			var value = other[column] || self.getOtherTotal( column, page );
 
 			if ( !hidden_cols || hidden_cols.indexOf( column ) === -1 ) {
+				if ( typeof other[column] == 'function' ) {
+					value = value.call( self );
+					if ( prefix[column] ) {
+						value = prefix[column] + value;
+					}
+					if ( suffix[column] ) {
+						value = value + suffix[column];
+					}
+				}
+
 				if ( !other[column] ) {
 					value = formatter && formatter[column] ? formatter[column]( value ) : value;
 					if ( prefix[column] ) {
@@ -463,17 +473,26 @@
 			str += _.template( tpl_col, {data: { html: ''}} );
 		}
 
-		for ( var i = 1; i <= cols_num; i++ ) {
-			var value = total[i] || self.getTotal( i );
+		for ( var column = 1; column <= cols_num; column++ ) {
+			var value = total[column] || self.getTotal( column );
 
-			if ( !hidden_cols || hidden_cols.indexOf( i ) === -1 ) {
-				if ( !total[i] ) {
-					value = formatter && formatter[i] ? formatter[i]( value ) : value;
-					if ( prefix[i] ) {
-						value = prefix[i] + value;
+			if ( !hidden_cols || hidden_cols.indexOf( column ) === -1 ) {
+				if ( typeof total[column] == 'function' ) {
+					value = value.call( self );
+					if ( prefix[column] ) {
+						value = prefix[column] + value;
 					}
-					if ( suffix[i] ) {
-						value = value + suffix[i];
+					if ( suffix[column] ) {
+						value = value + suffix[column];
+					}
+				}
+				if ( !total[column] ) {
+					value = formatter && formatter[column] ? formatter[column]( value ) : value;
+					if ( prefix[column] ) {
+						value = prefix[column] + value;
+					}
+					if ( suffix[column] ) {
+						value = value + suffix[column];
 					}
 				}
 				str += _.template( tpl_col, {

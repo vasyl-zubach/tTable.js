@@ -182,14 +182,26 @@ $( document ).ready( function (){
 			["Some Campaign / Mailing", 16334, 7988, 3085, 5586, 0.699298948422634, 0.34198604138606586]
 		],
 		other           : {
-			'1': 'Summary'
+			'1': 'Summary',
+			'6': function (){
+				return this.getOtherTotal( 5, 1 ) / this.getOtherTotal( 3, 1 );
+			},
+			'7': function (){
+				return this.getOtherTotal( 5, 1 ) / this.getOtherTotal( 2, 1 );
+			}
 		},
 		total           : {
-			'1': 'Totals'
+			'1': 'Totals',
+			'6': function (){
+				return this.getTotal( 5, 1 ) / this.getTotal( 3, 1 );
+			},
+			'7': function (){
+				return this.getTotal( 5, 1 ) / this.getTotal( 2, 1 );
+			}
 		},
 		page_size       : 5,
 		container       : '#other_table_id',
-				pager           : '#other_table_id_pager',
+		pager           : '#other_table_id_pager',
 		search_container: '#other_table_id_search',
 		search          : [1],
 		prefix          : {
