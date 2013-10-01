@@ -409,17 +409,17 @@
 			str += _.template( tpl_col, {data: { html: ''}} );
 		}
 
-		for ( var i = 1; i <= cols_num; i++ ) {
-			var value = other[i] || self.getOtherTotal( i );
+		for ( var column = 1; column <= cols_num; column++ ) {
+			var value = other[column] || self.getOtherTotal( column, page );
 
-			if ( !hidden_cols || hidden_cols.indexOf( i ) === -1 ) {
-				if ( !other[i] ) {
-					value = formatter && formatter[i] ? formatter[i]( value ) : value;
-					if ( prefix[i] ) {
-						value = prefix[i] + value;
+			if ( !hidden_cols || hidden_cols.indexOf( column ) === -1 ) {
+				if ( !other[column] ) {
+					value = formatter && formatter[column] ? formatter[column]( value ) : value;
+					if ( prefix[column] ) {
+						value = prefix[column] + value;
 					}
-					if ( suffix[i] ) {
-						value = value + suffix[i];
+					if ( suffix[column] ) {
+						value = value + suffix[column];
 					}
 				}
 				str += _.template( tpl_col, {
@@ -887,26 +887,34 @@
 		search = search || this.search;
 		var self = this,
 			new_data,
+			cols = self.get( 'search' ),
+			cols_all = cols === true || (_.isArray( cols ) && _.size( cols ) === 0),
 			search_sensitive = self.get( 'search_sensitive' );
 
 		if ( !search ) {
 			return data;
 		}
+
 		new_data = _.filter( data, function ( row ){
 			var results = 0;
-			_.each( row, function ( item ){
-				if ( search_sensitive ) {
-					if ( (_.isObject( item ) && _.contains( item.value, search )) || _.contains( item, search ) ) {
-						results += 1;
-					}
-				} else {
-
-					if ( _.isObject( item ) ) {
-						if ( item.value.toLowerCase().indexOf( search ) !== -1 ) {
+			_.each( row, function ( item, iterator ){
+				if ( cols_all || _.indexOf( cols, iterator + 1 ) !== -1 ) {
+					if ( search_sensitive ) {
+						if ( (_.isObject( item ) && _.contains( item.value, search )) || _.contains( item, search ) ) {
 							results += 1;
 						}
-					} else if ( item.indexOf( search ) !== -1 ) {
-						results += 1;
+					} else {
+						if ( _.isObject( item ) ) {
+							if ( typeof item.value === 'string' && item.value.toLowerCase().indexOf( search ) !== -1 ) {
+								results += 1;
+							} else if ( typeof item.value === 'number' && item.value.toString().indexOf( search ) !== -1 ) {
+								results += 1;
+							}
+						} else if ( typeof item === 'string' && item.indexOf( search ) !== -1 ) {
+							results += 1;
+						} else if ( typeof item === 'number' && item.toString().indexOf( search ) !== -1 ) {
+							results += 1;
+						}
 					}
 				}
 			} );

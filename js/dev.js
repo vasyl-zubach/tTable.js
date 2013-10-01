@@ -189,8 +189,9 @@ $( document ).ready( function (){
 		},
 		page_size       : 5,
 		container       : '#other_table_id',
-		pager           : '#other_table_id_pager',
+				pager           : '#other_table_id_pager',
 		search_container: '#other_table_id_search',
+		search          : [1],
 		prefix          : {
 			'4': '$'
 		},
