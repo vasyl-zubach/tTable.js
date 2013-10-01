@@ -1,0 +1,235 @@
+// Table
+$bg_table : #fff;
+$bg_col_hover : #e5e5e5;
+$color_border : #d6d6d6;
+
+// Rows
+$bg_row_odd : #f8f8f8;
+
+$bg_row_hover : #d9edf3;
+
+// Header
+$bg_row_head : #fff;
+$height_head : 34px;
+
+.tTable {
+	background      : $bg_table;
+	border-collapse : collapse;
+	border-spacing  : 0;
+	width           : 100%;
+	tr {
+		&:nth-child(2n) {
+			background : $bg_row_odd;
+		}
+		&:hover {
+			background : $bg_row_hover;
+		}
+	}
+	td {
+		border   : 1px $color_border solid;
+		padding  : 0 10px;
+		height   : 28px;
+		position : relative;
+	}
+	a {
+		text-decoration : none;
+		color           : #1964c9;
+		font-weight     : 600;
+	}
+}
+
+.tTable-head {
+	font-weight : 400;
+	background  : $bg_row_head !important;
+	color       : #696e78;
+	font-size   : 11px !important;
+	height      : $height_head;
+	&:hover {
+		background : $bg_row_head !important;
+		.tTable-sorting {
+			opacity : .5 !important;
+		}
+	}
+}
+
+.tTable-col-hover {
+	background : $bg_col_hover !important;
+}
+
+/*
+ * Table sorting
+ */
+
+.tTable-sorting {
+	position           : absolute;
+	right              : 0;
+	top                : 0;
+	height             : 30px;
+	width              : 20px;
+	font-weight        : 400;
+	background         : rgba(0, 0, 0, .1);
+	cursor             : pointer;
+	opacity            : .2;
+	-webkit-transition : opacity .2s;
+	-moz-transition    : opacity .2s;
+	transition         : opacity .2s;
+	&[data-sort] {
+		opacity : 1 !important;
+		&[data-sort_type="asc"] .tTable-sorting-desc {
+			opacity : .2;
+		}
+		&[data-sort_type="desc"] .tTable-sorting-asc {
+			opacity : .2;
+		}
+
+	}
+}
+
+.tTable-sorting-asc,
+.tTable-sorting-desc {
+	height   : 15px;
+	position : relative;
+	&:before {
+		content     : '\25B4';
+		position    : absolute;
+		width       : 100%;
+		height      : 100%;
+		left        : 0;
+		top         : 0;
+		text-align  : center;
+		line-height : 15px;
+		font-size   : 15px;
+		color       : #464646;
+	}
+}
+
+.tTable-sorting-desc::before {
+	-webkit-transform : rotate(180deg);
+	-moz-transform    : rotate(180deg);
+	transform         : rotate(180deg);
+}
+
+.tTable-pager {
+	display    : block;
+	height     : 30px;
+	overflow   : hidden;
+	background : rgba(0, 0, 0, .1);
+}
+
+/*
+ * Table Arrows
+ */
+
+.tTable-pager-arrows {
+	float        : left;
+	height       : 30px;
+	width        : 60px;
+	line-height  : 30px;
+	margin-right : 10px;
+}
+
+.tTable-pager-arrows-prev,
+.tTable-pager-arrows-next {
+	display     : inline-block;
+	width       : 30px;
+	height      : 30px;
+	text-align  : center;
+	position    : relative;
+	overflow    : hidden;
+	text-indent : 40px;
+	background  : rgba(0, 0, 0, .1);
+	&:hover {
+		background : rgba(0, 0, 0, .2);
+	}
+	&:active {
+		background : rgba(0, 0, 0, .3);
+	}
+	&:after {
+		position    : absolute;
+		left        : 0;
+		top         : 0;
+		text-indent : 0px;
+		text-align  : center;
+		width       : 100%;
+		height      : 100%;
+		font-size   : 30px;
+		line-height : 25px;
+		color       : #464646;
+	}
+}
+
+.tTable-pager-arrows-next__disabled,
+.tTable-pager-arrows-prev__disabled {
+	opacity    : .5;
+	background : rgba(0, 0, 0, .1) !important;
+}
+
+.tTable-pager-arrows-next:after {
+	content : '\203A ';
+}
+
+.tTable-pager-arrows-prev:after {
+	content : '\2039';
+}
+
+/*
+ * Table Pages
+ */
+
+.tTable-pager-pages {
+	float : left;
+}
+
+.tTable-pager-pages-item {
+	float       : left;
+	text-align  : center;
+	padding     : 0 5px;
+	background  : rgba(0, 0, 0, .1);
+	height      : 30px;
+	line-height : 30px;
+	&:hover {
+		background : rgba(0, 0, 0, .2);
+	}
+	&:active {
+		background : rgba(0, 0, 0, .3);
+	}
+}
+
+.tTable-pager-pages-item__on {
+	background : rgba(0, 0, 0, .3);
+}
+
+/*
+ * GOTO field
+ */
+.tTable-pager-goto {
+	float       : right;
+	width       : 30px;
+	height      : 14px;
+	margin      : 3px 5px;
+	padding     : 4px 5px;
+	line-height : 14px;
+	border      : 1px rgba(0, 0, 0, .2) solid;
+	text-align  : center;
+	&:focus {
+		outline      : none;
+		border-color : rgba(0, 0, 0, .4);
+	}
+}
+
+/*
+ * Page size
+ */
+.tTable-pager-page_size {
+	float  : right;
+	height : 20px;
+	margin : 5px;
+}
+
+/* tTable search */
+
+.tTable-search-input {
+	width     : 200px;
+	padding   : 3px 10px;
+	font-size : 13px;
+}
