@@ -154,13 +154,10 @@ $( document ).ready( function (){
 		if ( str[0].length >= 4 ) {
 			str[0] = str[0].replace( /(\d)(?=(\d{3})+$)/g, '$1,' );
 		}
-		if ( str[1] && str[1].length >= 5 ) {
-			str[1] = str[1].replace( /(\d{3})/g, '$1 ' );
-		}
 		return str.join( '.' );
 	}
 
-	new tTable( {
+	window.ttt_others = new tTable( {
 		titles          : [
 			{ title: "Campaigns", type: "string" },
 			{ title: "Unique Visitors", type: "number" },
@@ -184,7 +181,12 @@ $( document ).ready( function (){
 			["Some Campaign / AdWords", 16086, 9401, 5823, 5906, 0.6282310392511435, 0.36715156036304863],
 			["Some Campaign / Mailing", 16334, 7988, 3085, 5586, 0.699298948422634, 0.34198604138606586]
 		],
-		other           : true,
+		other           : {
+			'1': 'Summary'
+		},
+		total           : {
+			'1': 'Totals'
+		},
 		page_size       : 5,
 		container       : '#other_table_id',
 		pager           : '#other_table_id_pager',
@@ -193,9 +195,11 @@ $( document ).ready( function (){
 			'4': '$'
 		},
 		suffix          : {
-			'5': '%',
-			'6': '%'
+			'6': '%',
+			'7': '%'
 		},
+		row_numbers     : true,
+		page_size       : 3,
 		sorting         : [2, 3, 4, 5, 6, 7],
 		formatter       : {
 			'1': function ( value ){
@@ -211,6 +215,12 @@ $( document ).ready( function (){
 				return commafy( value );
 			},
 			'5': function ( value ){
+				return commafy( value );
+			},
+			'6': function ( value ){
+				return commafy( value );
+			},
+			'7': function ( value ){
 				return commafy( value );
 			}
 		}

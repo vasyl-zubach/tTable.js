@@ -44,14 +44,17 @@
 		search_sensitive: false,
 		search_value    : "",
 
-		ajax: null
+		ajax: null,
+
+		other: false,
+		total: false
 
 		// todo:
 		//		filter: {
 		//			"3": "git"
 		//		},
-	};
 
+	};
 
 	/**
 	 * Constructor
@@ -68,6 +71,7 @@
 		return self.init( config );
 	};
 
+
 	var t_proto = tTable.prototype;
 	t_proto.cache = [];
 
@@ -79,23 +83,23 @@
 		colgroup: '<colgroup></colgroup>',
 		row     : "<tr class='<%= className %>'><%= colls %></tr>",
 		coll    : "<td><%= data.html || '' %></td>",
-		sorting : '<div class="table-sorting" data-sort_type="<%= sort_type %>" data-sort_by="<%= sort_by %>" <%= is_sort_column ? "data-sort" : "" %>><div class="table-sorting-asc"></div><div class="table-sorting-desc"></div></div>',
+		sorting : '<div class="tTable-sorting" data-sort_type="<%= sort_type %>" data-sort_by="<%= sort_by %>" <%= is_sort_column ? "data-sort" : "" %>><div class="tTable-sorting-asc"></div><div class="tTable-sorting-desc"></div></div>',
 		pager   : {
-			wrap_top    : '<div class="table-pager">',
-			arrows      : '<span class="table-pager-arrows"><a href="#" class="table-pager-arrows-prev <%= prev_disabled %>">prev</a><a href="#" class="table-pager-arrows-next <%= next_disabled %>">next</a></span>',
-			pages_top   : '<span class="table-pager-pages">',
-			pages       : '<a href="#<%= page %>" class="table-pager-pages-item <%= current == page ? "table-pager-pages-item__on" : ""%>" data-goto="<%= page %>"><%= page %></a>',
-			dots        : '<span class="table-pager-pages-item">...</span>',
+			wrap_top    : '<div class="tTable-pager">',
+			arrows      : '<span class="tTable-pager-arrows"><a href="#" class="tTable-pager-arrows-prev <%= prev_disabled %>">prev</a><a href="#" class="tTable-pager-arrows-next <%= next_disabled %>">next</a></span>',
+			pages_top   : '<span class="tTable-pager-pages">',
+			pages       : '<a href="#<%= page %>" class="tTable-pager-pages-item <%= current == page ? "tTable-pager-pages-item__on" : ""%>" data-goto="<%= page %>"><%= page %></a>',
+			dots        : '<span class="tTable-pager-pages-item">...</span>',
 			pages_bottom: '</span>',
-			goto        : '<input type="text" name="table-goto" class="table-pager-goto" />',
-			page_size   : '<select class="table-pager-page_size"><% _.each(sizes, function(item){ %><option value="<%= item %>" <%= current == item ? "selected" : "" %>><%= item %></option><% }); %></select>',
+			goto        : '<input type="text" name="tTable-goto" class="tTable-pager-goto" />',
+			page_size   : '<select class="tTable-pager-page_size"><% _.each(sizes, function(item){ %><option value="<%= item %>" <%= current == item ? "selected" : "" %>><%= item %></option><% }); %></select>',
 			wrap_bottom : '</div>'
 		},
 
-		loading: '<div class="table-loading">Loading data...</div>',
-		no_data: '<div class="table-loading">No data...</div>',
+		loading: '<div class="tTable-loading">Loading data...</div>',
+		no_data: '<div class="tTable-loading">No data...</div>',
 
-		search: '<input type="text" name="table_search" class="table-search-input" placeholder="Search" value="<%= value %>">',
+		search: '<input type="text" name="tTable_search" class="tTable-search-input" placeholder="Search" value="<%= value %>">',
 
 		bottom: "</table>"
 	};
@@ -154,22 +158,22 @@
 		var self = this;
 		if ( self.$search ) {
 			self.$search
-				.off( 'input keypress blur', '.table-search-input' );
+				.off( 'input keypress blur', '.tTable-search-input' );
 			self.$search.empty();
 		}
 		if ( self.$el ) {
 			self.$el
-				.off( 'click', '.table-sorting' );
+				.off( 'click', '.tTable-sorting' );
 			self.$el.undelegate( 'td', 'mouseover mouseleave' );
 			self.$el.empty();
 		}
 		if ( self.$pager ) {
 			self.$pager
-				.off( 'click', '.table-pager-arrows-prev' )
-				.off( 'click', '.table-pager-arrows-next' )
-				.off( 'click', '.table-pager-pages-item' )
-				.off( 'keypress', '.table-pager-goto' )
-				.off( 'change', '.table-pager-page_size' );
+				.off( 'click', '.tTable-pager-arrows-prev' )
+				.off( 'click', '.tTable-pager-arrows-next' )
+				.off( 'click', '.tTable-pager-pages-item' )
+				.off( 'keypress', '.tTable-pager-goto' )
+				.off( 'change', '.tTable-pager-page_size' );
 			self.$pager.empty();
 		}
 		return self;
@@ -227,7 +231,9 @@
 	t_proto.renderTable = function (){
 		var self = this,
 			html = {},
-			html_str;
+			html_str,
+			other = self.get( 'other' ),
+			total = self.get( 'total' );
 
 		html.top = self.html.top || _.template( self.tpl.top, {} );
 
@@ -235,7 +241,14 @@
 		html.header = self.__tableHeadHTML();
 
 		// All table rows with some data
-		html.body = self.__tableBodyHTML();
+		html.body = '';
+		if ( total !== false ) {
+			html.body += self.__tableTotalRowHTML();
+		}
+		html.body += self.__tableBodyHTML();
+		if ( other !== false ) {
+			html.body += self.__tableOtherRowHTML();
+		}
 
 		// Table bottom
 		html.bottom = self.html.bottom || _.template( self.tpl.bottom, {} );
@@ -311,7 +324,7 @@
 		} );
 
 		str = _.template( self.tpl.row, {
-			className: 'table-head',
+			className: 'tTable-head',
 			colls    : str
 		} );
 		if ( hover_cols ) {
@@ -372,6 +385,112 @@
 		return str;
 	};
 
+	/**
+	 * Gethering table other row HTML
+	 * @returns {string}
+	 * @private
+	 */
+	t_proto.__tableOtherRowHTML = function (){
+		var self = this,
+			str = '',
+			page_size = self.get( 'page_size' ),
+			page = self.get( 'page' ),
+			sort_by = self.get( 'sort_by' ),
+			prefix = self.get( 'prefix' ),
+			suffix = self.get( 'suffix' ),
+			cols_num = _.size( self.get( 'titles' ) ),
+			is_row_numbers = self.get( 'row_numbers' ),
+			hidden_cols = self.get( 'hidden_cols' ),
+			tpl_col = self.tpl.coll,
+			other = self.get( 'other' ),
+			formatter = self.get( 'formatter' );
+
+		if ( is_row_numbers ) {
+			str += _.template( tpl_col, {data: { html: ''}} );
+		}
+
+		for ( var i = 1; i <= cols_num; i++ ) {
+			var value = other[i] || self.getOtherTotal( i );
+
+			if ( !hidden_cols || hidden_cols.indexOf( i ) === -1 ) {
+				if ( !other[i] ) {
+					value = formatter && formatter[i] ? formatter[i]( value ) : value;
+					if ( prefix[i] ) {
+						value = prefix[i] + value;
+					}
+					if ( suffix[i] ) {
+						value = value + suffix[i];
+					}
+				}
+				str += _.template( tpl_col, {
+					data: {
+						html: value
+					}
+				} );
+			}
+		}
+
+		str = _.template( self.tpl.row, {
+			className: '',
+			colls    : str
+		} );
+
+		return str;
+	};
+
+
+	/**
+	 * Gethering table total row HTML
+	 * @returns {string}
+	 * @private
+	 */
+	t_proto.__tableTotalRowHTML = function (){
+		var self = this,
+			str = '',
+			page_size = self.get( 'page_size' ),
+			page = self.get( 'page' ),
+			sort_by = self.get( 'sort_by' ),
+			prefix = self.get( 'prefix' ),
+			suffix = self.get( 'suffix' ),
+			cols_num = _.size( self.get( 'titles' ) ),
+			is_row_numbers = self.get( 'row_numbers' ),
+			hidden_cols = self.get( 'hidden_cols' ),
+			tpl_col = self.tpl.coll,
+			total = self.get( 'total' ),
+			formatter = self.get( 'formatter' );
+
+		if ( is_row_numbers ) {
+			str += _.template( tpl_col, {data: { html: ''}} );
+		}
+
+		for ( var i = 1; i <= cols_num; i++ ) {
+			var value = total[i] || self.getTotal( i );
+
+			if ( !hidden_cols || hidden_cols.indexOf( i ) === -1 ) {
+				if ( !total[i] ) {
+					value = formatter && formatter[i] ? formatter[i]( value ) : value;
+					if ( prefix[i] ) {
+						value = prefix[i] + value;
+					}
+					if ( suffix[i] ) {
+						value = value + suffix[i];
+					}
+				}
+				str += _.template( tpl_col, {
+					data: {
+						html: value
+					}
+				} );
+			}
+		}
+
+		str = _.template( self.tpl.row, {
+			className: '',
+			colls    : str
+		} );
+
+		return str;
+	};
 
 	/**
 	 * Rendering table pager
@@ -455,8 +574,8 @@
 		pager = {
 			top      : tpl.wrap_top,
 			arrows   : nav_arrows_available && pages_count > 1 ? _.template( tpl.arrows, {
-				prev_disabled: page == 1 ? 'table-pager-arrows-prev__disabled' : '',
-				next_disabled: page == pages_count ? 'table-pager-arrows-next__disabled' : ''
+				prev_disabled: page == 1 ? 'tTable-pager-arrows-prev__disabled' : '',
+				next_disabled: page == pages_count ? 'tTable-pager-arrows-next__disabled' : ''
 			} ) : '',
 			pages    : pages_available && pages_count > 1 ? get_pages() : '',
 			goto     : goto_available && pages_count > 1 ? _.template( tpl.goto, {} ) : '',
@@ -483,12 +602,12 @@
 		var self = this,
 			evnts = {
 				nav_arrows: function (){
-					self.$pager.off( 'click', '.table-pager-arrows-prev' ).on( 'click', '.table-pager-arrows-prev', function ( e ){
+					self.$pager.off( 'click', '.tTable-pager-arrows-prev' ).on( 'click', '.tTable-pager-arrows-prev', function ( e ){
 						e.preventDefault();
 						self.goto( self.get( 'page' ) - 1 );
 						return false;
 					} );
-					self.$pager.off( 'click', '.table-pager-arrows-next' ).on( 'click', '.table-pager-arrows-next', function ( e ){
+					self.$pager.off( 'click', '.tTable-pager-arrows-next' ).on( 'click', '.tTable-pager-arrows-next', function ( e ){
 						e.preventDefault();
 						self.goto( self.get( 'page' ) + 1 );
 						return false;
@@ -496,9 +615,9 @@
 				},
 
 				pagination: function (){
-					self.$pager.off( 'click', '.table-pager-pages-item' ).on( 'click', '.table-pager-pages-item', function ( e ){
+					self.$pager.off( 'click', '.tTable-pager-pages-item' ).on( 'click', '.tTable-pager-pages-item', function ( e ){
 						e.preventDefault();
-						if ( $( e.target ).hasClass( 'table-pager-pages-item__on' ) ) {
+						if ( $( e.target ).hasClass( 'tTable-pager-pages-item__on' ) ) {
 							return false;
 						}
 						self.goto( $( this ).data( 'goto' ) );
@@ -517,7 +636,7 @@
 				},
 
 				page_sizes: function (){
-					self.$pager.off( 'change', '.table-pager-page_size' ).on( 'change', '.table-pager-page_size', function ( e ){
+					self.$pager.off( 'change', '.tTable-pager-page_size' ).on( 'change', '.tTable-pager-page_size', function ( e ){
 						e.preventDefault();
 						self.set( {
 							page_size: parseInt( $( this ).val(), 10 )
@@ -527,7 +646,7 @@
 				},
 
 				sorting: function (){
-					self.$el.off( 'click', '.table-sorting' ).on( 'click', '.table-sorting', function ( e ){
+					self.$el.off( 'click', '.tTable-sorting' ).on( 'click', '.tTable-sorting', function ( e ){
 						e.preventDefault();
 						var $this = $( this ),
 							was_sorted_by = self.get( 'sort_by' ),
@@ -547,7 +666,7 @@
 						search_event = search_auto ? 'input keypress' : 'keypress',
 						search_sensitive = self.get( 'search_sensitive' );
 
-					self.$search.off( search_event, '.table-search-input' ).on( search_event, '.table-search-input', function ( e ){
+					self.$search.off( search_event, '.tTable-search-input' ).on( search_event, '.tTable-search-input', function ( e ){
 						var value = this.value;
 						if ( !search_sensitive ) {
 							value = value.toLowerCase();
@@ -560,7 +679,7 @@
 						}
 					} );
 
-					self.$search.off( 'blur', '.table-search-input' ).on( 'blur', '.table-search-input', function ( e ){
+					self.$search.off( 'blur', '.tTable-search-input' ).on( 'blur', '.tTable-search-input', function ( e ){
 						var value = this.value;
 						if ( !search_sensitive ) {
 							value = value.toLowerCase();
@@ -584,9 +703,9 @@
 							index = $this.index();
 						if ( (!row_numbers || index !== 0) && ((_.isArray( hover_cols ) && hover_cols.indexOf( index + (row_numbers ? 0 : 1) ) !== -1) || hover_cols === true) ) {
 							if ( e.type == 'mouseover' ) {
-								$colgroups.eq( index ).addClass( 'table-col-hover' );
+								$colgroups.eq( index ).addClass( 'tTable-col-hover' );
 							} else {
-								$colgroups.eq( index ).removeClass( 'table-col-hover' );
+								$colgroups.eq( index ).removeClass( 'tTable-col-hover' );
 							}
 						}
 					} );
@@ -975,17 +1094,57 @@
 			titles = self.get( 'titles' ),
 			titles_length = titles.length,
 			data_type = ((column > 0 && column <= titles_length) ? titles[column - 1].type : '').toLowerCase(),
-			data = self.getData();
+			data = self.getData(),
+			col = column - 1;
 
 		if ( data_type == 'number' ) {
 			_.each( data, function ( item ){
-				total += parseInt( item[column - 1] );
+				if ( _.isObject( item[col] ) ) {
+					total += parseFloat( item[col].value );
+				} else {
+					total += parseFloat( item[col] );
+				}
 			} );
 		}
 
 		return total
 	};
 
+
+	/**
+	 * Method that calculate total sum of table data in some predefined column
+	 * @param column
+	 * @param page
+	 * @returns {number}
+	 */
+	t_proto.getPageTotal = function ( column, page ){
+		var self = this,
+			total = 0,
+			titles = self.get( 'titles' ),
+			titles_length = titles.length,
+			data_type = ((column > 0 && column <= titles_length) ? titles[column - 1].type : '').toLowerCase(),
+			data = self.getPageData(),
+			col = column - 1;
+
+		if ( data_type == 'number' ) {
+			_.each( data, function ( item ){
+				if ( _.isObject( item[col] ) ) {
+					total += parseFloat( item[col].value );
+				} else {
+					total += parseFloat( item[col] );
+				}
+			} );
+		}
+
+		return total
+	};
+
+	t_proto.getOtherTotal = function ( column, page ){
+		var self = this,
+			total = 0;
+		total = self.getTotal( column ) - self.getPageTotal( column, page );
+		return total;
+	};
 
 	/**
 	 * Method for getting data array with table data related to current page
@@ -1193,5 +1352,13 @@
 	};
 
 	window.tTable = tTable;
+
+	// AMD
+	// TODO: check is this ok
+	if ( typeof window.define === "function" && window.define.amd ) {
+		window.define( "tTable", [], function (){
+			return tTable;
+		} );
+	}
 
 })( window, document );
