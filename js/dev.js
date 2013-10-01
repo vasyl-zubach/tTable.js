@@ -147,4 +147,72 @@ $( document ).ready( function (){
 	 "search_value"         : ""
 	 } );
 	 */
+
+
+	var commafy = function ( num ){
+		var str = num.toString().split( '.' );
+		if ( str[0].length >= 4 ) {
+			str[0] = str[0].replace( /(\d)(?=(\d{3})+$)/g, '$1,' );
+		}
+		if ( str[1] && str[1].length >= 5 ) {
+			str[1] = str[1].replace( /(\d{3})/g, '$1 ' );
+		}
+		return str.join( '.' );
+	}
+
+	new tTable( {
+		titles          : [
+			{ title: "Campaigns", type: "string" },
+			{ title: "Unique Visitors", type: "number" },
+			{ title: "Downloads", type: "number" },
+			{ title: "Revenue", type: "number" },
+			{ title: "Sales", type: "number" },
+			{ title: "Downloads > Sales", type: "number" },
+			{ title: "Visits > Sales", type: "number" }
+		],
+		data            : [
+			["Christmass Sale / Newsletter", 15257, 5678, 5700, 3821, 0.6729482212046495, 0.25044241987284527],
+			["Christmass Sale / Banners", 18759, 8316, 4663, 6498, 0.7813852813852814, 0.34639373100911564],
+			["Christmass Sale / Landing 1", 17314, 6099, 3218, 5448, 0.8932611903590753, 0.31465865773362595],
+			["Christmass Sale / Landing 2", 18868, 5652, 5941, 5367, 0.9495753715498938, 0.2844498622005512],
+			["Christmass Sale / AdWords", 15113, 6769, 4852, 3418, 0.5049490323533757, 0.2261629061073248],
+			["Christmass Sale / Mailing", 15313, 5541, 3514, 3803, 0.686338206099982, 0.2483510742506367],
+			["Some Campaign / Newsletter", 12891, 8512, 5107, 4561, 0.5358317669172933, 0.35381273756884646],
+			["Some Campaign / Banners", 13554, 7446, 2345, 5920, 0.7950577491270481, 0.436771432787369],
+			["Some Campaign / Landing 1", 17534, 8101, 1657, 3986, 0.49203801999753116, 0.2273297593247405],
+			["Some Campaign / Landing 2", 16253, 8312, 3803, 3486, 0.4193936477382098, 0.21448347997292808],
+			["Some Campaign / AdWords", 16086, 9401, 5823, 5906, 0.6282310392511435, 0.36715156036304863],
+			["Some Campaign / Mailing", 16334, 7988, 3085, 5586, 0.699298948422634, 0.34198604138606586]
+		],
+		other           : true,
+		page_size       : 5,
+		container       : '#other_table_id',
+		pager           : '#other_table_id_pager',
+		search_container: '#other_table_id_search',
+		prefix          : {
+			'4': '$'
+		},
+		suffix          : {
+			'5': '%',
+			'6': '%'
+		},
+		sorting         : [2, 3, 4, 5, 6, 7],
+		formatter       : {
+			'1': function ( value ){
+				return '<a href="#link' + encodeURIComponent( value ) + '">' + value + '</a>';
+			},
+			'2': function ( value ){
+				return commafy( value );
+			},
+			'3': function ( value ){
+				return commafy( value );
+			},
+			'4': function ( value ){
+				return commafy( value );
+			},
+			'5': function ( value ){
+				return commafy( value );
+			}
+		}
+	} );
 } );
