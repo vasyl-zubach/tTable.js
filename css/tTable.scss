@@ -47,7 +47,7 @@ $height_head : 34px;
 	&:hover {
 		background : $bg_row_head !important;
 		.tTable-sorting {
-			opacity : .5 !important;
+			opacity : .5;
 		}
 	}
 }

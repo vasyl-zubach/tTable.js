@@ -26,7 +26,7 @@
   .tTable-head:hover {
     background: white !important; }
     .tTable-head:hover .tTable-sorting {
-      opacity: .5 !important; }
+      opacity: .5; }
 
 .tTable-col-hover {
   background: #e5e5e5 !important; }
