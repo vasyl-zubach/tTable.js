@@ -4,7 +4,7 @@ $bg_col_hover : #e5e5e5;
 $color_border : #d6d6d6;
 
 // Rows
-$bg_row_odd : #f8f8f8;
+$bg_row_odd : rgba(0, 0, 0, .02);
 
 $bg_row_hover : #d9edf3;
 
@@ -18,6 +18,7 @@ $height_head : 34px;
 	border-spacing  : 0;
 	width           : 100%;
 	tr {
+		height : 28px;
 		&:nth-child(2n) {
 			background : $bg_row_odd;
 		}
@@ -28,7 +29,6 @@ $height_head : 34px;
 	td {
 		border   : 1px $color_border solid;
 		padding  : 0 10px;
-		height   : 28px;
 		position : relative;
 	}
 	a {
@@ -38,18 +38,22 @@ $height_head : 34px;
 	}
 }
 
-.tTable-head {
+tr.tTable-head {
 	font-weight : 400;
-	background  : $bg_row_head !important;
+	background  : $bg_row_head;
 	color       : #696e78;
 	font-size   : 11px !important;
-	height      : $height_head;
+	height      : $height_head !important;
 	&:hover {
-		background : $bg_row_head !important;
-		.tTable-sorting {
-			opacity : .5;
-		}
+		background : $bg_row_head;
 	}
+	.tTable-sorting {
+		opacity : 0;
+	}
+	.tTable-td-sorting {
+		cursor : pointer;
+	}
+	//}
 }
 
 .tTable-col-hover {
@@ -60,26 +64,25 @@ $height_head : 34px;
  * Table sorting
  */
 
+.tTable-td-sorted,
+.tTable-sort-column {
+	//background : #f8f8f8 !important;
+	background : rgba(0, 0, 0, .02) !important;
+}
+
 .tTable-sorting {
-	position           : absolute;
-	right              : 0;
-	top                : 0;
-	height             : 30px;
-	width              : 20px;
-	font-weight        : 400;
-	background         : rgba(0, 0, 0, .1);
-	cursor             : pointer;
-	opacity            : .2;
-	-webkit-transition : opacity .2s;
-	-moz-transition    : opacity .2s;
-	transition         : opacity .2s;
+	position    : absolute;
+	right       : 0;
+	top         : 0;
+	height      : 100%;
+	width       : 20px;
+	font-weight : 400;
+	cursor      : pointer;
 	&[data-sort] {
 		opacity : 1 !important;
-		&[data-sort_type="asc"] .tTable-sorting-desc {
-			opacity : .2;
-		}
+		&[data-sort_type="asc"] .tTable-sorting-desc,
 		&[data-sort_type="desc"] .tTable-sorting-asc {
-			opacity : .2;
+			display : none;
 		}
 
 	}
@@ -87,26 +90,40 @@ $height_head : 34px;
 
 .tTable-sorting-asc,
 .tTable-sorting-desc {
-	height   : 15px;
+	height   : 100%;
 	position : relative;
 	&:before {
-		content     : '\25B4';
-		position    : absolute;
-		width       : 100%;
-		height      : 100%;
-		left        : 0;
-		top         : 0;
-		text-align  : center;
-		line-height : 15px;
-		font-size   : 15px;
-		color       : #464646;
+		content                 : '';
+		position                : absolute;
+		width                   : 100%;
+		height                  : 100%;
+		left                    : 0;
+		top                     : 0;
+		text-align              : center;
+		line-height             : 15px;
+		font-size               : 15px;
+		color                   : #464646;
+		background-repeat       : no-repeat;
+		background-position     : center center;
+		background-image        : url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAASCAYAAABSO15qAAAAh0lEQVR4AWPABrZu3/MOB2ZAxyACG/6PDQ9mA0YNmAOSJBNPABnABsTHyNB8CKQX5hRJIH5MguYnQCyBHgbmQPydCM0/gdgSVyDGE2FABqFY6MejeS4x0cgMxHuwaD4NxBzEpgMRIL6DpPkVEMviT0iYWBeIvwDxHyB2wqUORODDwUBchE8NAIka4TnJA9HdAAAAAElFTkSuQmCC);
+		-webkit-background-size : 9px 9px;
+		-moz-background-size    : 9px 9px;
+		background-size         : 9px 9px;
 	}
+
 }
 
 .tTable-sorting-desc::before {
 	-webkit-transform : rotate(180deg);
 	-moz-transform    : rotate(180deg);
 	transform         : rotate(180deg);
+}
+
+.tTable-bar {
+	position   : absolute;
+	width      : 5px;
+	height     : 20px;
+	background : #ccc;
 }
 
 .tTable-pager {

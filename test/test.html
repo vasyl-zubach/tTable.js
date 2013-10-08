@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>tTable test pg</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../css/tTable.css"/>
+</head>
+<body>
+
+<div id="table_id"></div>
+
+<script src="../js/libs/jquery.min.js"></script>
+<script src="../js/libs/lodash.min.js"></script>
+<script src="../tTable.js"></script>
+
+<script>
+	var container = document.getElementById( 'table_id' );
+	var titles = ['Col1', 'Title2', 'Other'];
+
+	our_table = new tTable( {
+		container: container,
+		titles   : titles
+	} );
+
+</script>
+</body>
+</html>

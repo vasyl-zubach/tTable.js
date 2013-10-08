@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>tTable tests</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="lib/mocha/mocha.css"/>
+</head>
+<body>
+	<div class="hidden">
+		<div id="table_id"></div>
+	</div>
+
+	<div id="mocha"></div>
+
+	<script src="lib/mocha/mocha.js"></script>
+	<script>mocha.setup( 'bdd' )</script>
+	<script src="lib/should.js"></script>
+
+	<script src="../js/libs/jquery.min.js"></script>
+	<script src="../js/libs/lodash.min.js"></script>
+	<script src="../tTable.js"></script>
+
+	<script src="spec/config.spec.js"></script>
+	<script src="spec/methods.spec.js"></script>
+	<script>
+		mocha.run();
+	</script>
+</body>
+</html>

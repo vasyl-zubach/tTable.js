@@ -1,0 +1,5 @@
+--require should
+--require test/setup
+--reporter dot
+--ui bdd
+--recursive
