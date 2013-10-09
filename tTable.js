@@ -21,10 +21,10 @@
 
 		pager     : null,
 		page      : 1,
+		nav_arrows: true,
 		show_pages: true,
 		page_size : 10,
 		page_sizes: [10, 25, 50],
-		nav_arrows: true,
 		goto      : true,
 
 		sorting      : true,
@@ -121,7 +121,7 @@
 				wrap_top    : '<div class="' + cName.pager + '">',
 				arrows      : '<span class="' + cName.pager_arrows + '"><a href="#" class="' + cName.pager_arrows_prev + ' <%= prev_disabled %>">prev</a><a href="#" class="' + cName.pager_arrows_next + ' <%= next_disabled %>">next</a></span>',
 				pages_top   : '<span class="' + cName.pager_pages + '">',
-				pages       : '<a href="#<%= page %>" class="' + cName.pager_pages_item + ' <%= current == page ? "' + cName.pager_pages_item + '" : ""%>" data-goto="<%= page %>"><%= page %></a>',
+				pages       : '<a href="#<%= page %>" class="' + cName.pager_pages_item + ' <%= current == page ? "' + cName.pager_pages_item_on + '" : ""%>" data-goto="<%= page %>"><%= page %></a>',
 				dots        : '<span class="' + cName.pager_pages_item + '">...</span>',
 				pages_bottom: '</span>',
 				goto        : '<input type="text" name="tTable-goto" class="' + cName.pager_goto + '" />',
@@ -605,6 +605,8 @@
 				pages4str,
 				dots = tpl.dots,
 				tmp = 0,
+				tpl_top = tpl.pages_top,
+				tpl_bottom = tpl.pages_bottom,
 				tpl_page = function ( item ) {
 					return _.template( tpl.pages, {
 						page   : item,
@@ -651,7 +653,7 @@
 			if ( pages[1] + 3 <= pages_count ) {
 				pages4str = pages4str + dots + tpl_page( pages_count );
 			}
-			return pages4str;
+			return tpl_top + pages4str + tpl_bottom;
 		};
 
 		pager = {

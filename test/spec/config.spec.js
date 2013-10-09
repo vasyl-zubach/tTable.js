@@ -269,11 +269,93 @@
 		} );
 
 		describe( "nav_arrows", function () {
-			it( "{boolean}" );
+
+			it( "{boolean} - example: `true` (default)", function () {
+				var data = [
+						["col1", 1, "one"],
+						["col2", 2, "two"]
+					],
+					our_table = new tTable( {
+						pager    : '#table_id_pager',
+						page_size: 1,
+						data     : data
+					} );
+				our_table.get( 'nav_arrows' ).should.be.true;
+				( our_table.$pager.find( '.' + our_table.get( 'className' ).pager_arrows ).length > 0  ).should.be.true;
+			} );
+
+			it( "{boolean} - example: `false`", function () {
+				var data = [
+						["col1", 1, "one"],
+						["col2", 2, "two"]
+					],
+					our_table = new tTable( {
+						pager     : '#table_id_pager',
+						page_size : 1,
+						data      : data,
+						nav_arrows: false
+					} );
+				our_table.get( 'nav_arrows' ).should.be.false;
+				( our_table.$pager.find( '.' + our_table.get( 'className' ).pager_arrows ).length > 0  ).should.be.false;
+			} );
+
+			it( 'If there is one page in the table - navigation arrows are not displayed', function () {
+				var data = [
+						["col1", 1, "one"],
+						["col2", 2, "two"]
+					],
+					our_table = new tTable( {
+						pager: '#table_id_pager',
+						data : data
+					} );
+				our_table.get( 'nav_arrows' ).should.be.true;
+				( our_table.$pager.find( '.' + our_table.get( 'className' ).pager_arrows ).length > 0  ).should.be.false;
+			} );
 		} );
 
 		describe( "show_pages", function () {
-			it( "{boolean}" );
+			it( "{boolean} - example: `true` (default)", function () {
+				var data = [
+						["col1", 1, "one"],
+						["col2", 2, "two"]
+					],
+					our_table = new tTable( {
+						pager    : '#table_id_pager',
+						page_size: 1,
+						data     : data
+					} );
+				our_table.get( 'show_pages' ).should.be.true;
+				console.log( our_table.$pager.html() );
+				( our_table.$pager.find( '.' + our_table.get( 'className' ).pager_pages ).length > 0  ).should.be.true;
+			} );
+
+			it( "{boolean} - example: `false`", function () {
+				var data = [
+						["col1", 1, "one"],
+						["col2", 2, "two"]
+					],
+					our_table = new tTable( {
+						pager     : '#table_id_pager',
+						page_size : 1,
+						data      : data,
+						nav_arrows: false
+					} );
+				our_table.get( 'nav_arrows' ).should.be.false;
+				( our_table.$pager.find( '.' + our_table.get( 'className' ).pager_arrows ).length > 0  ).should.be.false;
+			} );
+
+			it( 'If there is one page in the table - navigation arrows are not displayed', function () {
+				var data = [
+						["col1", 1, "one"],
+						["col2", 2, "two"]
+					],
+					our_table = new tTable( {
+						pager: '#table_id_pager',
+						data : data
+					} );
+				our_table.get( 'nav_arrows' ).should.be.true;
+				( our_table.$pager.find( '.' + our_table.get( 'className' ).pager_arrows ).length > 0  ).should.be.false;
+			} );
 		} );
 
 		describe( "page_size", function () {
