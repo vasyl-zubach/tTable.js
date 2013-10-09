@@ -1115,7 +1115,7 @@
 			titles = self.get( 'titles' ),
 			titles_length = titles.length;
 		column = column || self.get( 'sort_by' );
-		return ((column > 0 && column <= titles_length) ? titles[column - 1].type : '').toLowerCase();
+		return ((column > 0 && column <= titles_length) ? (titles[column - 1].type || 'string') : 'string').toLowerCase();
 	};
 
 	/**
@@ -1438,7 +1438,7 @@
 	 * @returns {*}
 	 */
 	t_proto.goto = function ( page ) {
-		if ( !page ) {
+		if ( typeof page !== 'number' ) {
 			return this;
 		}
 		page = parseInt( page, 10 );

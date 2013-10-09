@@ -11,14 +11,17 @@
 		} )
 
 		describe( '{}', function () {
+
 			it( 'no options - sets all defaults', function () {
 				our_table = new tTable();
 				( JSON.stringify( our_table.config ) ).should.equal( JSON.stringify( tTable_defaults ) );
 			} )
+
 		} );
 
 
 		describe( "container", function () {
+
 			it( "`null` by default", function () {
 				our_table = new tTable();
 				( our_table.get( 'container' ) === null ).should.be.true;
@@ -47,6 +50,7 @@
 		} );
 
 		describe( "titles", function () {
+
 			it( "`[ ]` - empty array by default", function () {
 				our_table = new tTable( {
 					container: '#table_id'
@@ -54,6 +58,7 @@
 				var titles = our_table.get( 'titles' );
 				( _.isArray( titles ) && _.size( titles ) === 0).should.be.true;
 			} );
+
 			it( "{array of strings} - example: ['Col1','Title2','Other']", function () {
 				var titles = ['Col1', 'Title2', 'Other'];
 				our_table = new tTable( {
@@ -66,6 +71,7 @@
 				} );
 				our_table.get( 'titles' ).should.equal( titles );
 			} );
+
 			it( "{array of objects} - example object: { title : 'Col1', type: 'number' }", function () {
 				var titles = [
 					{ title: 'Col1', type: 'string' },
@@ -82,6 +88,7 @@
 				} );
 				our_table.get( 'titles' ).should.equal( titles );
 			} );
+
 			it( "{array of objects with sort key} - example object: { title : 'Col1', type: 'number', key: 'column_key' }", function () {
 				var titles = [
 					{ title: 'Col1', type: 'string' },
@@ -98,15 +105,58 @@
 				} );
 				our_table.get( 'titles' ).should.equal( titles );
 			} );
+
 		} );
 
 		describe( "data", function () {
-			it( '{array}' );
+
+			it( '`[ ]` empty array by default', function () {
+				our_table = new tTable();
+				(our_table.get( 'data' ).length === 0 ).should.be.true;
+			} );
+
+			it( '{array}: example for 1 row with 3 columns table [["column1", 2, "three"]]', function () {
+				var data = [
+					["column1", 2, "three"]
+				];
+				our_table = new tTable( {
+					container: '#table_id',
+					data     : data
+				} );
+				var $td = our_table.$el.find( 'tr' ).eq( 1 ).find( 'td' );
+				_.each( $td, function ( td, i ) {
+					($( td ).text()).should.equal( data[0][i].toString() );
+				} );
+				our_table.get( 'data' ).should.equal( data );
+			} );
+
 		} );
 
 		describe( "row_numbers", function () {
-			it( '{boolean} - `true`' );
-			it( '{boolean} - `false`' );
+
+			it( '{boolean} - `false` (default)', function () {
+				var titles = ['Col1', 'Title2', 'Other'];
+				our_table = new tTable( {
+					container: '#table_id',
+					titles   : titles
+				} );
+				var $td = our_table.$el.find( '.' + our_table.get( 'className' ).head ).find( 'td' );
+				($td.eq( 0 ).text() == titles[0]).should.be.true;
+				($td.length == titles.length).should.be.true;
+			} );
+
+			it( '{boolean} - `true`', function () {
+				var titles = ['Col1', 'Title2', 'Other'];
+				our_table = new tTable( {
+					container  : '#table_id',
+					titles     : titles,
+					row_numbers: true
+				} );
+				var $td = our_table.$el.find( '.' + our_table.get( 'className' ).head ).find( 'td' );
+				($td.eq( 0 ).text() == '#').should.be.true;
+				($td.length == titles.length + 1).should.be.true;
+			} );
+
 		} );
 
 		describe( "pager", function () {
@@ -114,12 +164,112 @@
 				our_table = new tTable();
 				( our_table.get( 'pager' ) === null ).should.be.true;
 			} );
-			it( "{string} - example: '#table_id_pager'" );
-			it( "{DOM element} - example: document.getElementById('table_id_pager')" );
-			it( "{jQuery object} - example: $('table_id_pager')" );
+
+			it( "{string} - example: '#table_id_pager'", function () {
+				var pager = '#table_id_pager';
+				our_table = new tTable( {
+					pager: pager
+				} );
+				( our_table.get( 'pager' ) === pager ).should.be.true;
+				( our_table.$pager.length > 0  ).should.be.true;
+			} );
+
+			it( "{DOM element} - example: document.getElementById('table_id_pager')", function () {
+				var pager = document.getElementById( 'table_id_pager' );
+				our_table = new tTable( {
+					pager: pager
+				} );
+				( our_table.get( 'pager' ) === pager ).should.be.true;
+				( our_table.$pager.length > 0  ).should.be.true;
+			} );
+
+			it( "{jQuery object} - example: $('table_id_pager')", function () {
+				var pager = $( '#table_id_pager' );
+				our_table = new tTable( {
+					pager: pager
+				} );
+				( our_table.get( 'pager' ) === pager ).should.be.true;
+				( our_table.$pager.length > 0  ).should.be.true;
+			} );
+
 		} );
+
 		describe( "page", function () {
-			it( "{number}" );
+			it( "{number} - 1 by default", function () {
+				var data = [
+						["col1", 1, "one"],
+						["col2", 2, "two"]
+					],
+					our_table = new tTable( {
+						container: '#table_id',
+						pager    : '#table_id_pager',
+						page_size: 1,
+						data     : data
+					} );
+				var $td = our_table.$el.find( 'tr' ).eq( 1 ).find( 'td' );
+				_.each( $td, function ( td, i ) {
+					($( td ).text()).should.equal( data[0][i].toString() );
+				} );
+			} );
+
+			it( "{number} - example: 2", function () {
+				var data = [
+						["col1", 1, "one"],
+						["col2", 2, "two"]
+					],
+					our_table = new tTable( {
+						container: '#table_id',
+						pager    : '#table_id_pager',
+						page     : 2,
+						page_size: 1,
+						data     : data
+					} );
+				var $td = our_table.$el.find( 'tr' ).eq( 1 ).find( 'td' );
+				_.each( $td, function ( td, i ) {
+					($( td ).text()).should.equal( data[1][i].toString() );
+				} );
+			} );
+
+			it( "{number} - example: 100500 (more than exist in table, will show last)", function () {
+				var data = [
+						["col1", 1, "one"],
+						["col2", 2, "two"]
+					],
+					our_table = new tTable( {
+						container: '#table_id',
+						pager    : '#table_id_pager',
+						page     : 100500,
+						page_size: 1,
+						data     : data
+					} );
+				var $td = our_table.$el.find( 'tr' ).eq( 1 ).find( 'td' );
+				_.each( $td, function ( td, i ) {
+					($( td ).text()).should.equal( data[1][i].toString() );
+				} );
+			} );
+
+			it( "{number} - example: -100500 (less than exist in table, will show first)", function () {
+				var data = [
+						["col1", 1, "one"],
+						["col2", 2, "two"]
+					],
+					our_table = new tTable( {
+						container: '#table_id',
+						pager    : '#table_id_pager',
+						page     : -100500,
+						page_size: 1,
+						data     : data
+					} );
+				var $td = our_table.$el.find( 'tr' ).eq( 1 ).find( 'td' );
+				_.each( $td, function ( td, i ) {
+					($( td ).text()).should.equal( data[0][i].toString() );
+				} );
+			} );
+
+		} );
+
+		describe( "nav_arrows", function () {
+			it( "{boolean}" );
 		} );
 
 		describe( "show_pages", function () {
@@ -133,10 +283,6 @@
 		describe( "page_sizes", function () {
 			it( "`[10, 25, 50] by default`" );
 			it( "{array}" );
-		} );
-
-		describe( "nav_arrows", function () {
-			it( "{boolean}" );
 		} );
 
 		describe( "goto", function () {

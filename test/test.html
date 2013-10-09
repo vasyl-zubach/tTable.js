@@ -9,19 +9,28 @@
 <body>
 
 <div id="table_id"></div>
+<div id="table_id_pager"></div>
 
 <script src="../js/libs/jquery.min.js"></script>
 <script src="../js/libs/lodash.min.js"></script>
 <script src="../tTable.js"></script>
 
 <script>
-	var container = document.getElementById( 'table_id' );
+	var container = '#table_id';
 	var titles = ['Col1', 'Title2', 'Other'];
-
+	var data = [
+		["col1", 1, "one"],
+		["col2", 2, "two"]
+	];
 	our_table = new tTable( {
 		container: container,
-		titles   : titles
+		titles   : titles,
+		data     : data,
+		page     : 0,
+		page_size: 1
 	} );
+
+
 
 </script>
 </body>
