@@ -545,6 +545,7 @@
 				}
 
 				if ( !other[column] ) {
+					value = number_class ? self.numberFormat( value ) : value;
 					value = formatter && formatter[column] ? formatter[column]( value ) : value;
 					if ( prefix[column] ) {
 						value = prefix[column] + value;
@@ -615,6 +616,7 @@
 				}
 
 				if ( !total[column] ) {
+					value = number_class ? self.numberFormat( value ) : value;
 					value = formatter && formatter[column] ? formatter[column]( value ) : value;
 					if ( prefix[column] ) {
 						value = prefix[column] + value;
