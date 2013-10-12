@@ -119,11 +119,26 @@ tr.tTable-head {
 	transform         : rotate(180deg);
 }
 
-.tTable-bar {
+.tTable-number-bar {
 	position   : absolute;
 	width      : 5px;
 	height     : 20px;
 	background : #ccc;
+}
+
+.tTable-number-column {
+	text-align : right;
+	text-align : end;
+	text-anchor: end;
+}
+
+.tTable-min-value,
+.tTable-max-value {
+	position   : absolute;
+	left       : 0;
+	top        : 0;
+	z-index    : 100;
+	background : #fff;
 }
 
 .tTable-pager {

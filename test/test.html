@@ -23,15 +23,108 @@
 			["col1", 1, "one"],
 			["col2", 2, "two"]
 		];
-		our_table = new tTable( {
-			container: container,
-			pager    : pager,
-			titles   : titles,
-			data     : data,
-			page     : 0,
-			page_size: 1
+		//		our_table = new tTable( {
+		//			container: container,
+		//			pager    : pager,
+		//			titles   : titles,
+		//			data     : data,
+		//			page     : 0,
+		//			page_size: 1
+		//		} );
+
+
+		//		our_table = new tTable( {
+		//			container: '#table_id',
+		//			titles   : [
+		//				{ title: '1123', type: 'number'}
+		//			],
+		//			data     : [
+		//				[1],
+		//				[2]
+		//			],
+		//			sort_by  : 1
+		//		} );
+
+
+		var commafy = function ( num ) {
+			var str = num.toString().split( '.' );
+			if ( str[0].length >= 4 ) {
+				str[0] = str[0].replace( /(\d)(?=(\d{3})+$)/g, '$1,' );
+			}
+			return str.join( '.' );
+		}
+
+		window.ttt_others = new tTable( {
+			titles          : [
+				{ title: "Campaigns", type: "string" },
+				{ title: "Unique Visitors", type: "number" },
+				{ title: "Downloads", type: "number" },
+				{ title: "Revenue", type: "number" },
+				{ title: "Sales", type: "number" },
+				{ title: "Downloads > Sales", type: "number" },
+				{ title: "Visits > Sales", type: "number" }
+			],
+			data            : [
+				["Christmass Sale / Newsletter", 15257, 5678, 5700, 3821, 0.67, 0.25],
+				["Christmass Sale / Banners", 18759, 8316, 4663, 6498, 0.78, 0.34],
+				["Christmass Sale / Landing 1", 17314, 6099, 3218, 5448, 0.89, 0.31],
+				["Christmass Sale / Landing 2", 18868, 5652, 5941, 5367, 0.94, 0.28],
+				["Christmass Sale / AdWords", 15113, 6769, 4852, 3418, 0.50, 0.22],
+				["Christmass Sale / Mailing", 15313, 5541, 3514, 3803, 0.68, 0.24],
+				["Some Campaign / Newsletter", 12891, 8512, 5107, 4561, 0.53, 0.35],
+				["Some Campaign / Banners", 13554, 7446, 2345, 5920, 0.79, 0.43],
+				["Some Campaign / Landing 1", 17534, 8101, 1657, 3986, 0.49, 0.22],
+				["Some Campaign / Landing 2", 16253, 8312, 3803, 3486, 0.41, 0.21],
+				["Some Campaign / AdWords", 16086, 9401, 5823, 5906, 0.62, 0.36],
+				["Some Campaign / Mailing", 16334, 7988, 3085, 5586, 0.69, 0.34]
+			],
+			other           : {
+				'1': 'Summary',
+				'6': function () {
+					return ((this.getOtherTotal( 5, 1 ) / this.getOtherTotal( 3, 1 )) * 100).toFixed( 2 );
+				},
+				'7': function () {
+					return ((this.getOtherTotal( 5, 1 ) / this.getOtherTotal( 2, 1 )) * 100).toFixed( 2 );
+				}
+			},
+			total           : {
+				'1': 'Totals',
+				'6': function () {
+					return ((this.getTotal( 5, 1 ) / this.getTotal( 3, 1 )) * 100).toFixed( 2 );
+				},
+				'7': function () {
+					return ((this.getTotal( 5, 1 ) / this.getTotal( 2, 1 )) * 100).toFixed( 2 );
+				}
+			},
+			column_bars     : true,
+			page_size       : 5,
+			container       : '#table_id',
+			pager           : '#table_id_pager',
+			search_container: '#table_id_search',
+			search          : [1],
+			sort_td_click   : true,
+			prefix          : {
+				'4': '$'
+			},
+			suffix          : {
+				'6': '%',
+				'7': '%'
+			},
+			row_numbers     : true,
+			show_max        : [4,5,6],
+			show_min        : [4,5,6],
+			page_size       : 3,
+			sorting         : [2, 3, 4, 5, 6, 7],
+			formatter       : {
+				'1': function ( value ) {
+					return '<a href="#link' + encodeURIComponent( value ) + '">' + value + '</a>';
+				}
+			}
 		} );
 
+		console.log( '' );
+		console.log( window.ttt_others );
+		console.log( '' );
 
 	</script>
 </body>
